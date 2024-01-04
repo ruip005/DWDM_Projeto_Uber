@@ -1,15 +1,17 @@
 const mongoose = require('mongoose');
 
 const restauranteSchema = new mongoose.Schema({
-  companyName: { 
+  campanyName: { 
     type: String,
     required: true 
   },
-  companyRating: Number,
-  deliveryFee: Number,
+  deliveryFee: {
+      type: Number,
+      required: true
+    },
   businessHours: {
     Monday: { 
-      type: String, 
+      type: Array, 
       required: true
     },
     Tuesday: { 
@@ -51,11 +53,13 @@ const restauranteSchema = new mongoose.Schema({
   },
   BoxID: { 
     type: String, 
-    required: true 
+    required: false, 
+    default: null
   },
   ContainerID: { 
     type: String, 
-    required: true 
+    required: false,
+    default: null
   },
   Address: { 
     type: String, 
