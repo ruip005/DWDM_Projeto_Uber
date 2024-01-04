@@ -1,43 +1,68 @@
 const mongoose = require('mongoose');
 
-const restaurantSchema = new mongoose.Schema({
-  companyName: {
+const restauranteSchema = new mongoose.Schema({
+  companyName: { 
     type: String,
-    required: true
+    required: true 
   },
-  companyRating: {
-    type: Number,
-    min: 0,
-    max: 5
-  },
-  deliveryFee: {
-    type: Number,
-    default: 0
-  },
+  companyRating: Number,
+  deliveryFee: Number,
   businessHours: {
-    type: {
-      Monday: String,
-      Tuesday: String,
-      Wednesday: String,
-      Thursday: String,
-      Friday: String,
-      Saturday: String,
-      Sunday: String
+    Monday: { 
+      type: String, 
+      required: true
+    },
+    Tuesday: { 
+      type: String, 
+      required: true 
+    },
+    Wednesday: { 
+      type: String, 
+      required: true 
+    },
+    Thursday: { 
+      type: String, 
+      required: true 
+    },
+    Friday: { 
+      type: String, 
+      required: true 
+    },
+    Saturday: { 
+      type: String, 
+      required: true 
+    },
+    Sunday: { 
+      type: String, 
+      required: true 
     }
   },
-  contact: {
-    email: String,
-    phone: String
+  contactEmail: { 
+    type: String, 
+    required: true 
   },
-  address: {
-    type: String
+  contactPhone: { 
+    type: String, 
+    required: true 
   },
-  deliversToHome: {
-    type: Boolean,
-    default: false
+  deliversToHome: { 
+    type: Boolean, 
+    default: false 
+  },
+  BoxID: { 
+    type: String, 
+    required: true 
+  },
+  ContainerID: { 
+    type: String, 
+    required: true 
+  },
+  Address: { 
+    type: String, 
+    required: true 
   }
 });
 
-const Restaurant = mongoose.model('Restaurant', restaurantSchema);
+const restauranteModel = mongoose.model('restaurants', restauranteSchema);
 
-module.exports = Restaurant;
+module.exports = restauranteModel;
