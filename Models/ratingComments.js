@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const ratingCommentsSchema = new mongoose.Schema({
     userId: { 
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
         required: true 
     },
     userOpinion: {
@@ -10,7 +11,8 @@ const ratingCommentsSchema = new mongoose.Schema({
         required: false
     },
     ratingContainerId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'rating_box',
         required: true
     },
     ratingStars: {

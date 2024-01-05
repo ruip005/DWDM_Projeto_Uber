@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 
 const ratingSchema = new mongoose.Schema({
     campanyId: { 
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'restaurants',
         required: true 
     },
     ratingContainerId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'rating_box',
         required: true
     },
 });

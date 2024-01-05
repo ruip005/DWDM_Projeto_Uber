@@ -2,11 +2,13 @@ const mongoose = require('mongoose');
 
 const restaurantsAdminSchema = new mongoose.Schema({
     campanyId: { 
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'restaurants',
         required: true 
     },
     userId: { 
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
         required: true 
     },
 });

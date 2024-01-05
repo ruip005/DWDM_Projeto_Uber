@@ -19,11 +19,13 @@ const userSchema = new mongoose.Schema({
     },
     designation: {
         type: String,
-        required: false
+        required: false,
+        default: null
     },
     birthday: {
         type: Date,
-        required: false
+        required: false,
+        default: null
     },
     password: {
         type: String,
@@ -43,7 +45,8 @@ const userSchema = new mongoose.Schema({
     },
     address: {
         type: String,
-        required: false
+        required: false,
+        default: null
     },
 });
 

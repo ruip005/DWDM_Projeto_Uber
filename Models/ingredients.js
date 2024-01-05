@@ -10,7 +10,8 @@ const ingredientsSchema = new mongoose.Schema({
     required: false
   },
   fileContentId: {
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'file_content',
     required: true
   },
   creatorWhoAdded: {
