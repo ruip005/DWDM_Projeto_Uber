@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const itemSchema = new mongoose.Schema({
   boxId: { 
-    type: String,
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'boxes',
     required: true 
   },
   itemName: {

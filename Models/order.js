@@ -2,7 +2,8 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
     userId: { 
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'user',
         required: true 
     },
     orderDate: {
@@ -11,9 +12,9 @@ const orderSchema = new mongoose.Schema({
         default: Date.now
     },
     orderStatus: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'order_status',
         required: true,
-        default: 'Pending'
     },
     orderTotal: {
         type: Number,
@@ -48,15 +49,17 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
     orderPaymentMethod: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'payment_method',
         required: true
     },
     orderPaymentStatus: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'payment_status',
         required: true
     },
 });
 
 const orderModel = mongoose.model('order', orderSchema);
 
-module.exports = orderModel; // To do !!!!
+module.exports = orderModel;

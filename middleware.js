@@ -1,5 +1,6 @@
 const { default: axios } = require('axios');
-const apiKeyModel = require('./Models/apikey');
+const apiKeyModel = require('./Models/apiKey');
+const appAdminModel = require('./Models/appAdmin');
 
 // Middleware para autenticação por chave de API
 const authenticate = async (req, res, next) => {
@@ -23,7 +24,7 @@ const authenticate = async (req, res, next) => {
 };
 
 // Middleware para log de requisições
-const middlewareLogging = (req, res, next) => {
+const logging = (req, res, next) => {
     console.log(`Requisição: ${req.method} ${req.url} [ ${req.ip} ] - ${new Date()}`);
     next();
   };
@@ -50,10 +51,54 @@ const antiVPN = (req, res, next) => {
     next();
   };
 
+const isAPIAlreadyUsed = (key) => { // Não é middleware, é uma função para verificar se a API já existe
+    return new Promise((resolve, reject) => {
+      apiKeyModel.findOne({ key })
+        .then((result) => {
+          if (result) {
+            resolve(true);
+          } else {
+            resolve(false);
+          }
+        })
+        .catch((err) => {
+          reject(err);
+        });
+    });
+    /*
+    const isAPIAlreadyUsed = async (key) => {
+  try {
+    const result = await apiKeyModel.findOne({ key: key });
+    return !!result; //  !!result converte o resultado em um booleano: se result existir, !!result será true; caso contrário, será false.
+  } catch (err) {
+    throw err;
+  }
+};
+    */
+}
+
+const isAdmin = (userId) => { // Não é middleware, é uma função para verificar se o utilizador é admin
+  return new Promise((resolve, reject) => {
+    appAdminModel.findOne({ userId })
+      .then((result) => {
+        if (result) {
+          resolve(true);
+        } else {
+          resolve(false);
+        }
+      })
+      .catch((err) => {
+        reject(err);
+      });
+  });
+}
+
   module.exports = {
     authenticate,
-    middlewareLogging,
-    antiVPN
+    logging,
+    antiVPN,
+    isAPIAlreadyUsed,
+    isAdmin
   };
 
 /*

@@ -14,11 +14,13 @@ const fileSchema = new mongoose.Schema({
         required: false
     },
     fileContainerId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'file_containers',
         required: true
     },
     fileContentId: {
-        type: String,
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'file_content',
         required: true
     },
 });

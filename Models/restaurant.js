@@ -10,33 +10,79 @@ const restauranteSchema = new mongoose.Schema({
       required: true
     },
   businessHours: {
-    Monday: { 
-      type: Array, 
+    DayOfWeek: {
+      type: Number,
       required: true
     },
-    Tuesday: { 
-      type: String, 
-      required: true 
+    Monday: {
+      open: {
+        type: String,
+        required: true
+      },
+      close: {
+        type: String,
+        required: true
+      }
     },
-    Wednesday: { 
-      type: String, 
-      required: true 
+    Tuesday: {
+      open: {
+        type: String,
+        required: true
+      },
+      close: {
+        type: String,
+        required: true
+      }
     },
-    Thursday: { 
-      type: String, 
-      required: true 
+    Wednesday: {
+      open: {
+        type: String,
+        required: true
+      },
+      close: {
+        type: String,
+        required: true
+      }
     },
-    Friday: { 
-      type: String, 
-      required: true 
+    Thursday: {
+      open: {
+        type: String,
+        required: true
+      },
+      close: {
+        type: String,
+        required: true
+      }
     },
-    Saturday: { 
-      type: String, 
-      required: true 
+    Friday: {
+      open: {
+        type: String,
+        required: true
+      },
+      close: {
+        type: String,
+        required: true
+      }
     },
-    Sunday: { 
-      type: String, 
-      required: true 
+    Saturday: {
+      open: {
+        type: String,
+        required: true
+      },
+      close: {
+        type: String,
+        required: true
+      }
+    },
+    Sunday: {
+      open: {
+        type: String,
+        required: true
+      },
+      close: {
+        type: String,
+        required: true
+      }
     }
   },
   contactEmail: { 
@@ -52,12 +98,14 @@ const restauranteSchema = new mongoose.Schema({
     default: false 
   },
   BoxID: { 
-    type: String, 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'boxes',
     required: false, 
     default: null
   },
   ContainerID: { 
-    type: String, 
+    type: mongoose.Schema.Types.ObjectId,
+    ref: 'file_containers',
     required: false,
     default: null
   },
