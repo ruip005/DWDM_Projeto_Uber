@@ -5,6 +5,7 @@ const order = require('../Models/order')
 const orderStatus = require('../Models/orderStatus')
 const paymentMethod = require('../Models/paymentMethod')
 const paymentStatus = require('../Models/paymentStatus')
+const { createLog } = require('../Utils/Logs')
 
 const appController = {
     
@@ -91,6 +92,8 @@ const appController = {
 
             await newComment.save();
 
+            await createLog('createComment', `O utilizador ${userId} comentou a empresa ${id}, com ${ratingStars} estrelas.`, userId, id, false);
+
             res.json({
                 success: true,
                 newComment,
@@ -102,7 +105,6 @@ const appController = {
             });
         }
     },
-
 
 }
 
