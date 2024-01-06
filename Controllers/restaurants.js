@@ -3,6 +3,7 @@ const FileContainer = require('../Models/fileContainer');
 const Box = require('../Models/box')
 const restaurantAdmin = require('../Models/restaurantsAdmins')
 const user = require('../Models/user');
+const { createLog } = require('../Utils/Logs');
 
 const restaurantController = {
   // Listar todos os restaurantes
@@ -64,6 +65,8 @@ const restaurantController = {
       const restauranteSalvo = await novoRestaurante.save();
       // Atualizar o restaurante c/ as FKs
       await Restaurant.findByIdAndUpdate(restauranteSalvo._id, { BoxID, ContainerID }, { new: true });
+
+      await createLog('create', `Restaurante ${campanyName} criado com sucesso!`, req.user._id, restauranteSalvo._id, true);
 
       res.status(201).json({
         success: true, 
@@ -149,6 +152,8 @@ const restaurantController = {
         });
       }
 
+      await createLog('update', `Restaurante ${campanyName} atualizado com sucesso!`, req.user._id, restaurante._id, true);
+
       res.json({
         success: true, 
         message: "Restaurante atualizado com sucesso!"
@@ -181,6 +186,8 @@ const restaurantController = {
           message: "Restaurante não encontrado!",
         });
       }
+
+      await createLog('delete', `Restaurante ${restaurante.campanyName} apagado com sucesso!`, req.user._id, restaurante._id, true);
 
       res.json({
         success: true, 
@@ -275,6 +282,7 @@ const restaurantController = {
         });
 
         await novoAdmin.save();
+        await createLog('create', `Admin ${adminExiste.name} adicionado ao restaurante ${restaurante.campanyName}!`, req.user._id, restaurante._id, true);
       });
 
       res.json({
@@ -353,6 +361,8 @@ const restaurantController = {
           message: "Admin não encontrado!",
         });
       }
+
+      await createLog('delete', `Admin ${adminId} apagado do restaurante ${restaurante.campanyName}!`, req.user._id, restaurante._id, true);
 
       res.json({
         success: true, 

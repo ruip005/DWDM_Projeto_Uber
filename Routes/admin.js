@@ -3,7 +3,7 @@ const { Router } = express;
 const router = Router();
 const restaurantController = require('../Controllers/restaurants');
 const userController = require('../Controllers/users');
-const { authenticate } = require('../middleware');
+const { authenticate } = require('../Utils/middleware');
 
 // Restaurante Routes
 router.post('/restaurantes', authenticate, restaurantController.createRestaurant);

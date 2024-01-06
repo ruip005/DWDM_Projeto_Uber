@@ -3,7 +3,7 @@ const app = express();
 const db = require("mongoose");
 const port = 3000;
 require('dotenv').config()
-const { authenticate, logging, antiVPN } = require('./middleware');
+const { authenticate, logging, antiVPN } = require('./Utils/middleware');
 
 app.use(express.json());
 
@@ -31,8 +31,10 @@ connectDB = async () => { // Função para ligar à base de dados
 
   const userAPI = require('./Routes/users');
   const adminAPI = require('./Routes/admin');
-  app.use('/users', userAPI); // Usar o roteador
-  app.use('/admin', adminAPI); // Usar o roteador
+  const restaurantAPI = require('./Routes/restaurant');
+  app.use(process.env.USER_ROUTE, userAPI); // Usar o roteador
+  app.use(process.env.ADMIN_ROUTE, adminAPI); // Usar o roteador
+  app.use(proccess.env.RESTAURANT_ROUTE, restaurantAPI); // Usar o roteador
 
   app.listen(port, function(){
     console.log(`Servidor arrancado!`)

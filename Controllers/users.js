@@ -1,6 +1,7 @@
 const user = require('../Models/user');
 const apiKey = require('../Models/apiKey');
 const appAdmin = require('../Models/appAdmin');
+const { createLog } = require('../Utils/Logs');
 
 const userController = {
 
@@ -73,6 +74,8 @@ const userController = {
                 address
             });
 
+            await createLog('create', `Utilizador ${utilizador.firstName} ${utilizador.lastName} criado com sucesso!`, utilizador._id, null, false);
+
             res.json({
                 success: true,
                 utilizador,
@@ -118,7 +121,7 @@ const userController = {
 
         try {
             
-            // Verificar se a x-api-key é válida e se coincide com o ID do utilizador
+            /* Verificar se a x-api-key é válida e se coincide com o ID do utilizador
             const apiAuthKey = req.headers['x-api-key'];
             const apiKeyObj = await apiKey.findOne({key: apiAuthKey});
             if (!apiKeyObj || apiKeyObj.user != id) {
@@ -126,7 +129,7 @@ const userController = {
                     success: false,
                     message: "A x-api-key não é válida!",
                 });
-            }
+            }*/
 
             const utilizador = await user.findByIdAndUpdate(id, {
                 firstName, 
@@ -141,6 +144,8 @@ const userController = {
                 city,
                 address
             }, {new: true});
+
+            await createLog('update', `Utilizador ${utilizador.firstName} ${utilizador.lastName} atualizado com sucesso!`, utilizador._id, null, false);
 
             res.json({
                 success: true,
@@ -235,6 +240,8 @@ const userController = {
                 address
             }, {new: true});
 
+            await createLog('update', `[STAFF] Utilizador ${utilizador.firstName} ${utilizador.lastName} atualizado com sucesso!`, utilizador._id, null, false);
+
             res.json({
                 success: true,
                 utilizador,
@@ -257,6 +264,13 @@ const userController = {
             });
         }
 
+        if (id == process.env.MASTER_USER) {
+            return res.status(403).json({
+                success: false,
+                message: "Não é possível apagar o utilizador master!",
+            });
+        }
+
         try {
             const utilizador = await user.findByIdAndDelete(id);
 
@@ -266,6 +280,8 @@ const userController = {
                     message: "Utilizador não encontrado!",
                 });
             }
+
+            await createLog('delete', `[STAFF] Utilizador ${utilizador.firstName} ${utilizador.lastName} apagado com sucesso!`, utilizador._id, null, false);
 
             res.json({
                 success: true,
@@ -289,6 +305,13 @@ const userController = {
             });
         }
 
+        if (userId == process.env.MASTER_USER) {
+            return res.status(403).json({
+                success: false,
+                message: "Não é possível alterar as permissões do utilizador master!",
+            });
+        }
+
         try {
             const imAdmin = await appAdmin.find({userId})
 
@@ -300,6 +323,8 @@ const userController = {
                     await apiKey.deleteMany({userId});
                 }
 
+                await createLog('update', `[STAFF] Permissões de administrador revogadas ao utilizador ${userId} com sucesso!`, userId, null, false);
+
                 return res.json({
                     success: true,
                     message: "Permissões de administrador revogadas com sucesso!",
@@ -308,6 +333,9 @@ const userController = {
 
             await appAdmin.create({userId: userId});
             await apiKey.create({userId, key: generateApiKey()});
+
+            await createLog('update', `[STAFF] Permissões de administrador atribuídas ao utilizador ${userId} com sucesso!`, userId, null, false);
+
             res.json({
                 success: true,
                 message: "Permissões de administrador atribuídas com sucesso!",
