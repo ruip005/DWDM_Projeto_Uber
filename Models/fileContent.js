@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const fileContentSchema = new mongoose.Schema({
   binary: {
-    type: Buffer,
+    type: String,
     required: true
   },
 });

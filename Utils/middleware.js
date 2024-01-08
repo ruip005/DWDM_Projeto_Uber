@@ -3,7 +3,7 @@ const apiKeyModel = require('../Models/apiKey');
 const appAdminModel = require('../Models/appAdmin');
 
 // Middleware para autenticação por chave de API
-const authenticate = async (req, res, next) => {
+const authenticate = async (req, res, next) => { // Usar futuramente em terceiros
     const apiKey = req.header('x-api-key');
   
     if (!apiKey) {
@@ -29,6 +29,24 @@ const logging = (req, res, next) => {
     next();
   };
 
+  // Middleware para verificar o token
+  const checkToken = (req, res, next) => {
+    const authHead = req.headers['authorization'];
+    const token = authHead && authHead.split(' ')[1];
+
+    if (token == null) return res.status(401).json({ success: false, message: 'Acesso negado' });
+
+    try {
+      const secret = process.env.JWT_SECRET;
+      const decoded = jwt.verify(token, secret);
+      req.userId = decoded.userId;
+      next();
+    } catch (error) {
+      res.status(403).json({ success: false, message: 'Acesso negado' });
+    }
+
+  }
+
 // Middleware para antivpn
 const antiVPN = (req, res, next) => {
     const ip = req.ip;
@@ -40,7 +58,7 @@ const antiVPN = (req, res, next) => {
     const url = `https://ipqualityscore.com/api/json/ip/${process.env.API}/${ip}`
     axios.get(url)
     .then(function (response) {
-      if (response.data.fraud_score >= 85 || response.data.vpn == true) {
+      if (response.data.fraud_score >= 93 || response.data.vpn == true) {
         return res.status(305).json({ success: false, message: 'Acesso negado' });
       }
     })
@@ -98,7 +116,8 @@ const isAdmin = (userId) => { // Não é middleware, é uma função para verifi
     logging,
     antiVPN,
     isAPIAlreadyUsed,
-    isAdmin
+    isAdmin,
+    checkToken
   };
 
 /*

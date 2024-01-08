@@ -23,18 +23,17 @@ connectDB = async () => { // Função para ligar à base de dados
 
   // Iniciar a ligação à base de dados
   connectDB();
+  require('./Utils/checkBD')
 
   app.use(logging);
   app.use(antiVPN);
   //app.use(authenticate); -- TO DO descomentar quando a autenticação estiver pronta
   console.log('Middlewares carregados!');
 
-  const userAPI = require('./Routes/users');
-  const adminAPI = require('./Routes/admin');
-  const restaurantAPI = require('./Routes/restaurant');
-  app.use(process.env.USER_ROUTE, userAPI); // Usar o roteador
-  app.use(process.env.ADMIN_ROUTE, adminAPI); // Usar o roteador
-  app.use(proccess.env.RESTAURANT_ROUTE, restaurantAPI); // Usar o roteador
+  // Roteadores
+  app.use(process.env.USER_ROUTE, require('./Routes/users'));
+  app.use(process.env.ADMIN_ROUTE, require('./Routes/admin'));
+  app.use(process.env.RESTAURANT_ROUTE, require('./Routes/restaurant')); 
 
   app.listen(port, function(){
     console.log(`Servidor arrancado!`)

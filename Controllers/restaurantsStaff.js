@@ -1,15 +1,25 @@
 const item = require('../Models/item');
-const file = require('../Models/file');
-const fileContainer = require('../Models/fileContainer');
-const fileContent = require('../Models/fileContent');
 const restaurant = require('../Models/restaurant');
 const staff = require('../Models/restaurantsAdmins');
+const imageCreate = require('../Utils/saveImage')
+const imageDelete = require('../Utils/deleteImage')
+const ingredient = require('../Models/ingredients')
 
 const restaurantStaffController = {
 
     createNewProduct: async (req, res) => {
         const { id } = req.params;
-        const { name, description, price, userId } = req.body;
+        const { 
+            name, 
+            description, 
+            price, 
+            userId,
+            data,
+            contentType,
+            nameFile,
+            format,
+            size
+        } = req.body;
 
         if (!id) {
             return res.status(400).json({
@@ -44,6 +54,8 @@ const restaurantStaffController = {
                 });
             }
 
+            await imageCreate(getRestaurant[0].restaurantContainerId, data, nameFile, format, size)
+
             const newItem = new item({
                 name,
                 description,
@@ -71,7 +83,12 @@ const restaurantStaffController = {
 
     updateProduct: async (req, res) => {
         const { id } = req.params;
-        const { name, description, price, userId } = req.body;
+        const { 
+            name, 
+            description, 
+            price, 
+            userId 
+        } = req.body;
 
         if (!id) {
             return res.status(400).json({
@@ -88,6 +105,7 @@ const restaurantStaffController = {
         }
 
         try {
+
             const getProduct = await item.find({ _id: id });
             
             if (!getProduct) {
@@ -99,6 +117,10 @@ const restaurantStaffController = {
 
             const getRestaurantStaff = await staff.find({ userId });
 
+            const getRestaurantInfo = await getRestaurantStaff[0].restaurantId;
+
+            const getRestaurant = await restaurant.find({ _id: getRestaurantInfo });
+
             if (!getRestaurantStaff) {
                 return res.status(401).json({
                     success: false,
@@ -106,11 +128,15 @@ const restaurantStaffController = {
                 });
             }
 
+            await imageDelete(getProduct[0].imageId);
+
             const updateProduct = await item.updateOne({ _id: id }, {
                 name,
                 description,
                 price
             });
+
+            await imageCreate(getRestaurant.ContainerID, data, nameFile, format, size)
 
             await createLog('updateProduct', `O utilizador ${userId} editou o produto ${name} no restaurante ${getProduct[0].restaurantId}.`, userId, id, true);
 
@@ -165,6 +191,8 @@ const restaurantStaffController = {
                 });
             }
 
+            await imageDelete(getProduct[0].imageId);
+
             const deleteProduct = await item.deleteOne({ _id: id });
 
             await createLog('deleteProduct', `O utilizador ${userId} apagou o produto ${getProduct[0].name} no restaurante ${getProduct[0].restaurantId}.`, userId, id, true);
@@ -185,7 +213,14 @@ const restaurantStaffController = {
 
     updateRestaurant: async (req, res) => {
         const { id } = req.params;
-        const { userId, deliveryFee, businessHours, deliversToHome, Address, contactPhone  } = req.body;
+        const { 
+            userId, 
+            deliveryFee, 
+            businessHours, 
+            deliversToHome, 
+            Address, 
+            contactPhone  
+        } = req.body;
 
         if (!id) {
             return res.status(400).json({
@@ -238,6 +273,42 @@ const restaurantStaffController = {
             res.status(500).json({
                 success: false,
                 message: err.message || "Ocorreu um erro ao editar o restaurante.",
+            });
+        }
+    },
+
+    showAllIngredients: async (req, res) => {
+        const { userId } = req.body;
+
+        if (!userId) {
+            return res.status(400).json({
+                success: false,
+                message: "ID do utilizador não recebido!",
+            });
+        }
+
+        try {
+            const getRestaurantStaff = await staff.find({ userId });
+
+            if (!getRestaurantStaff) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Você não tem permissões para ver os ingredientes deste restaurante!"
+                });
+            }
+
+            const getIngredients = await ingredient.find({});
+
+            res.json({
+                success: true,
+                message: "Ingredientes encontrados com sucesso!",
+                getIngredients
+            });
+
+        } catch (err) {
+            res.status(500).json({
+                success: false,
+                message: err.message || "Ocorreu um erro ao encontrar os ingredientes.",
             });
         }
     },

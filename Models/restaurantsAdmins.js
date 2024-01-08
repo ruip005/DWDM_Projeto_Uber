@@ -15,4 +15,4 @@ const restaurantsAdminSchema = new mongoose.Schema({
 
 const restaurantsAdminModel = mongoose.model('restaurants_admin', restaurantsAdminSchema);
 
-module.exports = appAdminModel;
+module.exports = restaurantsAdminModel;
