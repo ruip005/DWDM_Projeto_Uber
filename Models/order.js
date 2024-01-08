@@ -58,6 +58,11 @@ const orderSchema = new mongoose.Schema({
         ref: 'payment_status',
         required: true
     },
+    CampanyId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'restaurant',
+        required: true
+    },
 });
 
 const orderModel = mongoose.model('order', orderSchema);

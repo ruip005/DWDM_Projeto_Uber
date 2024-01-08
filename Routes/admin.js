@@ -3,6 +3,7 @@ const { Router } = express;
 const router = Router();
 const restaurantController = require('../Controllers/restaurants');
 const userController = require('../Controllers/users');
+const appController = require('../Controllers/system');
 const { authenticate } = require('../Utils/middleware');
 
 // Restaurante Routes
@@ -18,5 +19,9 @@ router.get('/users', authenticate, userController.getAllUsers);
 router.put('/users/:id', authenticate, userController.updateUserById);
 router.delete('/users/:id', authenticate, userController.deleteUserById);
 router.post('/users/admins/:userId', authenticate, userController.deleteUserById);
+
+// App Routes
+router.post('/ingredient', authenticate, appController.createIngredient);
+router.delete('/ingredient/:id', authenticate, appController.deleteIngredient);
 
 module.exports = router;

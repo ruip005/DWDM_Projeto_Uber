@@ -4,6 +4,7 @@ const Box = require('../Models/box')
 const restaurantAdmin = require('../Models/restaurantsAdmins')
 const user = require('../Models/user');
 const { createLog } = require('../Utils/Logs');
+const { isAdmin } = require('../Utils/middleware');
 
 const restaurantController = {
   // Listar todos os restaurantes
@@ -30,13 +31,21 @@ const restaurantController = {
       contactEmail, 
       contactPhone, 
       deliversToHome, 
-      Address  
+      Address,
+      userId
     } = req.body;
 
-    if (!campanyName || !deliveryFee || !businessHours || !contactEmail || !contactPhone || !deliversToHome || !Address) { // Verificar se todos os dados foram recebidos
+    if (!userId || !campanyName || !deliveryFee || !businessHours || !contactEmail || !contactPhone || !deliversToHome || !Address) { // Verificar se todos os dados foram recebidos
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
+      });
+    }
+
+    if (!isAdmin(userId)) {
+      return res.status(401).json({
+          success: false,
+          message: "Acesso negado!",
       });
     }
 
@@ -124,10 +133,11 @@ const restaurantController = {
       contactEmail, 
       contactPhone, 
       deliversToHome, 
-      Address  
+      Address,
+      userId
     } = req.body;
 
-    if (!campanyName || !deliveryFee || !businessHours || !contactEmail || !contactPhone || !deliversToHome || !Address) { // Verificar se todos os dados foram recebidos
+    if (!userId || !campanyName || !deliveryFee || !businessHours || !contactEmail || !contactPhone || !deliversToHome || !Address) { // Verificar se todos os dados foram recebidos
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
@@ -135,6 +145,14 @@ const restaurantController = {
     }
 
     try {
+
+      if (!isAdmin(userId)) {
+        return res.status(401).json({
+            success: false,
+            message: "Acesso negado!",
+        });
+      }
+
       const restaurante = await Restaurant.findByIdAndUpdate(id, {
         campanyName, 
         deliveryFee, 
@@ -169,6 +187,7 @@ const restaurantController = {
   // Apagar um restaurante por ID
   deleteRestaurantById: async (req, res) => {
     const { id } = req.params;
+    const { userId } = req.body;
 
     if (!id) {
       return res.status(400).json({
@@ -178,6 +197,14 @@ const restaurantController = {
     }
 
     try {
+
+      if (!isAdmin(userId)) {
+        return res.status(401).json({
+            success: false,
+            message: "Acesso negado!",
+        });
+      }
+
       const restaurante = await Restaurant.findByIdAndDelete(id);
 
       if (!restaurante) {
@@ -344,7 +371,7 @@ const restaurantController = {
     }
 
     try {
-      const restaurante = await Restaurant.findById(id);
+      const restaurante = await Restaurant.findById(id); // TO DO APAGAR DEPENDENCIAS TIPO FOTOS
 
       if (!restaurante) {
         return res.status(404).json({

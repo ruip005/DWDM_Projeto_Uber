@@ -2,6 +2,9 @@ const user = require('../Models/user');
 const apiKey = require('../Models/apiKey');
 const appAdmin = require('../Models/appAdmin');
 const { createLog } = require('../Utils/Logs');
+const encrypt = require('../Utils/crypt');
+const jwt = require('jsonwebtoken');
+const { isAdmin } = require('../Utils/middleware');
 
 const userController = {
 
@@ -60,6 +63,7 @@ const userController = {
         }
 
         try {
+
             const utilizador = await user.create({
                 firstName, 
                 lastName,
@@ -90,6 +94,7 @@ const userController = {
 
     updateMyUserProfile: async (req, res) => {
         const { id } = req.params;
+        const { userId } = req.body;
 
         if (!id) {
             return res.status(400).json({
@@ -97,6 +102,13 @@ const userController = {
                 message: "ID do utilizador não recebido!",
             });
         }
+
+        if (userId != id) {
+            return res.status(401).json({
+                success: false,
+                message: "Acesso negado!",
+        });
+    }
 
         const {
             firstName, 
@@ -160,21 +172,19 @@ const userController = {
     },
 
     getAllUsers: async (req, res) => {
-        const { id } = req.params;
-        if (!id) {
+        const { userId } = req.body;
+        if (!userId) {
             return res.status(400).json({
                 success: false,
-                message: "ID do utilizador não recebido!",
+                message: "ID não recebido!",
             });
         }
 
         try {
-            const imAdmin = await appAdmin.find({userId: id})
-
-            if (!imAdmin) {
-                return res.status(403).json({
+            if (!isAdmin(userId)) {
+                return res.status(401).json({
                     success: false,
-                    message: "Não tem permissões para aceder a esta funcionalidade!",
+                    message: "Acesso negado!",
                 });
             }
 
@@ -214,7 +224,8 @@ const userController = {
             country,
             state,
             city,
-            address
+            address,
+            userId
         } = req.body;
 
         if (!firstName || !lastName || !email || !phone || !password || !country || !state || !city) {
@@ -225,6 +236,13 @@ const userController = {
         }
 
         try {
+
+            if (!isAdmin(userId)) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Acesso negado!",
+                });
+            }
 
             const utilizador = await user.findByIdAndUpdate(id, {
                 firstName, 
@@ -271,7 +289,17 @@ const userController = {
             });
         }
 
+        const { userId } = req.body;
+
         try {
+
+            if (!isAdmin(userId)) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Acesso negado!",
+                });
+            }
+
             const utilizador = await user.findByIdAndDelete(id);
 
             if (!utilizador) {
@@ -296,16 +324,17 @@ const userController = {
     },
 
     GiveOrRevokeAdminPermissions: async (req, res) => {
-        const { userId } = req.params;
+        const { Id } = req.params;
+        const { userId} = req.body;
 
-        if (!userId) {
+        if (!Id || !userId) {
             return res.status(400).json({
                 success: false,
                 message: "ID do utilizador não recebido!",
             });
         }
 
-        if (userId == process.env.MASTER_USER) {
+        if (Id == process.env.MASTER_USER) {
             return res.status(403).json({
                 success: false,
                 message: "Não é possível alterar as permissões do utilizador master!",
@@ -313,28 +342,35 @@ const userController = {
         }
 
         try {
-            const imAdmin = await appAdmin.find({userId})
+            if (!isAdmin(userId)) {
+                return res.status(401).json({
+                    success: false,
+                    message: "Acesso negado!",
+                });
+            }
 
-            if (imAdmin.length > 0) {
-                await appAdmin.deleteMany({userId});
-                const apiAuth = await apiKey.findOne({userId});
+            if (!isAdmin(Id)) {
+
+                await appAdmin.deleteMany({Id});
+                const apiAuth = await apiKey.findOne({Id});
 
                 if (apiAuth) {
-                    await apiKey.deleteMany({userId});
+                    await apiKey.deleteMany({Id});
                 }
 
-                await createLog('update', `[STAFF] Permissões de administrador revogadas ao utilizador ${userId} com sucesso!`, userId, null, false);
+                await createLog('update', `[STAFF] Permissões de administrador revogadas ao utilizador ${Id} com sucesso!`, userId, null, false);
 
                 return res.json({
                     success: true,
                     message: "Permissões de administrador revogadas com sucesso!",
                 });
+            
             }
 
-            await appAdmin.create({userId: userId});
-            await apiKey.create({userId, key: generateApiKey()});
+            await appAdmin.create({userId: Id});
+            await apiKey.create({Id, key: generateApiKey()});
 
-            await createLog('update', `[STAFF] Permissões de administrador atribuídas ao utilizador ${userId} com sucesso!`, userId, null, false);
+            await createLog('update', `[STAFF] Permissões de administrador atribuídas ao utilizador ${Id} com sucesso!`, userId, null, false);
 
             res.json({
                 success: true,
@@ -348,6 +384,45 @@ const userController = {
         }
 
     },
+
+    loginUser: async (req, res) => {
+        const { 
+            username, 
+            password 
+        } = req.body;
+
+        if (!username || !password) {
+            return res.status(422).json({
+                success: false,
+                message: "Dados obrigatórios do utilizador não recebidos!",
+            });
+        }
+
+        const userExist = await user.findOne({ email: username });
+
+        if (!userExist) {
+            return res.status(404).json({
+                success: false,
+                message: "Utilizador não encontrado!",
+            });
+        }
+
+        const passwordMatch = await encrypt.compare(password, userExist.password);
+
+        if (!passwordMatch) {
+            return res.status(401).json({
+                success: false,
+                message: "Password incorreta!",
+            });
+        }
+
+        try {    
+            const secret = process.env.JWT_SECRET;
+            const token = jwt.sign({ id: user._id }, secret,); 
+        } catch (err) {
+            console.log(err)
+        }
+    }
 }
 
 module.exports = userController;

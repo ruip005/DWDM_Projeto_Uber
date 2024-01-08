@@ -6,8 +6,7 @@ const paymentMethodSchema = new mongoose.Schema({
         required: true
     },
     icon: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'file_content',
+        type: String,
         required: false
     },
 });

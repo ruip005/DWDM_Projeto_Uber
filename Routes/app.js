@@ -7,5 +7,6 @@ const { authenticate } = require('../middleware');
 // App Routes
 router.get('/comment/:id', systemController.getCommentByCampanyId);
 router.post('/comment/:id', systemController.createComment);
+router.post('/order', systemController.newOrder);
 
 module.exports = router;
