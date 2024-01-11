@@ -17,7 +17,9 @@ const ratingCommentsSchema = new mongoose.Schema({
     },
     ratingStars: {
         type: Number,
-        required: true
+        required: true,
+        min: 1,
+        max: 5
     },
 });
 

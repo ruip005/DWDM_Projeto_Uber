@@ -7,12 +7,12 @@ const appController = require('../Controllers/system');
 const { authenticate } = require('../Utils/middleware');
 
 // Restaurante Routes
-router.post('/restaurantes', authenticate, restaurantController.createRestaurant);
-router.put('/restaurantes/:id', authenticate, restaurantController.updateRestaurantById);
-router.delete('/restaurantes/:id', authenticate, restaurantController.deleteRestaurantById);
-router.get('/restaurantes/admins/', authenticate, restaurantController.getRestaurantAdmins);
-router.post('/restaurantes/admins/', authenticate, restaurantController.addAdminsToRestaurant);
-router.delete('/restaurantes/admins/:id', authenticate, restaurantController.deleteRestaurantAdmin);
+router.post('/restaurants', authenticate, restaurantController.createRestaurant);
+router.put('/restaurants/:id', authenticate, restaurantController.updateRestaurantById);
+router.delete('/restaurants/:id', authenticate, restaurantController.deleteRestaurantById);
+router.get('/restaurants/admins/', authenticate, restaurantController.getRestaurantAdmins);
+router.post('/restaurants/admins/', authenticate, restaurantController.addAdminsToRestaurant);
+router.delete('/restaurants/admins/:id', authenticate, restaurantController.deleteRestaurantAdmin);
 
 // User Routes
 router.get('/users', authenticate, userController.getAllUsers);

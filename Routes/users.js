@@ -5,13 +5,16 @@ const restaurantController = require('../Controllers/restaurants');
 const userController = require('../Controllers/users');
 
 // Restaurante Routes
-router.get('/restaurantes', restaurantController.getAllRestaurants);
-router.get('/restaurantes/:id', restaurantController.getRestaurantById);
-router.get('/restaurantes/:id/boxes', restaurantController.getRestaurantBoxes);
+router.get('/restaurants', restaurantController.getAllRestaurants);
+router.get('/restaurants/:id', restaurantController.getRestaurantById);
+router.get('/restaurants/:id/boxes', restaurantController.getRestaurantBoxes);
 
 // App Routes
 router.get('/profile/:id', userController.getProfileById);
 router.post('/profile', userController.createUserProfile);
-router.put('/profile', userController.updateMyUserProfile);
+router.put('/profile/:id', userController.updateMyUserProfile);
+
+// User Routes
+router.post('/users', userController.loginUser);
 
 module.exports = router;

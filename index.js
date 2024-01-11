@@ -34,6 +34,8 @@ connectDB = async () => { // Função para ligar à base de dados
   app.use(process.env.USER_ROUTE, require('./Routes/users'));
   app.use(process.env.ADMIN_ROUTE, require('./Routes/admin'));
   app.use(process.env.RESTAURANT_ROUTE, require('./Routes/restaurant')); 
+  app.use(process.env.APP_ROUTE, require('./Routes/app')); 
+
 
   app.listen(port, function(){
     console.log(`Servidor arrancado!`)
