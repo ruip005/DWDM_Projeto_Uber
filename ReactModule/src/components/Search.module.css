@@ -1,0 +1,24 @@
+/* Em seu arquivo CSS (por exemplo, seuarquivo.css) */
+
+.search-container {
+  display: flex;
+  align-items: center;
+  justify-content: space-between; /* Adicionado para espaçamento entre a barra de pesquisa e o botão */
+  margin: 0 auto;
+  width: 100%;
+  max-width: 500px;
+  padding: 0 20px;
+}
+
+.search {
+  margin-top: 20px;
+  width: 70%; /* Reduzi um pouco a largura para dar espaço ao botão */
+  height: 40px;
+  border-radius: 20px;
+  border: 2px solid #ccc;
+  box-shadow: 0 1px 4px rgba(0, 0, 0, 0.3);
+  padding: 0 20px;
+  font-size: 16px;
+  outline: none;
+  transition: 0.3s;
+}
