@@ -1,0 +1,34 @@
+{
+  "name": "uber",
+  "version": "1.0.0",
+  "description": "Projeto final da disciplina de PSW e TDW",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ruip005/DWDM-ProjetoUber.git"
+  },
+  "keywords": [
+    "uber",
+    "nodejs",
+    "react",
+    "website"
+  ],
+  "author": "Rui Rodrigues, Mariana Neves, Ricardo Aparicio",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ruip005/DWDM-ProjetoUber/issues"
+  },
+  "homepage": "https://github.com/ruip005/DWDM-ProjetoUber#readme",
+  "dependencies": {
+    "axios": "^1.6.4",
+    "bcryptjs": "^2.4.3",
+    "dotenv": "^16.3.1",
+    "express": "^4.18.2",
+    "jsonwebtoken": "^9.0.2",
+    "mongoose": "^8.0.3",
+    "nodemon": "^3.0.2"
+  }
+}
