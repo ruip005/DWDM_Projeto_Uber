@@ -1,0 +1,25 @@
+.grid-container {
+    display: grid;
+    grid-template-columns: auto auto auto auto;
+    align-items: center;
+    justify-content: center;
+    margin: auto; 
+    margin-top: 200px;
+}
+
+.grid-item {
+    background-color: #f7f7f7;
+    border: 1px solid #333;
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+    padding: 30px; /* Increased padding for more space */
+    font-size: 24px; /* Increased font size */
+    text-align: center;
+}
+
+.imagem {
+    width: 50px;
+    height: 50px;
+    border-radius: 10%;
+    object-fit: cover;
+}

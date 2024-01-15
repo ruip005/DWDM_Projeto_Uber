@@ -7,6 +7,11 @@
   color: #fff;
 }
 
+.navImg {
+  width: 50px;
+  border-radius: 50%;
+}
+
 .navList {
   list-style: none;
   display: flex;
@@ -53,9 +58,4 @@
 
 .optionsNav a:hover {
   color: #1c9f0e;
-}
-
-.navImg {
-  width: 50px;
-  border-radius: 50%;
 }
