@@ -1,7 +1,5 @@
 import { NavLink } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import {Login} from "../pages/Login,Register/Login/Login.js";
-import {Register} from "../pages/Login,Register/Register/Register.js";
 
 const Navbar = () => {
   return (
@@ -38,10 +36,10 @@ const Navbar = () => {
 
       <div className={styles.itemNav}>
         <div className={styles.optionsNav}>
-          <NavLink to="/login" element={<Login />} className={styles.navLink}>
+          <NavLink to="/login" className={styles.navLink}>
             Entrar
           </NavLink>
-          <NavLink to="/register" element={<Register/>} className={styles.navLink}>
+          <NavLink to="/register" className={styles.navLink}>
             Registar
           </NavLink>
         </div>
