@@ -12,6 +12,9 @@ import Search from "./components/Search";
 import {Login} from "./pages/Login,Register/Login/Login.js";
 import {Register} from "./pages/Login,Register/Register/Register.js";
 import { Restaurantes } from "./pages/Restaurantes/Restaurantes.js";
+import { MyRestaurante } from "./pages/MyRestaurante/MyRestaurante.js";
+import MyRestauranteEdit from "./pages/MyRestaurante/MyRestauranteEdit/MyRestauranteEdit.js";
+import AddNewProduct from "./pages/MyRestaurante/AddNewProduct/AddNewProduct.js";
 
 
 // Components
@@ -56,6 +59,30 @@ const App = () => {
                 <Navbar />
                 <div className="container">
                   <Restaurantes/>
+                </div>
+                <Footer />
+              </>} />
+              <Route path="/myrestaurant" element={
+              <>
+                <Navbar />
+                <div className="container">
+                  <MyRestaurante/>
+                </div>
+                <Footer />
+              </>} />
+              <Route path="/myrestaurant/MyRestauranteEdit" element={
+              <>
+                <Navbar />
+                <div className="container">
+                  <MyRestauranteEdit/>
+                </div>
+                <Footer />
+              </>} />
+              <Route path="/myrestaurant/AddNewProduct" element={
+              <>
+                <Navbar />
+                <div className="container">
+                  <AddNewProduct/>
                 </div>
                 <Footer />
               </>} />

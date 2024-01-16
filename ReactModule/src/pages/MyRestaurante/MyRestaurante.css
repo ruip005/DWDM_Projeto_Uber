@@ -1,13 +1,29 @@
-.grid-container {
+.MyRestaurante-Name {
+    font-weight: bold;
+    font-size: 64px;
+}
+
+.container{
+    margin-top: 50px;
+    text-align: center;
+}
+
+.MyRestaurant-Logo{
+    width: 50px;
+    height: 50px;
+    margin-bottom: 10px;
+    margin-left: 10px;
+}   
+
+.grid-containerProduto {
     display: grid;
     grid-template-columns: auto auto auto auto;
     align-items: center;
     justify-content: center;
     margin: auto; 
-    margin-top: 200px;
 }
 
-.grid-item {
+.grid-itemProduto {
     background-color: #f7f7f7;
     border: 1px solid #333;
     border-radius: 5px;
@@ -17,9 +33,14 @@
     text-align: center;
 }
 
-.imagem {
+.imagemProduto {
     width: 50px;
     height: 50px;
     border-radius: 10%;
     object-fit: cover;
+}
+.Horas{
+    font-size: 24px;
+    margin-top: 10px;
+    margin-bottom: 10px;
 }

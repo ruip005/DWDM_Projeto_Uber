@@ -2,6 +2,7 @@ import { NavLink } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import {Login} from "../pages/Login,Register/Login/Login.js";
 import {Register} from "../pages/Login,Register/Register/Register.js";
+import { MyRestaurante } from "../pages/MyRestaurante/MyRestaurante.js";
 
 const Navbar = () => {
   return (
@@ -15,7 +16,7 @@ const Navbar = () => {
           </NavLink>
         </li>
         <li>
-          <NavLink to="/myrestaurant" className={styles.navLink}>
+          <NavLink to="/myrestaurant" element={<MyRestaurante/>}className={styles.navLink}>
             MyRestaurant
           </NavLink>
         </li>
