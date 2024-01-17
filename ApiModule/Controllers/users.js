@@ -2,7 +2,7 @@ const user = require("../Models/user");
 const apiKey = require("../Models/apiKey");
 const appAdmin = require("../Models/appAdmin");
 const { createLog } = require("../Utils/Logs");
-const encrypt = require("../Utils/crypt");
+const { encrypt, compare } = require("../Utils/crypt");
 const jwt = require("jsonwebtoken");
 const { isAdmin } = require("../Utils/middleware");
 const getCountry = require("../Utils/userInfo");
@@ -504,7 +504,7 @@ const userController = {
       });
     }
 
-    const passwordMatch = await encrypt.compare(password, userExist.password);
+    const passwordMatch = await compare(password, userExist.password);
 
     if (!passwordMatch) {
       return res.status(401).json({
@@ -516,8 +516,17 @@ const userController = {
     try {
       const secret = process.env.JWT_SECRET;
       const token = jwt.sign({ id: user._id }, secret);
+      return res.json({
+        success: true,
+        message: "Login efetuado com sucesso!",
+        token,
+      });
     } catch (err) {
       console.log(err);
+      return res.status(500).json({
+        success: false,
+        message: "Erro ao gerar o token!",
+      });
     }
   },
 };
