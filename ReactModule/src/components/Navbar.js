@@ -2,7 +2,7 @@ import { NavLink } from "react-router-dom";
 import styles from "./Navbar.module.css";
 import {Login} from "../pages/Login,Register/Login/Login.js";
 import {Register} from "../pages/Login,Register/Register/Register.js";
-import { MyRestaurante } from "../pages/MyRestaurante/MyRestaurante.js";
+import MyRestaurante from "../pages/MyRestaurante/MyRestaurante.js";
 
 const Navbar = () => {
   return (
