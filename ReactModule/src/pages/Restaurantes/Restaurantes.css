@@ -1,25 +1,57 @@
+* {
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+    font-family: 'Roboto', sans-serif;
+}
+
 .grid-container {
     display: grid;
-    grid-template-columns: auto auto auto auto;
-    align-items: center;
+    grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+    gap: 16px;
+    padding: 16px;
+    margin: 0 auto;
+    max-width: 1200px;
+    width: 100%;
     justify-content: center;
-    margin: auto; 
-    margin-top: 200px;
+    color: black;
 }
 
 .grid-item {
-    background-color: #f7f7f7;
-    border: 1px solid #333;
-    border-radius: 5px;
-    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
-    padding: 30px; 
-    font-size: 24px; 
     text-align: center;
+    box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2);
+    transition: 0.3s;
+    position: relative;
+    min-height: 200px;
+  background-color: white;
+    z-index: 1;
 }
 
 .imagem {
-    width: 50px;
-    height: 50px;
-    border-radius: 10%;
+    margin-top: 10px;
+    max-width: 100%;
+    height: 100px;
     object-fit: cover;
+    border-radius: 8px 8px 0 0;
 }
+
+  
+  .grid-item::before {
+    position: absolute;
+    content: "";
+    top: 0;
+    right: 0;
+    bottom: 0;
+    left: 0;
+    background-image: linear-gradient(
+      to bottom,
+      #ffffff,
+      #dadada
+    );
+    z-index: -1;
+    transition: opacity 0.5s linear;
+    opacity: 0;
+  }
+  .grid-item:hover::before {
+    opacity: 1;
+  }

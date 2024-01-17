@@ -95,33 +95,43 @@ const userController = {
       let [firstName, ...lastName] = name.split(" ");
       lastName = lastName.join(" ");
 
+      const getAddress = await getCountry(req.ip);
+
       const utilizador = new User(
         firstName,
         lastName,
         email,
         phone,
-        "N/A",
-        "N/A",
-        encrypt.encrypt(password),
-        getCountry(req.ip),
-        "N/A",
-        "N/A",
-        "N/A"
+        designation || null,
+        birthday || null,
+        encrypt(password),
+        getAddress.countryName || null,
+        getAddress.regionName || null,
+        getAddress.city || null,
+        getAddress.postalCode || null
       );
 
-      await user.create(utilizador);
-
-      await createLog(
-        "create",
-        `Utilizador ${utilizador.firstName} ${utilizador.lastName} criado com sucesso!`,
-        utilizador._id,
-        null,
-        false
-      );
+      if (email) {
+        const existingUser = await user.findOne({ email });
+        if (existingUser) {
+          return res.status(409).json({
+            success: false,
+            message: "Email já em uso!",
+          });
+        } else {
+          const newUser = await user.create(utilizador);
+          await createLog(
+            "create",
+            `Utilizador ${utilizador.firstName} ${utilizador.lastName} criado com sucesso!`,
+            newUser._id,
+            null,
+            false
+          );
+        }
+      }
 
       res.json({
         success: true,
-        utilizador,
       });
     } catch (err) {
       res.status(500).json({
