@@ -1,11 +1,13 @@
-import React, { useState, useEffect } from 'react';
-import './MyRestaurante.css';
-import ProductsLista from './ProductsLista';
-import { useNavigate, useParams } from 'react-router-dom';
+import React, { useState } from 'react';
 import RestaurantesList from '../Restaurantes/RestaurantesLista';
+import ProductsLista from '../MyRestaurante/ProductsLista';
+import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import './RestaurantesId.css';
 
-const MyRestaurante = () => {
+const RestaurantesId = ({cartItems,setCartItems}) => {
     const { restaurantId } = useParams();
+    const [warning, setWarning] = useState(false);
     const Navigate = useNavigate();
 
     const [restaurantInfo, setRestaurantInfo] = useState({
@@ -15,8 +17,6 @@ const MyRestaurante = () => {
     });
 
     useEffect(() => {
-        // Fetch restaurant details based on the restaurantId
-        // Replace the following with your actual data fetching logic
         const fetchedRestaurant = RestaurantesList.find(restaurant => restaurant.id === restaurantId);
 
         if (fetchedRestaurant) {
@@ -28,6 +28,14 @@ const MyRestaurante = () => {
         }
     }, [restaurantId]);
 
+    const addToCart = (produto) => {
+        const isItemInCart = cartItems.some(item => item.id === produto.id);
+        if (isItemInCart) {
+           alert('Produto já adicionado ao carrinho');
+            return;
+        }
+        setCartItems([...cartItems, produto]);
+    };
     return (
         <div className="container">
             <div className="MyRestaurante-Name">
@@ -40,38 +48,30 @@ const MyRestaurante = () => {
                     />
                 </h1>
             </div>
-            <div className="MyRestaurante-Info">
-                <h3>Working Hours</h3>
-                {Object.keys(restaurantInfo.workingDays).map(day => (
-                    <div key={day}>
-                        <label style={{ fontWeight: 'bold', padding: '10px' }}>{day}</label>
-                        <div>
-                            <label>Horas de Abertura:</label>
-                            <span className='Horas' style={{ marginLeft: '40px' }}>{restaurantInfo.workingDays[day].openingHours}</span>
-                        </div>
-                        <div>
-                            <label>Horas de Encerramento:</label>
-                            <span className='Horas'>{restaurantInfo.workingDays[day].closingHours}</span>
-                        </div>
-                    </div>
-                ))}
-            </div>
-            <button onClick={() => Navigate('MyRestauranteEdit')}>Editar</button>
             <div className="MyRestaurante-Products">
                 <h3 style={{ marginTop: '10px' }}>Produtos</h3>
-                <button style={{ marginBottom: '10px' }} onClick={() => Navigate('AddNewProduct')}>Adicionar Produto</button>
                 <div className="grid-containerProduto">
                     {ProductsLista.map((produto) => (
                         <div className="grid-itemProduto" key={produto.id}>
                             <img className="imagemProduto" src={produto.image} alt={produto.name} />
                             <p>{produto.name}</p>
-                            <p>{produto.price +'€'}</p>
+                            <p>{produto.price + '€'}</p>
+                            <button onClick={() => addToCart(produto)}>Adicionar</button>
                         </div>
                     ))}
                 </div>
             </div>
-        </div>
+            <div className="ShoppingCart">
+                <h3>Shopping Cart</h3>
+                <ul>
+                    {cartItems.map((item, index) => (   
+                        <li key={index}>{item.name}</li>
+                    ))}
+                </ul>
+            </div>
+              <button onClick={() => Navigate("/cart")}> aaaaaa</button>
+          </div>
     );
-}
+};
 
-export default MyRestaurante;
+export default RestaurantesId;
