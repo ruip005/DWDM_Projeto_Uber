@@ -5,6 +5,9 @@ import {Register} from "../pages/Login,Register/Register/Register.js";
 import MyRestaurante from "../pages/MyRestaurante/MyRestaurante.js";
 import axios from "axios";
 import React, { useState, useEffect } from 'react';
+import { FaShoppingCart } from "react-icons/fa";
+import { Link } from "react-router-dom";
+
 
 
 const Navbar = () => {
@@ -82,6 +85,9 @@ const Navbar = () => {
           <div className={styles.optionsNav}>
           {!checkUse() ? (
   <>
+    <Link to="/cart">
+    <FaShoppingCart style={{position:'absolute', right:'170px'}}/>
+    </Link>
     <NavLink to="/login" element={<Login />} className={styles.navLink}>
       Entrar
     </NavLink>
