@@ -3,7 +3,7 @@
     max-width: 1440px;
     margin: auto 0;
     padding: 0 20px;
-    margin-left: 200px;
+    margin-left: 130px;
 }
 
 .slide-item{
@@ -12,3 +12,40 @@
     object-fit: cover;
 }
 
+.fastfood {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-right: 40px;
+    margin-top: 30px;
+}
+
+.pizza{
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-right: 40px;
+    margin-top: 30px;
+}
+.sandwich{
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-right: 10px;
+    margin-top: 30px;
+    margin-left: 0px;
+}
+
+.coffee{
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-top: 30px;
+    
+}
+  
+sub{
+    font-size: 12px;
+    margin-left: auto;
+    
+}

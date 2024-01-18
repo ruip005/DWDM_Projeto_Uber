@@ -43,7 +43,6 @@ const Home = () => {
 
   return (
     <div className={styles.container}>
-      Home
       <Swiper
         slidesPerView={slidesPerView}
         pagination={{ clickable: true }}
@@ -57,6 +56,19 @@ const Home = () => {
           </SwiperSlide>
         ))}
       </Swiper>
+    
+        <img className={styles['fastfood']} src='./fast-food.png' alt='fastfood' />
+        <img className={styles['pizza']} src='./pizza.png' alt='pizza' />
+        <img className={styles['sandwich']} src='./sandwich.png' alt='sandwich' />
+        <img className={styles['coffee']} src='./coffee-cup.png' alt='coffecup' />
+
+        <div>
+          <sub>Fast Food</sub>
+          <sub>Pizza</sub>
+          <sub>Sandwich</sub>
+          <sub>Coffee</sub>
+        </div>
+
     </div>
   );
 };
