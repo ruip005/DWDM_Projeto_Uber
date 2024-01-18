@@ -16,5 +16,6 @@ router.put("/profile/:id", userController.updateMyUserProfile);
 
 // User Routes
 router.post("/login", userController.loginUser);
+router.get("/infos", userController.userCheckPermissions);
 
 module.exports = router;
