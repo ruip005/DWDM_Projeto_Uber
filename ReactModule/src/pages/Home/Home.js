@@ -57,18 +57,7 @@ const Home = () => {
         ))}
       </Swiper>
     
-        <img className={styles['fastfood']} src='./fast-food.png' alt='fastfood' />
-        <img className={styles['pizza']} src='./pizza.png' alt='pizza' />
-        <img className={styles['sandwich']} src='./sandwich.png' alt='sandwich' />
-        <img className={styles['coffee']} src='./coffee-cup.png' alt='coffecup' />
-
-        <div>
-          <sub>Fast Food</sub>
-          <sub>Pizza</sub>
-          <sub>Sandwich</sub>
-          <sub>Coffee</sub>
-        </div>
-
+       
     </div>
   );
 };

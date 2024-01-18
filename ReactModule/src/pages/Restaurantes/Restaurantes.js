@@ -19,6 +19,11 @@ export const Restaurantes = () => {
 
     return (
         <>
+         <img className='fastfood' src='./fast-food.png' alt='fastfood' />
+        <img className='pizza' src='./pizza.png' alt='pizza' />
+        <img className='sandwich' src='./sandwich.png' alt='sandwich' />
+        <img className='coffee' src='./coffee-cup.png' alt='coffecup' />
+
             <div className="grid-container">
                 {RestaurantesList.map((restaurante) => (
                     <div className="grid-item" key={restaurante.id}>

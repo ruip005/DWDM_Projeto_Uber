@@ -55,3 +55,37 @@
   .grid-item:hover::before {
     opacity: 1;
   }
+
+  .fastfood {
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-right: 40px;
+    margin-bottom: 20px;
+    
+}
+
+.pizza{
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-right: 40px;
+    margin-bottom: 20px;
+ 
+}
+.sandwich{
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-right: 40px;
+    margin-bottom: 20px;
+    
+}
+
+.coffee{
+    width: 70px;
+    height: 70px;
+    object-fit: cover;
+    margin-bottom: 20px;
+    
+}
