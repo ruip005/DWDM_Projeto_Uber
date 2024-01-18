@@ -1,6 +1,7 @@
 // Requires etc..
 import React from "react";
-import { BrowserRouter, Route, Routes } from "react-router-dom";
+import { BrowserRouter, Route, Routes, } from "react-router-dom";
+import { useState } from "react";
 
 // Pages
 import Home from "./pages/Home/Home";
@@ -16,11 +17,17 @@ import MyRestauranteEdit from "./pages/MyRestaurante/MyRestauranteEdit/MyRestaur
 import AddNewProduct from "./pages/MyRestaurante/AddNewProduct/AddNewProduct.js";
 import Admin from "./pages/Admin/Admin.js";
 import CreateRestaurant from "./pages/Admin/CreateRestaurant/Create.js";
+import RestaurantesLista from "./pages/Restaurantes/RestaurantesLista.js";
+import RestaurantesId from "./pages/Restaurantes/RestaurantesId.js";
+import Cart from "./pages/Cart/Cart.js";
 
 
 // Components
 const App = () => {
   // Functions
+  const [restaurantesLista, setRestaurantesLista] = useState(RestaurantesLista)
+  const [cartItems, setCartItems] = useState([])
+
   
 
 
@@ -98,11 +105,36 @@ const App = () => {
                 <Footer />
               </>} />
               <Route path="/admin/create" element={
+  <>
+    <Navbar />
+    <div className="container">
+      <CreateRestaurant restaurantesLista={restaurantesLista} setRestaurantesLista={setRestaurantesLista} />
+    </div>
+    <Footer />
+  </>
+} />
+<Route path="/sobre" element={
+  <>
+    <Navbar />
+    <div className="container">
+      <About />
+    </div>
+    <Footer />
+  </>
+} />
+  <Route path="/restaurantes/:restaurantId" element={
               <>
                 <Navbar />
                 <div className="container">
-                <CreateRestaurant/>
-
+                  <RestaurantesId cartItems={cartItems} setCartItems={setCartItems} />
+                </div>
+                <Footer />
+              </>} />
+              <Route path="/cart" element={
+              <>
+                <Navbar />
+                <div className="container">
+                  <Cart cartItems={cartItems} setCartItems={setCartItems} />
                 </div>
                 <Footer />
               </>} />

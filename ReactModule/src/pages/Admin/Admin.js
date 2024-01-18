@@ -1,8 +1,9 @@
 import React, { useState } from 'react';
 import './Admin.css';
 import RestaurantesList from '../Restaurantes/RestaurantesLista';
-import CreateRestaurant from './CreateRestaurant/Create'; // Import the CreateRestaurant component
-import { useNavigate } from 'react-router-dom';
+import CreateRestaurant from './CreateRestaurant/Create';
+import { useNavigate,Link } from 'react-router-dom';
+import { useEffect } from 'react';
 
 function Admin() {
   const [selectedTable, setSelectedTable] = useState('');
@@ -50,6 +51,11 @@ function Admin() {
       ],
     },
   ];
+  
+  useEffect(() => {
+  const updateRestaurantes = (updatedList) => {
+    setRestaurantes(updatedList);
+  };})
 
   return (
     <div>
@@ -60,7 +66,9 @@ function Admin() {
 
       {selectedTable === 'Restaurantes' && (
         <div>
-          <button onClick={() => Navigate('./create')}>Criar Restaurante</button>
+          <Link to="./create">
+            <button>Criar Restaurante</button>
+          </Link>
           <table className='tableAdmin'>
             <thead>
               <tr>

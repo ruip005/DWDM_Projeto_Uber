@@ -1,180 +1,231 @@
 import React, { useState } from 'react';
-import RestaurantesList from '../../Restaurantes/RestaurantesLista';
-import { useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 
-function CreateRestaurant({ setRestaurantesLista }) {
-    const [name, setName] = useState('');
-    const [logo, setLogo] = useState('');
-    const [workingHours, setWorkingHours] = useState({
-        Segunda: { opening: '', closing: '', isClosingDay: false },
-        Terça: { opening: '', closing: '', isClosingDay: false },
-        Quarta: { opening: '', closing: '', isClosingDay: false },
-        Quinta: { opening: '', closing: '', isClosingDay: false },
-        Sexta: { opening: '', closing: '', isClosingDay: false },
-        Sabado: { opening: '', closing: '', isClosingDay: false },
-        Domingo: { opening: '', closing: '', isClosingDay: false },
+function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
+  const Navigate = useNavigate();
+  const [newRestaurant, setNewRestaurant] = useState({
+    campanyName: '',
+    deliveryFee: 0.0,
+    businessHours: {
+      Monday: { open: '', close: '' },
+      Tuesday: { open: '', close: '' },
+      Wednesday: { open: '', close: '' },
+      Thursday: { open: '', close: '' },
+      Friday: { open: '', close: '' },
+      Saturday: { open: '', close: '' },
+      Sunday: { open: '', close: '' },
+    },
+    contactEmail: '',
+    contactPhone: '',
+    deliversToHome: false,
+    Address: '',
+    UserId: '',
+    closingDays: {},
+  });
+
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewRestaurant((prevRestaurant) => ({
+      ...prevRestaurant,
+      [name]: value,
+    }));
+  };
+
+  const handleBusinessHoursChange = (day, type, value) => {
+    setNewRestaurant((prevRestaurant) => {
+      const updatedHours = { ...prevRestaurant.businessHours };
+      updatedHours[day][type] = value;
+      return { ...prevRestaurant, businessHours: updatedHours };
     });
-    
-    useEffect(() => {
-        console.log(setRestaurantesLista);
-      }, [setRestaurantesLista]);
-      
-    const handleNameChange = (event) => {
-        setName(event.target.value);
-    };
+  };
 
-    const handleLogoChange = (event) => {
-        setLogo(event.target.value);
-    };
+  const handleCheckboxChange = (day) => {
+    setNewRestaurant((prevRestaurant) => {
+      const updatedClosingDays = { ...prevRestaurant.closingDays };
+      updatedClosingDays[day] = !updatedClosingDays[day];
+      const updatedBusinessHours = { ...prevRestaurant.businessHours };
+      if (updatedClosingDays[day]) {
+        updatedBusinessHours[day] = { open: '', close: '' };
+      }
+      return {
+        ...prevRestaurant,
+        closingDays: updatedClosingDays,
+        businessHours: updatedBusinessHours,
+      };
+    });
+  };
 
-    const handleWorkingHoursChange = (day, type, value) => {
-        setWorkingHours((prevWorkingHours) => ({
-            ...prevWorkingHours,
-            [day]: {
-                ...prevWorkingHours[day],
-                [type]: value,
-            },
-        }));
-    };
+  const createRestaurant = () => {
+    for (let day in newRestaurant.businessHours) {
+      if (
+        !newRestaurant.closingDays[day] &&
+        Number(newRestaurant.businessHours[day].open) >=
+          Number(newRestaurant.businessHours[day].close)
+      ) {
+        alert(
+          `Opening hours must be less than closing hours on ${day}`
+        );
+        return;
+      }
+    }
 
-    const handleClosingDayChange = (day, value) => {
-        setWorkingHours((prevWorkingHours) => ({
-            ...prevWorkingHours,
-            [day]: {
-                ...prevWorkingHours[day],
-                isClosingDay: value,
-                closing: '', // Reset closing hours when it's a closing day
-            },
-        }));
-    };
+    const updatedRestaurantList = [...restaurantesLista, newRestaurant];
+    setRestaurantesLista(updatedRestaurantList); // Update the restaurant list in the parent component
 
-    const createRestaurant = () => {
-        // Check if every input is filled or checkbox is checked
-        for (const day in workingHours) {
-            const opening = workingHours[day].opening;
-            const closing = workingHours[day].closing;
+    // Reset form fields
+    setNewRestaurant({
+      campanyName: '',
+      deliveryFee: 0.0,
+      businessHours: {
+        Monday: { open: '', close: '' },
+        Tuesday: { open: '', close: '' },
+        Wednesday: { open: '', close: '' },
+        Thursday: { open: '', close: '' },
+        Friday: { open: '', close: '' },
+        Saturday: { open: '', close: '' },
+        Sunday: { open: '', close: '' },
+      },
+      contactEmail: '',
+      contactPhone: '',
+      deliversToHome: false,
+      Address: '',
+      UserId: '',
+      closingDays: {},
+    });
 
-            if (!workingHours[day].isClosingDay && (opening === '' || closing === '')) {
-                alert(`Please fill in opening and closing hours on ${day}.`);
-                return;
-            }
-        }
+    Navigate('/admin');
 
-        // Additional check for name and logo
-        if (name === '' || logo === '') {
-            alert('Please fill in restaurant name and logo.');
-            return;
-        }
+    console.log(updatedRestaurantList);
+    console.log(newRestaurant);
+    console.log(restaurantesLista);
+    console.log(restaurantesLista);
+  };
 
-        // Validation check for numeric input and opening hours less than closing hours
-        for (const day in workingHours) {
-            const opening = workingHours[day].opening;
-            const closing = workingHours[day].closing;
+  return (
+    <div>
+      <label>
+        Company Name:
+        <input
+          type="text"
+          name="campanyName"
+          value={newRestaurant.campanyName}
+          onChange={handleInputChange}
+        />
+      </label>
+      <p />
 
-            if (!workingHours[day].isClosingDay && (!/^\d+$/.test(opening) || parseInt(opening) > 24)) {
-                alert(`Please enter a valid numeric value less than or equal to 24 for opening hours on ${day}.`);
-                return;
-            }
+      <label>
+        Delivery Fee:
+        <input
+          type="number"
+          name="deliveryFee"
+          value={newRestaurant.deliveryFee}
+          onChange={handleInputChange}
+        />
+      </label>
+      <p />
 
-            if (!workingHours[day].isClosingDay && (!/^\d+$/.test(closing) || parseInt(closing) > 24)) {
-                alert(`Please enter a valid numeric value less than or equal to 24 for closing hours on ${day}.`);
-                return;
-            }
-
-            if (!workingHours[day].isClosingDay && opening !== '' && closing !== '' && parseInt(opening) >= parseInt(closing)) {
-                alert(`Closing hours should be greater than opening hours on ${day}.`);
-                return;
-            }
-        }
-
-        // Create new restaurant object
-        const newRestaurant = {
-            id: `A--${Date.now()}`, // Unique ID for the new restaurant
-            name,
-            image: logo,
-            workingDays: {
-                Segunda: {
-                    openingHours: workingHours.Segunda.opening,
-                    closingHours: workingHours.Segunda.closing,
-                },
-                Terça: {
-                    openingHours: workingHours.Terça.opening,
-                    closingHours: workingHours.Terça.closing,
-                },
-                Quarta: {
-                    openingHours: workingHours.Quarta.opening,
-                    closingHours: workingHours.Quarta.closing,
-                },
-                Quinta: {
-                    openingHours: workingHours.Quinta.opening,
-                    closingHours: workingHours.Quinta.closing,
-                },
-                Sexta: {
-                    openingHours: workingHours.Sexta.opening,
-                    closingHours: workingHours.Sexta.closing,
-                },
-                Sabado: {
-                    openingHours: workingHours.Sabado.opening,
-                    closingHours: workingHours.Sabado.closing,
-                },
-                Domingo: {
-                    openingHours: workingHours.Domingo.opening,
-                    closingHours: workingHours.Domingo.closing,
-                },
-            },
-            closingDays: {
-                Domingo: workingHours.Domingo.isClosingDay,
-            },
-        };
-
-        // Update the RestaurantesLista state using the callback function
-        setRestaurantesLista((prevRestaurantes) => [...prevRestaurantes, newRestaurant]);
-
-        console.log('RestaurantesList:', [...RestaurantesList, newRestaurant]);
-        console.log('Creating restaurant:', newRestaurant);
-        alert('Restaurant created successfully!');
-    };
-    
-
-    return (
-        <div>
-            <input type="text" value={name} onChange={handleNameChange} placeholder="Restaurant Name" />
-            <p />
-            <input type="text" value={logo} onChange={handleLogoChange} placeholder="Logo URL" />
-            <p />
-
-            {/* Input fields for working hours */}
-            {Object.keys(workingHours).map((day) => (
-                <div key={day}>
-                    <label>{day.charAt(0).toUpperCase() + day.slice(1)}:</label>
-                    <input
-                        type="text"
-                        value={workingHours[day].opening}
-                        onChange={(e) => handleWorkingHoursChange(day, 'opening', e.target.value)}
-                        placeholder="Opening"
-                        disabled={workingHours[day].isClosingDay}
-                    />
-                    <input
-                        type="text"
-                        value={workingHours[day].closing}
-                        onChange={(e) => handleWorkingHoursChange(day, 'closing', e.target.value)}
-                        placeholder="Closing"
-                        disabled={workingHours[day].isClosingDay}
-                    />
-                    <label>
-                        Closing Day:
-                        <input
-                            type="checkbox"
-                            checked={workingHours[day].isClosingDay}
-                            onChange={(e) => handleClosingDayChange(day, e.target.checked)}
-                        />
-                    </label>
-                </div>
-            ))}
-
-            <button onClick={createRestaurant}>Create Restaurant</button>
+      {/* Input fields for business hours */}
+      {Object.keys(newRestaurant.businessHours).map((day) => (
+        <div key={day}>
+          <label>
+            {day}:
+            <input
+              type="number"
+              min="0"
+              max="24"
+              value={newRestaurant.businessHours[day].open}
+              onChange={(e) =>
+                handleBusinessHoursChange(day, 'open', e.target.value)
+              }
+              placeholder="Open"
+              disabled={newRestaurant.closingDays[day]}
+            />
+            <input
+              type="number"
+              min="0"
+              max="24"
+              value={newRestaurant.businessHours[day].close}
+              onChange={(e) =>
+                handleBusinessHoursChange(day, 'close', e.target.value)
+              }
+              placeholder="Close"
+              disabled={newRestaurant.closingDays[day]}
+            />
+            <label>
+              Closing Day:
+              <input
+                type="checkbox"
+                onChange={() => handleCheckboxChange(day)}
+              />
+            </label>
+          </label>
         </div>
-    );
+      ))}
+
+      <label>
+        Contact Email:
+        <input
+          type="email"
+          name="contactEmail"
+          value={newRestaurant.contactEmail}
+          onChange={handleInputChange}
+        />
+      </label>
+      <p />
+
+      <label>
+        Contact Phone:
+        <input
+          type="text"
+          name="contactPhone"
+          value={newRestaurant.contactPhone}
+          onChange={handleInputChange}
+        />
+      </label>
+      <p />
+
+      <label>
+        Delivers to Home:
+        <input
+          type="checkbox"
+          name="deliversToHome"
+          checked={newRestaurant.deliversToHome}
+          onChange={() =>
+            setNewRestaurant((prevRestaurant) => ({
+              ...prevRestaurant,
+              deliversToHome: !prevRestaurant.deliversToHome,
+            }))
+          }
+        />
+      </label>
+      <p />
+
+      <label>
+        Address:
+        <input
+          type="text"
+          name="Address"
+          value={newRestaurant.Address}
+          onChange={handleInputChange}
+        />
+      </label>
+      <p />
+
+      <label>
+        User ID:
+        <input
+          type="text"
+          name="UserId"
+          value={newRestaurant.UserId}
+          onChange={handleInputChange}
+        />
+      </label>
+      <p />
+
+      <button onClick={createRestaurant}>Create Restaurant</button>
+    </div>
+  );
 }
 
 export default CreateRestaurant;

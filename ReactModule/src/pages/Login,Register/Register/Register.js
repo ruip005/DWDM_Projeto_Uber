@@ -2,7 +2,7 @@ import React, { useState,useRef } from 'react';
 
 import { FaUser } from "react-icons/fa";
 import { FaLock } from "react-icons/fa";
-import styles from"./RegisterForm.css"
+import styles from "./Register.module.css"
 import { FaEnvelope } from "react-icons/fa";
 import { useNavigate } from 'react-router-dom';
 
@@ -37,8 +37,21 @@ export const Register = () => {
         navigate("/Login");
       };
   return (
-    
-    
+    <>
+    <ul class="background">
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+   <li></li>
+</ul>
       <div className='wrappera'>
        <form onSubmit={submitForm}>
           <h1>Registrar</h1>
@@ -72,6 +85,7 @@ export const Register = () => {
             <a href="/Login">Voltar</a>
           </div>
       </div>
+      </>
     );
     
   
