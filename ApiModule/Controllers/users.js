@@ -516,13 +516,18 @@ const userController = {
 
     try {
       const secret = process.env.JWT_SECRET;
-      const token = jwt.sign({ id: user._id }, secret);
+      const token = await jwt.sign(
+        {
+          firstName: user.firstName,
+          lastName: user.lastName,
+          email: user.email,
+          userId: user._id,
+        },
+        secret
+      );
       return res.json({
         success: true,
         message: "Login efetuado com sucesso!",
-        firstName: userExist.firstName,
-        lastName: userExist.lastName,
-        email: userExist.email,
         token,
       });
     } catch (err) {

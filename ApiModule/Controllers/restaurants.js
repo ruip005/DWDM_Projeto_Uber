@@ -23,6 +23,29 @@ const restaurantController = {
     }
   },
 
+  getFilteredRestaurants: async (req, res) => {
+  try {
+    let query = {};
+
+    // Verifica se foi fornecido um parâmetro de pesquisa (por exemplo, 'nome')
+    if (req.query.campanyName) {
+      // Utiliza uma expressão regular para buscar parcialmente o nome
+      query = { campanyName: { $regex: new RegExp(req.query.campanyName, 'i') } };
+    }
+
+    const restaurantes = await Restaurant.find(query);
+    res.send({
+      success: true,
+      restaurantes
+    });
+  } catch (err) {
+    res.status(500).json({
+      message: err.message || "Ocorreu um erro ao obter os restaurantes.",
+    });
+  }
+},
+
+
   // Criar um novo restaurante
   createRestaurant: async (req, res) => {
     const {
