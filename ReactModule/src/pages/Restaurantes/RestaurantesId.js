@@ -69,7 +69,7 @@ const RestaurantesId = ({cartItems,setCartItems}) => {
                     ))}
                 </ul>
             </div>
-              <button onClick={() => Navigate("/cart")}> aaaaaa</button>
+              <button onClick={() => Navigate("/admin")}> aaaaaa</button>
           </div>
     );
 };

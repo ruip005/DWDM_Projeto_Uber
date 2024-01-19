@@ -10,16 +10,27 @@ import { Link } from "react-router-dom";
 
 
 
-const Navbar = () => {
+const Navbar = (cartItems) => {
 
   const [userInfo, setUserInfo] = useState(null);
 
   const getUserInfo = async () => {
     const url = "http://192.168.1.102:9000/user/infos";
-    const userId = localStorage.getItem("userId");
-
+  
     try {
-      const response = await axios.get(url, { userId });
+      const token = localStorage.getItem("token");
+  
+      if (!token) {
+        // Lidar com a ausência de token, se necessário
+        return null;
+      }
+      console.log("Meu token é:",token);
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: `${token}`,
+          "Content-Type": "application/json",
+        },
+      });
       return response.data;
     } catch (error) {
       console.error(error);
@@ -27,12 +38,9 @@ const Navbar = () => {
   };
 
   const checkUse = () => {
-    const firstname = localStorage.getItem("firstName");
-    const lastname = localStorage.getItem("lastName");
-    const email = localStorage.getItem("email");
     const token = localStorage.getItem("token");
 
-    return firstname && lastname && email && token;
+    return token;
   };
 
   useEffect(() => {
@@ -40,7 +48,7 @@ const Navbar = () => {
       getUserInfo().then(data => setUserInfo(data));
     }
   }, []);
-
+  console.log(cartItems.cartItems);
 
   return (
     <>
@@ -85,9 +93,12 @@ const Navbar = () => {
           <div className={styles.optionsNav}>
           {!checkUse() ? (
   <>
-    <Link to="/cart">
-    <FaShoppingCart style={{position:'absolute', right:'170px'}}/>
-    </Link>
+    <span className={styles.cart}>
+      <Link to="/cart">
+        <FaShoppingCart style={{position:'absolute', right:'170px'}}/>
+        <span className={styles.cartCount}>{cartItems.cartItems.length}</span>
+      </Link>
+    </span>
     <NavLink to="/login" element={<Login />} className={styles.navLink}>
       Entrar
     </NavLink>

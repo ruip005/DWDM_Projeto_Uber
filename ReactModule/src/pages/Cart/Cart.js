@@ -1,84 +1,111 @@
-import React, { useState } from 'react';
-import styles from'./Cart.module.css';
-import { useEffect } from 'react';
+import React, { useState, useEffect } from 'react';
+import styles from './Cart.module.css';
+import pedidos from './PedidosLista'; // Make sure this import is correct
+import RestaurantesList from '../Restaurantes/RestaurantesLista';
 
-const Cart = ({ cartItems, setCartItems }) => {
-    const [price, setPrice] = useState(0);
+const Cart = ({ cartItems, setCartItems,}) => {
+  const [price, setPrice] = useState(0);
 
-    const handleRemove = (itemToRemove) => {
-        setCartItems(cartItems.filter(item => item !== itemToRemove));
-    };
+  const [restaurantInfo, setRestaurantInfo] = useState( RestaurantesList);
 
-    const handleadd = (itemToAdd) => {
-        const updatedCartItems = cartItems.map(item => {
-            if (item === itemToAdd) {
-                return {
-                    ...item,
-                    quantity: item.quantity + 1
-                };
-            }
-            return item;
-        });
-        setCartItems(updatedCartItems);
-    };
+  const handleRemove = (itemToRemove) => {
+    setCartItems(cartItems.filter(item => item !== itemToRemove));
+  };
 
-    useEffect(() => {
-        handleprice();
+  const handleAdd = (itemToAdd) => {
+    const updatedCartItems = cartItems.map(item => {
+      if (item === itemToAdd) {
+        return {
+          ...item,
+          quantity: item.quantity + 1
+        };
+      }
+      return item;
     });
+    setCartItems(updatedCartItems);
+  };
 
+  const handleMinus = (itemToMinus) => {
+    const updatedCartItems = cartItems.map(item => {
+      if (item.quantity === 1) {
+        console.log('Não pode ter menos que 1 item no carrinho');
+      } else if (item === itemToMinus) {
+        return {
+          ...item,
+          quantity: item.quantity - 1
+        };
+      }
+      return item;
+    });
+    setCartItems(updatedCartItems);
+  }
 
-    const handleprice = () => {
-        let ans = 0;
-        cartItems.map(item => {
-            ans += item.price * item.quantity;
-        });
-        setPrice(ans);
+  const handlePrice = () => {
+    let ans = 0;
+    cartItems.forEach(item => {
+      ans += item.price * item.quantity;
+    });
+    setPrice(ans);
+  };
+
+  useEffect(() => {
+    handlePrice();
+  }, [cartItems]); 
+
+const handlePedido = () => {
+   
+    const restaurantId = cartItems[0].restaurantId;
+
+   
+    const restaurant = RestaurantesList.find(restaurant => restaurant.id === restaurantId);
+
+    
+    const newOrder = {
+        id: pedidos.length + 1, 
+        user: 'algumuser',
+        restaurant: restaurant.name,
+        items: cartItems.map(item => ({ name: item.name, quantity: item.quantity })) ,
+        total_price: price,
+        status: 'Pendente'
     };
 
-    const handleminus = (itemToMinus) => {
-        const updatedCartItems = cartItems.map(item => {
-            if (item.quantity === 1) {
-                console.log('Não pode ter menos que 1 item no carrinho');
-            } else if (item === itemToMinus) {
-                return {
-                    ...item,
-                    quantity: item.quantity - 1
-                };
-            }
-            return item;
-        });
-        setCartItems(updatedCartItems);
-    }
+  
+    pedidos.push(newOrder);
 
+  
+    setCartItems([]);
 
-    return (
-        <article>
-{
-    cartItems?.map((item) => (
-        <div className={styles.cart_box}>
+    console.log('New order:', newOrder);
+};
+
+  return (
+    <article>
+      {
+        cartItems?.map((item) => (
+          <div className={styles.cart_box} key={item.id}>
             <div className={styles['cart_img']}>
-                <img src={item.image} alt={item.name} />
-                <p>{item.name}</p>
+              <img src={item.image} alt={item.name} />
+              <p>{item.name}</p>
             </div>
             <div>
-                <button onClick={() => handleadd(item)}>+</button>
-                <button>{item.quantity}</button>
-                <button onClick={() => handleminus(item)}>-</button>
+              <button className={styles['botao-feio']} onClick={() => handleAdd(item)}>+</button>
+              <button className={styles['botao-feio']}>{item.quantity}</button>
+              <button className={styles['botao-feio']}onClick={() => handleMinus(item)}>-</button>
             </div>
             <div>
-                <span>{item.price}</span>
-                <button onClick={() => handleRemove(item)}>Remove</button>  
+              <span>{item.price}</span>
+              <button className={styles['botao-feio']} onClick={() => handleRemove(item)}>Remove</button>
             </div>
-        </div>
-    ))
-}
-        <div className={styles.total}>
-            <span>Preço Total:</span>
-            <span>{price}€</span>
-        </div>
-       <button className={styles.finishbuy}>Finalizar Compra</button>
-        </article>
-    );
+          </div>
+        ))
+      }
+      <div className={styles.total}>
+        <span>Preço Total:</span>
+        <span>{price}€</span>
+      </div>
+      <button className={styles.finishbuy} onClick={handlePedido}>Finalizar Compra</button>
+    </article>
+  );
 };
 
 export default Cart;

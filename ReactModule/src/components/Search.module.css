@@ -1,18 +1,17 @@
 /* Em seu arquivo CSS (por exemplo, seuarquivo.css) */
 
 .search-container {
+  position: relative;
   display: flex;
   align-items: center;
-  justify-content: space-between; /* Adicionado para espaçamento entre a barra de pesquisa e o botão */
+  justify-content: space-between; /* Adicionado para posicionar os elementos no início e no final do contêiner */
   margin: 0 auto;
-  width: 100%;
   max-width: 500px;
-  padding: 0 20px;
+  padding: 20px;
 }
 
 .search {
-  margin-top: 20px;
-  width: 70%; /* Reduzi um pouco a largura para dar espaço ao botão */
+  width: 60%; /* Reduzi a largura para dar mais espaço ao botão */
   height: 40px;
   border-radius: 20px;
   border: 2px solid #ccc;
@@ -21,4 +20,43 @@
   font-size: 16px;
   outline: none;
   transition: 0.3s;
+}
+
+.button {
+  width: 30%; /* Defini a largura do botão para 30% */
+  height: 40px;
+  margin-left: 10px; /* Adicionado espaçamento entre a barra de pesquisa e o botão */
+  margin-top: 10px;
+  border-radius: 20px;
+  border: 2px solid #007BFF;
+  background-color: #007BFF;
+  color: #fff;
+  font-size: 16px;
+  cursor: pointer;
+  transition: 0.3s;
+}
+
+.results {
+  position: absolute;
+  top: calc(100% + 10px); /* Posiciona a lista abaixo da barra de pesquisa */
+  left: 0;
+  width: 100%;
+  max-height: 200px;
+  overflow-y: auto;
+  border: 2px solid #ccc;
+  border-top: none; /* Remove a borda superior para uma aparência mais limpa */
+  border-radius: 0 0 20px 20px;
+  box-shadow: 0 2px 4px rgba(0, 0, 0, 0.3);
+  background-color: #fff;
+  z-index: 999; /* Ajustei o z-index para garantir que esteja à frente */
+}
+
+.results li {
+  padding: 10px;
+  cursor: pointer;
+  list-style: none;
+}
+
+.results li:hover {
+  background-color: #f0f0f0;
 }
