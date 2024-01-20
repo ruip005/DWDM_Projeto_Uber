@@ -48,9 +48,10 @@ const logging = (req, res, next) => {
 };
 
 // Middleware para verificar o token
-const authenticate = (req, res, next) => {
+const authenticate = async (req, res, next) => {
   const authHead = req.headers.authorization;
   const token = authHead;
+  //console.log("Token:", token);
 
   if (token == null)
     return res
@@ -59,13 +60,10 @@ const authenticate = (req, res, next) => {
 
   try {
     const secret = process.env.JWT_SECRET;
-    jwt.verify(token, secret, (err, decoded) => {
-      if (err) {
-        console.log("Erro no verify:", err);
-      }
-      req.userId = decoded.userId;
-      next();
-    });
+    const decoded = await jwt.verify(token, secret);
+    req.body.userId = decoded.userId;
+    //console.log("Decoded:", decoded);
+    next();
   } catch (error) {
     res.status(403).json({ success: false, message: "Acesso negado" });
   }

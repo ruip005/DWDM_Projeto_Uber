@@ -90,6 +90,13 @@ const userController = {
       });
     }
 
+    if (password < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "A password deve ter pelo menos 6 caracteres!",
+      });
+    }
+
     try {
       const country = await getCountry(req.ip);
 
@@ -518,10 +525,10 @@ const userController = {
       const secret = process.env.JWT_SECRET;
       const token = await jwt.sign(
         {
-          firstName: user.firstName,
-          lastName: user.lastName,
-          email: user.email,
-          userId: user._id,
+          firstName: userExist.firstName,
+          lastName: userExist.lastName,
+          email: userExist.email,
+          userId: userExist._id,
         },
         secret
       );
@@ -558,7 +565,7 @@ const userController = {
           message: "Utilizador não encontrado!",
         });
       }
-
+      //console.log(utilizador);
       let haveAdmin = await isAdmin(userId);
       let staffRecord = await resStaff.findOne({ userId });
 
