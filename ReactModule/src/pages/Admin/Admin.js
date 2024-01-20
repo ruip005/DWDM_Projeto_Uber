@@ -4,6 +4,7 @@ import RestaurantesList from '../Restaurantes/RestaurantesLista';
 import CreateRestaurant from './CreateRestaurant/Create';
 import { useNavigate,Link } from 'react-router-dom';
 import { useEffect } from 'react';
+import pedidos from '../Cart/PedidosLista';
 
 function Admin() {
   const [selectedTable, setSelectedTable] = useState('');
@@ -12,7 +13,6 @@ function Admin() {
 
 
   const handleRestaurantClick = (restaurantId) => {
-    // Redirect to the specific restaurant page
     Navigate(`/myrestaurant/${restaurantId}`);
   };
 
@@ -29,28 +29,7 @@ function Admin() {
       role: 'McDonalds',
       isAdmin: false,
     },
-  ]);
-
-  const pedidos = [
-    {
-      id: 1,
-      user: 'Administrador',
-      restaurant: 'McDonalds',
-      items: [
-        { name: 'Fumo Azul', quantity: 2 },
-        { name: 'Fumo Vermelho', quantity: 1 },
-      ],
-    },
-    {
-      id: 2,
-      user: 'DonoMcDonalds',
-      restaurant: 'Burguer King',
-      items: [
-        { name: 'Hamburger', quantity: 1 },
-        { name: 'Batatas Fritas', quantity: 3 },
-      ],
-    },
-  ];
+  ])
   
   useEffect(() => {
   const updateRestaurantes = (updatedList) => {
@@ -70,24 +49,21 @@ function Admin() {
             <button>Criar Restaurante</button>
           </Link>
           <table className='tableAdmin'>
-            <thead>
-              <tr>
-                <th>ID</th>
-                <th>Name</th>
-                <th>Image</th>
+            <thead >
+              <tr className='grid-container-admin'>
+                <th className='grid-item-admin '>Name</th>
+                <th className='grid-item-admin'> Image</th>
               </tr>
             </thead>
             <tbody>
               {restaurantes.map((restaurante) => (
-                <tr key={restaurante.id}>
-                  <td>{restaurante.id}</td>
-                  <td
-                    style={{ cursor: 'pointer', color: 'blue', textDecoration: 'underline' }}
+                <tr  key={restaurante.id}>
+                  <button type='button'
                     onClick={() => handleRestaurantClick(restaurante.id)}
                   >
                     {restaurante.name}
-                  </td>
-                  <td>
+                  </button>
+                  <td className='restaurante-img'>
                     <img
                       src={restaurante.image}
                       alt={restaurante.name}
@@ -95,7 +71,7 @@ function Admin() {
                     />
                   </td>
                 </tr>
-              ))}
+              ))} 
             </tbody>
           </table>
         </div>
@@ -106,19 +82,28 @@ function Admin() {
         <table className='tableAdmin'>
           <thead>
             <tr>
-              <th>ID</th>
               <th>User</th>
               <th>Restaurant</th>
               <th>Items</th>
+              <th>Preço Total</th>
+              <th>Estado</th>
             </tr>
           </thead>
           <tbody>
-            {pedidos.map((pedido) => (
+          {pedidos.map((pedido) => (
               <tr key={pedido.id}>
-                <td>{pedido.id}</td>
                 <td>{pedido.user}</td>
                 <td>{pedido.restaurant}</td>
-                <td>{pedido.items.map(item => `${item.name} (${item.quantity})`).join(', ')}</td>
+                <td>
+                  {pedido.items.map((item, index) => (
+                    `${item.name}(${item.quantity})`
+                  )).join(',').slice(0, 30)}
+                  {pedido.items.map((item, index) => (
+                    `${item.name}(${item.quantity})`
+                  )).join(',').length > 30 ? '...' : ''}
+                </td>
+                <td>{pedido.total_price +'€'}</td>
+                <td>{pedido.status}</td>
               </tr>
             ))}
           </tbody>
@@ -141,7 +126,6 @@ function Admin() {
                 <td>{user.id}</td>
                 <td>{user.name}</td>
                 <td>
-                  {/* Dropdown for the 'Role' column */}
                   <select
                     value={user.role}
                     onChange={(e) =>

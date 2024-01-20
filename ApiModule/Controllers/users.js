@@ -1,6 +1,7 @@
 const user = require("../Models/user");
 const apiKey = require("../Models/apiKey");
 const appAdmin = require("../Models/appAdmin");
+const resStaff = require("../Models/restaurantsAdmins");
 const { createLog } = require("../Utils/Logs");
 const { encrypt, compare } = require("../Utils/crypt");
 const jwt = require("jsonwebtoken");
@@ -86,6 +87,13 @@ const userController = {
       return res.status(400).json({
         success: false,
         message: "Dados obrigatórios do utilizador não recebidos!",
+      });
+    }
+
+    if (password < 6) {
+      return res.status(400).json({
+        success: false,
+        message: "A password deve ter pelo menos 6 caracteres!",
       });
     }
 
@@ -248,7 +256,7 @@ const userController = {
     }
 
     try {
-      if (!isAdmin(userId)) {
+      if ((await isAdmin(userId)) == false) {
         return res.status(401).json({
           success: false,
           message: "Acesso negado!",
@@ -311,7 +319,7 @@ const userController = {
     }
 
     try {
-      if (!isAdmin(userId)) {
+      if ((await isAdmin(userId)) == false) {
         return res.status(401).json({
           success: false,
           message: "Acesso negado!",
@@ -376,7 +384,7 @@ const userController = {
     const { userId } = req.body;
 
     try {
-      if (!isAdmin(userId)) {
+      if ((await isAdmin(userId)) == false) {
         return res.status(401).json({
           success: false,
           message: "Acesso negado!",
@@ -431,7 +439,7 @@ const userController = {
     }
 
     try {
-      if (!isAdmin(userId)) {
+      if ((await isAdmin(userId)) == false) {
         return res.status(401).json({
           success: false,
           message: "Acesso negado!",
@@ -515,7 +523,15 @@ const userController = {
 
     try {
       const secret = process.env.JWT_SECRET;
-      const token = jwt.sign({ id: user._id }, secret);
+      const token = await jwt.sign(
+        {
+          firstName: userExist.firstName,
+          lastName: userExist.lastName,
+          email: userExist.email,
+          userId: userExist._id,
+        },
+        secret
+      );
       return res.json({
         success: true,
         message: "Login efetuado com sucesso!",
@@ -529,6 +545,44 @@ const userController = {
       });
     }
   },
+
+  userCheckPermissions: async (req, res) => {
+    const { userId } = req.body;
+
+    if (!userId) {
+      return res.status(400).json({
+        success: false,
+        message: "ID do utilizador não recebido!",
+      });
+    }
+
+    try {
+      const utilizador = await user.findOne({ _id: userId });
+
+      if (!utilizador) {
+        return res.status(404).json({
+          success: false,
+          message: "Utilizador não encontrado!",
+        });
+      }
+      //console.log(utilizador);
+      let haveAdmin = await isAdmin(userId);
+      let staffRecord = await resStaff.findOne({ userId });
+
+      let haveStaff = null;
+      if (staffRecord) {
+        haveStaff = staffRecord.restaurantId;
+      }
+
+      return res.json({
+        success: true,
+        haveAdmin,
+        haveStaff,
+      });
+    } catch (err) {
+      throw err;
+    }
+  }, //
 };
 
 module.exports = userController;

@@ -59,3 +59,12 @@
   width: 50px;
   border-radius: 50%;
 }
+.cartCount{
+  padding: 0 3px;
+  background-color: red;
+  color: white;
+  font-weight: bold;
+  border-radius: 5px;
+  position: relative;
+  top: -15px;
+}

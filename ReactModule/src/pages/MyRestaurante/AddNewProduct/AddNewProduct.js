@@ -1,15 +1,42 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ProductsLista from '../ProductsLista';
+import { useParams } from 'react-router-dom';
+import { useEffect } from 'react';
+import RestaurantesList from '../../Restaurantes/RestaurantesLista';
 
 function AddNewProduct() {
+  const { restaurantId } = useParams();
     const Navigate = useNavigate();
+
+
     const [newProduct, setNewProduct] = useState({
         name: '',
         price: '',
         description: '',
         image: null,
     });
+
+
+    const [restaurantInfo, setRestaurantInfo] = useState({
+      name: '',
+      logo: '',
+      workingDays: {},
+  });
+
+
+    useEffect(() => {
+      const fetchedRestaurant = RestaurantesList.find(restaurant => restaurant.id === restaurantId);
+
+      if (fetchedRestaurant) {
+          setRestaurantInfo({
+              name: fetchedRestaurant.name,
+              logo: fetchedRestaurant.image,
+              workingDays: fetchedRestaurant.workingDays,
+          });
+      }
+  }, [restaurantId]);
+
 
     function getBase64(file) {
         return new Promise((resolve, reject) => {
@@ -20,6 +47,7 @@ function AddNewProduct() {
         });
       }
 
+
     const handleInputChange = (e) => {
         const { name, value } = e.target;
         setNewProduct((prevProduct) => ({
@@ -27,6 +55,7 @@ function AddNewProduct() {
             [name]: value,
         }));
     };
+
 
     const handleImageChange = (e) => {
         const imageFile = e.target.files[0];
@@ -38,27 +67,32 @@ function AddNewProduct() {
         });
       };
 
+
     const handleAddProduct = () => {
-        if (newProduct.name && newProduct.price && newProduct.description && newProduct.image) {
-            const newProductWithId = {
-                ...newProduct,
-                id: ProductsLista.length + 1,
-            };
+      if (newProduct.name && newProduct.price && newProduct.description && newProduct.image) {
+        const newProductWithId = {
+          ...newProduct,
+          id: ProductsLista.length + 1,
+          restaurantId: restaurantId, 
+        };
 
-            ProductsLista.push(newProductWithId);
+        ProductsLista.push(newProductWithId);
 
+        setNewProduct({
+          name: '',
+          price: '',
+          description: '',
+          image: null,
+          quantity: 1,
+          restaurantId: {restaurantId}, 
 
-            setNewProduct({
-                name: '',
-                price: '',
-                description: '',
-                image: null,
-            });
+        });
 
-            Navigate(-1);
-        } else {
-            alert('Please fill in all fields before adding the product.');
-        }
+        Navigate(-1);
+        console.log(ProductsLista);
+      } else {
+        alert('Please fill in all fields before adding the product.');
+      }
     };
 
 
@@ -66,11 +100,11 @@ function AddNewProduct() {
     <div className="container">
       <div className="MyRestaurante-Name">
         <h1>
-          McDonalds
+          {restaurantInfo.name}
           <img
-            src="https://upload.wikimedia.org/wikipedia/commons/thumb/3/36/McDonald%27s_Golden_Arches.svg/1200px-McDonald%27s_Golden_Arches.svg.png"
+            src={restaurantInfo.logo}
             className="MyRestaurant-Logo"
-            alt="McDonald's Logo"
+            alt={restaurantInfo.name + ' Logo'}
           />
         </h1>
       </div>

@@ -20,6 +20,9 @@ import CreateRestaurant from "./pages/Admin/CreateRestaurant/Create.js";
 import RestaurantesLista from "./pages/Restaurantes/RestaurantesLista.js";
 import RestaurantesId from "./pages/Restaurantes/RestaurantesId.js";
 import Cart from "./pages/Cart/Cart.js";
+import Pedidos from "./pages/Pedidos/Pedidos.js";
+import Pendente from "./pages/Pedidos/Pendente.js";
+import pedidos from "./pages/Cart/PedidosLista.js";
 
 
 // Components
@@ -27,6 +30,8 @@ const App = () => {
   // Functions
   const [restaurantesLista, setRestaurantesLista] = useState(RestaurantesLista)
   const [cartItems, setCartItems] = useState([])
+  const [PedidosLista, setPedidosLista] = useState(pedidos);
+
 
   
 
@@ -41,7 +46,7 @@ const App = () => {
             path="/"
             element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems} />
                 <Search />
                 <div className="container">
                   <Home />
@@ -54,7 +59,7 @@ const App = () => {
             path="/about"
             element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems}/>
                 <div className="container">
                   <About />
                 </div>
@@ -66,7 +71,7 @@ const App = () => {
           <Route path="/register" element={<Register />} />
           <Route path="/restaurantes" element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems}/>
                 <div className="container">
                   <Restaurantes/>
                 </div>
@@ -74,7 +79,7 @@ const App = () => {
               </>} />
               <Route path="/myrestaurant/:restaurantId" element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems}/>
                 <div className="container">
                   <MyRestaurante/>
                 </div>
@@ -82,15 +87,15 @@ const App = () => {
               </>} />
               <Route path="/myrestaurant/MyRestauranteEdit" element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems} />
                 <div className="container">
                   <MyRestauranteEdit/>
                 </div>
                 <Footer />
               </>} />
-              <Route path="/myrestaurant/AddNewProduct" element={
+              <Route path="/myrestaurant/:restaurantId/AddNewProduct" element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems}/>
                 <div className="container">
                   <AddNewProduct/>
                 </div>
@@ -98,7 +103,7 @@ const App = () => {
               </>} />
               <Route path="/admin" element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems}/>
                 <div className="container">
                   <Admin/>
                 </div>
@@ -106,7 +111,7 @@ const App = () => {
               </>} />
               <Route path="/admin/create" element={
   <>
-    <Navbar />
+    <Navbar cartItems={cartItems}/>
     <div className="container">
       <CreateRestaurant restaurantesLista={restaurantesLista} setRestaurantesLista={setRestaurantesLista} />
     </div>
@@ -115,7 +120,7 @@ const App = () => {
 } />
 <Route path="/sobre" element={
   <>
-    <Navbar />
+    <Navbar cartItems={cartItems}/>
     <div className="container">
       <About />
     </div>
@@ -124,7 +129,7 @@ const App = () => {
 } />
   <Route path="/restaurantes/:restaurantId" element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems}/>
                 <div className="container">
                   <RestaurantesId cartItems={cartItems} setCartItems={setCartItems} />
                 </div>
@@ -132,9 +137,27 @@ const App = () => {
               </>} />
               <Route path="/cart" element={
               <>
-                <Navbar />
+                <Navbar cartItems={cartItems}/>
                 <div className="container">
                   <Cart cartItems={cartItems} setCartItems={setCartItems} />
+                </div>
+                <Footer />
+              </>} />
+
+              <Route path="/myrestaurant/:restaurantId/Pedidos" element={
+  <>
+    <Navbar cartItems={cartItems}/>
+    <div className="container">
+      <Pedidos PedidosLista={PedidosLista} setPedidosLista={setPedidosLista}/>
+    </div>
+    <Footer />
+  </>} />
+
+              <Route path="/Pedidos/:pedidoId" element={
+              <>
+                <Navbar cartItems={cartItems}/>
+                <div className="container">
+                <Pendente setPedidosLista={setPedidosLista} />
                 </div>
                 <Footer />
               </>} />

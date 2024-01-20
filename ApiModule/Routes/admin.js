@@ -7,7 +7,7 @@ const appController = require('../Controllers/system');
 const { authenticate } = require('../Utils/middleware');
 
 // Restaurante Routes
-router.post('/restaurants', authenticate, restaurantController.createRestaurant);
+router.post('/restaurants', restaurantController.createRestaurant);
 router.put('/restaurants/:id', authenticate, restaurantController.updateRestaurantById);
 router.delete('/restaurants/:id', authenticate, restaurantController.deleteRestaurantById);
 router.get('/restaurants/admins/', authenticate, restaurantController.getRestaurantAdmins);

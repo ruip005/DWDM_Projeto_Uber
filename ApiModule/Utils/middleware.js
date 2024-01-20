@@ -2,6 +2,7 @@ const axios = require("axios");
 const apiKeyModel = require("../Models/apiKey");
 const appAdminModel = require("../Models/appAdmin");
 const { color } = require("console-log-colors");
+const jwt = require("jsonwebtoken");
 
 // Middleware para autenticação por chave de API
 const authenticate2 = async (req, res, next) => {
@@ -47,17 +48,21 @@ const logging = (req, res, next) => {
 };
 
 // Middleware para verificar o token
-const authenticate = (req, res, next) => {
-  const authHead = req.headers["authorization"];
-  const token = authHead && authHead.split(" ")[1];
+const authenticate = async (req, res, next) => {
+  const authHead = req.headers.authorization;
+  const token = authHead;
+  //console.log("Token:", token);
 
   if (token == null)
-    return res.status(401).json({ success: false, message: "Acesso negado" });
+    return res
+      .status(401)
+      .json({ success: false, message: "Acesso negado [Token nulo]" });
 
   try {
     const secret = process.env.JWT_SECRET;
-    const decoded = jwt.verify(token, secret);
-    req.userId = decoded.userId;
+    const decoded = await jwt.verify(token, secret);
+    req.body.userId = decoded.userId;
+    //console.log("Decoded:", decoded);
     next();
   } catch (error) {
     res.status(403).json({ success: false, message: "Acesso negado" });
