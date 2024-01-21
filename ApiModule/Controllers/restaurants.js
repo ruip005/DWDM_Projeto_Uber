@@ -24,27 +24,28 @@ const restaurantController = {
   },
 
   getFilteredRestaurants: async (req, res) => {
-  try {
-    let query = {};
+    try {
+      let query = {};
 
-    // Verifica se foi fornecido um parâmetro de pesquisa (por exemplo, 'nome')
-    if (req.query.campanyName) {
-      // Utiliza uma expressão regular para buscar parcialmente o nome
-      query = { campanyName: { $regex: new RegExp(req.query.campanyName, 'i') } };
+      // Verifica se foi fornecido um parâmetro de pesquisa (por exemplo, 'nome')
+      if (req.query.campanyName) {
+        // Utiliza uma expressão regular para buscar parcialmente o nome
+        query = {
+          campanyName: { $regex: new RegExp(req.query.campanyName, "i") },
+        };
+      }
+
+      const restaurantes = await Restaurant.find(query);
+      res.send({
+        success: true,
+        restaurantes,
+      });
+    } catch (err) {
+      res.status(500).json({
+        message: err.message || "Ocorreu um erro ao obter os restaurantes.",
+      });
     }
-
-    const restaurantes = await Restaurant.find(query);
-    res.send({
-      success: true,
-      restaurantes
-    });
-  } catch (err) {
-    res.status(500).json({
-      message: err.message || "Ocorreu um erro ao obter os restaurantes.",
-    });
-  }
-},
-
+  },
 
   // Criar um novo restaurante
   createRestaurant: async (req, res) => {
@@ -60,17 +61,20 @@ const restaurantController = {
       userId,
     } = req.body;
 
+    console.log(req.body);
+
     if (
       !userId ||
       !campanyName ||
-      !deliveryFee ||
       !businessHours ||
+      !deliveryFee ||
       !contactEmail ||
       !contactPhone ||
       !deliversToHome ||
       !Address
     ) {
       // Verificar se todos os dados foram recebidos
+      console.log("Falta dados:");
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
@@ -100,6 +104,7 @@ const restaurantController = {
       if ((await isAdmin(userId)) == false) {
         return res.status(401).json({
           success: false,
+          userId,
           message: "Acesso negado!",
         });
       } else {

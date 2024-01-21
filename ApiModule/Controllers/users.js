@@ -263,7 +263,7 @@ const userController = {
         });
       }
 
-      const utilizadores = await user.find();
+      const utilizadores = await user.find({}, { password: 0 });
 
       res.json({
         success: true,
@@ -583,6 +583,45 @@ const userController = {
       throw err;
     }
   }, //
+  /*
+  searchUserFromName: async (req, res) => {
+    // Procurar utilizador por nome
+    const { name } = req.body;
+
+    if (!name) {
+      return res.status(400).json({
+        success: false,
+        message: "Nome do utilizador não recebido!",
+      });
+    }
+
+    try {
+      // Procurar utilizador por nome (fristName ou lastName)
+      const utilizador = await user.find({
+        $or: [
+          { firstName: { $regex: name, $options: "i" } },
+          { lastName: { $regex: name, $options: "i" } },
+        ],
+      });
+
+      if (!utilizador) {
+        return res.status(404).json({
+          success: false,
+          message: "Utilizador não encontrado!",
+        });
+      }
+
+      res.json({
+        success: true,
+        utilizador,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: err.message || "Ocorreu um erro ao obter o utilizador.",
+      });
+    }
+  },*/
 };
 
 module.exports = userController;
