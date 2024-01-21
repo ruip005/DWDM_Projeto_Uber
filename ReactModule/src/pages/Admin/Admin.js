@@ -1,16 +1,14 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import './Admin.css';
 import RestaurantesList from '../Restaurantes/RestaurantesLista';
 import CreateRestaurant from './CreateRestaurant/Create';
-import { useNavigate,Link } from 'react-router-dom';
-import { useEffect } from 'react';
+import { useNavigate, Link } from 'react-router-dom';
 import pedidos from '../Cart/PedidosLista';
 
-function Admin() {
+function Admin({ PedidosLista }) {
   const [selectedTable, setSelectedTable] = useState('');
   const [restaurantes, setRestaurantes] = useState(RestaurantesList);
   const Navigate = useNavigate();
-
 
   const handleRestaurantClick = (restaurantId) => {
     Navigate(`/myrestaurant/${restaurantId}`);
@@ -29,12 +27,13 @@ function Admin() {
       role: 'McDonalds',
       isAdmin: false,
     },
-  ])
-  
+  ]);
+
   useEffect(() => {
-  const updateRestaurantes = (updatedList) => {
-    setRestaurantes(updatedList);
-  };})
+    const updateRestaurantes = (updatedList) => {
+      setRestaurantes(updatedList);
+    };
+  }, []);
 
   return (
     <div>
@@ -49,7 +48,7 @@ function Admin() {
             <button>Criar Restaurante</button>
           </Link>
           <table className='tableAdmin'>
-            <thead >
+            <thead>
               <tr className='grid-container-admin'>
                 <th className='grid-item-admin '>Name</th>
                 <th className='grid-item-admin'> Image</th>
@@ -57,8 +56,9 @@ function Admin() {
             </thead>
             <tbody>
               {restaurantes.map((restaurante) => (
-                <tr  key={restaurante.id}>
-                  <button type='button'
+                <tr key={restaurante.id}>
+                  <button
+                    type='button'
                     onClick={() => handleRestaurantClick(restaurante.id)}
                   >
                     {restaurante.name}
@@ -71,12 +71,11 @@ function Admin() {
                     />
                   </td>
                 </tr>
-              ))} 
+              ))}
             </tbody>
           </table>
         </div>
       )}
-
 
       {selectedTable === 'Pedidos' && (
         <table className='tableAdmin'>
@@ -90,7 +89,7 @@ function Admin() {
             </tr>
           </thead>
           <tbody>
-          {pedidos.map((pedido) => (
+            {PedidosLista.map((pedido) => (
               <tr key={pedido.id}>
                 <td>{pedido.user}</td>
                 <td>{pedido.restaurant}</td>
@@ -102,7 +101,7 @@ function Admin() {
                     `${item.name}(${item.quantity})`
                   )).join(',').length > 30 ? '...' : ''}
                 </td>
-                <td>{pedido.total_price +'€'}</td>
+                <td>{pedido.total_price + '€'}</td>
                 <td>{pedido.status}</td>
               </tr>
             ))}
