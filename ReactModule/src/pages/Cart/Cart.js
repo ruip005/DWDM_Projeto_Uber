@@ -3,10 +3,8 @@ import styles from './Cart.module.css';
 import pedidos from './PedidosLista'; // Make sure this import is correct
 import RestaurantesList from '../Restaurantes/RestaurantesLista';
 
-const Cart = ({ cartItems, setCartItems,}) => {
+const Cart = ({ cartItems, setCartItems,setPedidosLista,PedidosLista }) => {
   const [price, setPrice] = useState(0);
-
-  const [restaurantInfo, setRestaurantInfo] = useState( RestaurantesList);
 
   const handleRemove = (itemToRemove) => {
     setCartItems(cartItems.filter(item => item !== itemToRemove));
@@ -28,7 +26,7 @@ const Cart = ({ cartItems, setCartItems,}) => {
   const handleMinus = (itemToMinus) => {
     const updatedCartItems = cartItems.map(item => {
       if (item.quantity === 1) {
-        console.log('Não pode ter menos que 1 item no carrinho');
+        console.log('Cannot have less than 1 item in the cart');
       } else if (item === itemToMinus) {
         return {
           ...item,
@@ -38,7 +36,7 @@ const Cart = ({ cartItems, setCartItems,}) => {
       return item;
     });
     setCartItems(updatedCartItems);
-  }
+  };
 
   const handlePrice = () => {
     let ans = 0;
@@ -48,57 +46,55 @@ const Cart = ({ cartItems, setCartItems,}) => {
     setPrice(ans);
   };
 
-  useEffect(() => {
-    handlePrice();
-  }, [cartItems]); 
+  const handlePedido = () => {
+    const restaurantId = cartItems[0]?.restaurantId;
 
-const handlePedido = () => {
-   
-    const restaurantId = cartItems[0].restaurantId;
+    if (!restaurantId) {
+      console.log('No items in the cart or invalid restaurant ID.');
+      return;
+    }
 
-   
     const restaurant = RestaurantesList.find(restaurant => restaurant.id === restaurantId);
 
-    
     const newOrder = {
-        id: pedidos.length + 1, 
-        user: 'algumuser',
-        restaurant: restaurant.name,
-        items: cartItems.map(item => ({ name: item.name, quantity: item.quantity })) ,
-        total_price: price,
-        status: 'Pendente'
+      id: pedidos.length + 1,
+      user: 'algumuser',
+      restaurant: restaurant.name,
+      items: cartItems.map(item => ({ name: item.name, quantity: item.quantity })),
+      total_price: price,
+      status: 'Pendente'
     };
 
-  
-    pedidos.push(newOrder);
+    setPedidosLista(prevPedidos => [...prevPedidos, newOrder]); 
 
-  
     setCartItems([]);
 
     console.log('New order:', newOrder);
-};
+  };
+
+  useEffect(() => {
+    handlePrice();
+  }, [cartItems]);
 
   return (
     <article>
-      {
-        cartItems?.map((item) => (
-          <div className={styles.cart_box} key={item.id}>
-            <div className={styles['cart_img']}>
-              <img src={item.image} alt={item.name} />
-              <p>{item.name}</p>
-            </div>
-            <div>
-              <button className={styles['botao-feio']} onClick={() => handleAdd(item)}>+</button>
-              <button className={styles['botao-feio']}>{item.quantity}</button>
-              <button className={styles['botao-feio']}onClick={() => handleMinus(item)}>-</button>
-            </div>
-            <div>
-              <span>{item.price}</span>
-              <button className={styles['botao-feio']} onClick={() => handleRemove(item)}>Remove</button>
-            </div>
+      {cartItems?.map((item) => (
+        <div className={styles.cart_box} key={item.id}>
+          <div className={styles['cart_img']}>
+            <img src={item.image} alt={item.name} />
+            <p>{item.name}</p>
           </div>
-        ))
-      }
+          <div>
+            <button className={styles['botao-feio']} onClick={() => handleAdd(item)}>+</button>
+            <button className={styles['botao-feio']}>{item.quantity}</button>
+            <button className={styles['botao-feio']} onClick={() => handleMinus(item)}>-</button>
+          </div>
+          <div>
+            <span>{item.price}</span>
+            <button className={styles['botao-feio']} onClick={() => handleRemove(item)}>Remove</button>
+          </div>
+        </div>
+      ))}
       <div className={styles.total}>
         <span>Preço Total:</span>
         <span>{price}€</span>

@@ -1,27 +1,50 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import React, { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
 
 function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
   const Navigate = useNavigate();
   const [newRestaurant, setNewRestaurant] = useState({
-    campanyName: '',
+    campanyName: "",
     deliveryFee: 0.0,
     businessHours: {
-      Monday: { open: '', close: '' },
-      Tuesday: { open: '', close: '' },
-      Wednesday: { open: '', close: '' },
-      Thursday: { open: '', close: '' },
-      Friday: { open: '', close: '' },
-      Saturday: { open: '', close: '' },
-      Sunday: { open: '', close: '' },
+      Monday: { open: "", close: "" },
+      Tuesday: { open: "", close: "" },
+      Wednesday: { open: "", close: "" },
+      Thursday: { open: "", close: "" },
+      Friday: { open: "", close: "" },
+      Saturday: { open: "", close: "" },
+      Sunday: { open: "", close: "" },
     },
-    contactEmail: '',
-    contactPhone: '',
+    contactEmail: "",
+    contactPhone: "",
     deliversToHome: false,
-    Address: '',
-    UserId: '',
+    Address: "",
+    UserId: "",
     closingDays: {},
   });
+
+  const [usersList, setUsersList] = useState([]);
+
+  useEffect(() => {
+    const fetchUsers = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const url = "http://localhost:9000/admin/users";
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const data = response.data.utilizadores;
+        setUsersList(data);
+      } catch (error) {
+        console.error("Error fetching users:", error);
+      }
+    };
+
+    fetchUsers();
+  }, []);
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -45,7 +68,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
       updatedClosingDays[day] = !updatedClosingDays[day];
       const updatedBusinessHours = { ...prevRestaurant.businessHours };
       if (updatedClosingDays[day]) {
-        updatedBusinessHours[day] = { open: '', close: '' };
+        updatedBusinessHours[day] = { open: "", close: "" };
       }
       return {
         ...prevRestaurant,
@@ -55,50 +78,75 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
     });
   };
 
-  const createRestaurant = () => {
+  const createRestaurant = async () => {
     for (let day in newRestaurant.businessHours) {
       if (
         !newRestaurant.closingDays[day] &&
         Number(newRestaurant.businessHours[day].open) >=
           Number(newRestaurant.businessHours[day].close)
       ) {
-        alert(
-          `Opening hours must be less than closing hours on ${day}`
-        );
+        alert(`Opening hours must be less than closing hours on ${day}`);
         return;
       }
     }
 
-    const updatedRestaurantList = [...restaurantesLista, newRestaurant];
-    setRestaurantesLista(updatedRestaurantList); // Update the restaurant list in the parent component
+    try {
+      const token = localStorage.getItem("token");
+      const url = "http://localhost:9000/admin/restaurants";
+      const response = await axios.post(
+        url,
+        {
+          campanyName: newRestaurant.campanyName,
+          deliveryFee: newRestaurant.deliveryFee,
+          businessHours: newRestaurant.businessHours,
+          contactEmail: newRestaurant.contactEmail,
+          contactPhone: newRestaurant.contactPhone,
+          deliversToHome: newRestaurant.deliversToHome,
+          Address: newRestaurant.Address,
+          userId: newRestaurant.UserId,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
 
-    // Reset form fields
-    setNewRestaurant({
-      campanyName: '',
-      deliveryFee: 0.0,
-      businessHours: {
-        Monday: { open: '', close: '' },
-        Tuesday: { open: '', close: '' },
-        Wednesday: { open: '', close: '' },
-        Thursday: { open: '', close: '' },
-        Friday: { open: '', close: '' },
-        Saturday: { open: '', close: '' },
-        Sunday: { open: '', close: '' },
-      },
-      contactEmail: '',
-      contactPhone: '',
-      deliversToHome: false,
-      Address: '',
-      UserId: '',
-      closingDays: {},
-    });
+      // Verifica se a requisição foi bem-sucedida
+      if (response.status === 201) {
+        const createdRestaurant = response.data.restaurant;
+        const updatedRestaurantList = [...restaurantesLista, createdRestaurant];
+        setRestaurantesLista(updatedRestaurantList);
 
-    Navigate('/admin');
+        setNewRestaurant({
+          campanyName: "",
+          deliveryFee: 0.0,
+          businessHours: {
+            Monday: { open: "", close: "" },
+            Tuesday: { open: "", close: "" },
+            Wednesday: { open: "", close: "" },
+            Thursday: { open: "", close: "" },
+            Friday: { open: "", close: "" },
+            Saturday: { open: "", close: "" },
+            Sunday: { open: "", close: "" },
+          },
+          contactEmail: "",
+          contactPhone: "",
+          deliversToHome: false,
+          Address: "",
+          UserId: "",
+          closingDays: {},
+        });
 
-    console.log(updatedRestaurantList);
-    console.log(newRestaurant);
-    console.log(restaurantesLista);
-    console.log(restaurantesLista);
+        Navigate("/admin");
+      } else {
+        // Handle error or display appropriate message
+        alert("Failed to create restaurant");
+      }
+    } catch (error) {
+      console.error("Error creating restaurant:", error);
+      alert("Failed to create restaurant. Please try again.");
+    }
   };
 
   return (
@@ -136,7 +184,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
               max="24"
               value={newRestaurant.businessHours[day].open}
               onChange={(e) =>
-                handleBusinessHoursChange(day, 'open', e.target.value)
+                handleBusinessHoursChange(day, "open", e.target.value)
               }
               placeholder="Open"
               disabled={newRestaurant.closingDays[day]}
@@ -147,7 +195,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
               max="24"
               value={newRestaurant.businessHours[day].close}
               onChange={(e) =>
-                handleBusinessHoursChange(day, 'close', e.target.value)
+                handleBusinessHoursChange(day, "close", e.target.value)
               }
               placeholder="Close"
               disabled={newRestaurant.closingDays[day]}
@@ -186,6 +234,17 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
       <p />
 
       <label>
+        Address:
+        <input
+          type="text"
+          name="Address"
+          value={newRestaurant.Address}
+          onChange={handleInputChange}
+        />
+      </label>
+      <p />
+
+      <label>
         Delivers to Home:
         <input
           type="checkbox"
@@ -202,24 +261,21 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
       <p />
 
       <label>
-        Address:
-        <input
-          type="text"
-          name="Address"
-          value={newRestaurant.Address}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
-
-      <label>
         User ID:
-        <input
-          type="text"
+        <select
           name="UserId"
           value={newRestaurant.UserId}
           onChange={handleInputChange}
-        />
+        >
+          <option value="" disabled>
+            Select a user
+          </option>
+          {usersList.map((user) => (
+            <option key={user._id} value={user._id}>
+              {user.firstName} {user.lastName}
+            </option>
+          ))}
+        </select>
       </label>
       <p />
 
