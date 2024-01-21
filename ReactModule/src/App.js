@@ -105,7 +105,7 @@ const App = () => {
               <>
                 <Navbar cartItems={cartItems}/>
                 <div className="container">
-                  <Admin/>
+                  <Admin PedidosLista={PedidosLista} setPedidosLista={setPedidosLista}/>
                 </div>
                 <Footer />
               </>} />
@@ -139,7 +139,7 @@ const App = () => {
               <>
                 <Navbar cartItems={cartItems}/>
                 <div className="container">
-                  <Cart cartItems={cartItems} setCartItems={setCartItems} />
+                  <Cart cartItems={cartItems} setCartItems={setCartItems} PedidosLista={PedidosLista} setPedidosLista={setPedidosLista} />
                 </div>
                 <Footer />
               </>} />

@@ -1,9 +1,8 @@
-import pedidos from '../Cart/PedidosLista';
 import { useParams, Link } from 'react-router-dom';
 import RestaurantesList from '../Restaurantes/RestaurantesLista';
 import { useState, useEffect } from 'react';
 
-function Pedidos() {
+function Pedidos({ PedidosLista }) {
   const { restaurantId } = useParams();
 
   const [restaurantInfo, setRestaurantInfo] = useState({
@@ -24,6 +23,9 @@ function Pedidos() {
     }
   }, [restaurantId]);
 
+  // Filter PedidosLista based on the current restaurantId
+  const filteredPedidos = PedidosLista.filter(pedido => pedido.restaurant === restaurantInfo.name);
+
   return (
     <div>
       <h1>{restaurantInfo.name} Pedidos</h1>
@@ -38,7 +40,7 @@ function Pedidos() {
           </tr>
         </thead>
         <tbody>
-          {pedidos.map((pedido) => (
+          {filteredPedidos.map((pedido) => (
             <tr key={pedido.id}>
               <td>{pedido.user}</td>
               <td>{pedido.restaurant}</td>
