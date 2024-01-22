@@ -55,6 +55,25 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
       [name]: value,
     }));
   };
+  const handleImageChange = (e) => {
+        const imageFile = e.target.files[0];
+        getBase64(imageFile).then((base64Image) => {
+          setNewRestaurant((prevRestaurant) => ({
+            ...prevRestaurant,
+            image: base64Image,
+          }));
+        });
+      };
+    
+      const getBase64 = (file) => {
+        return new Promise((resolve, reject) => {
+          const reader = new FileReader();
+          reader.readAsDataURL(file);
+          reader.onload = () => resolve(reader.result);
+          reader.onerror = (error) => reject(error);
+        });
+      };
+    
 
   const handleBusinessHoursChange = (day, type, value) => {
     setNewRestaurant((prevRestaurant) => {
@@ -283,6 +302,19 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
         </select>
       </label>
       <p />
+          </label>
+      <p />
+      <p>
+      <label>
+        Imagem:
+        <input
+          type="file"
+          name="image"
+          accept="image/*"
+          onChange={handleImageChange}
+        />
+      </label>
+      </p>
 
       <button onClick={createRestaurant}>Create Restaurant</button>
       {/* ToastContainer for displaying notifications */}
