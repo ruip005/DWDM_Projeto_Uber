@@ -1,7 +1,7 @@
 import { NavLink } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import { Login } from "../pages/Login,Register/Login/Login.js";
-import { Register } from "../pages/Login,Register/Register/Register.js";
+import { Login } from "../pages/Auth/Login/Login.js";
+import { Register } from "../pages/Auth/Register/Register.js";
 import MyRestaurante from "../pages/MyRestaurante/MyRestaurante.js";
 import axios from "axios";
 import React, { useState, useEffect } from "react";

@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
 
 function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
   const Navigate = useNavigate();
@@ -103,6 +105,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
           contactPhone: newRestaurant.contactPhone,
           deliversToHome: newRestaurant.deliversToHome,
           Address: newRestaurant.Address,
+          staffId: newRestaurant.UserId,
           userId: newRestaurant.UserId,
         },
         {
@@ -135,17 +138,19 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
           deliversToHome: false,
           Address: "",
           UserId: "",
+          StaffId: "",
           closingDays: {},
         });
 
-        Navigate("/admin");
+        toast.success("Restaurante criado com sucesso!");
+        setTimeout(() => {
+          Navigate("/admin");
+        }, 4000);
       } else {
-        // Handle error or display appropriate message
-        alert("Failed to create restaurant");
+        toast.error("Não conseguimos criar o seu restaurante!");
       }
     } catch (error) {
-      console.error("Error creating restaurant:", error);
-      alert("Failed to create restaurant. Please try again.");
+      toast.error(error.response.data.message);
     }
   };
 
@@ -280,6 +285,8 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
       <p />
 
       <button onClick={createRestaurant}>Create Restaurant</button>
+      {/* ToastContainer for displaying notifications */}
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
     </div>
   );
 }

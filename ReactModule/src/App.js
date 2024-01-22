@@ -1,6 +1,6 @@
 // Requires etc..
 import React from "react";
-import { BrowserRouter, Route, Routes, } from "react-router-dom";
+import { BrowserRouter, Route, Routes } from "react-router-dom";
 import { useState } from "react";
 
 // Pages
@@ -9,8 +9,8 @@ import About from "./pages/About/About";
 import Navbar from "./components/Navbar";
 import Footer from "./components/Footer";
 import Search from "./components/Search";
-import {Login} from "./pages/Login,Register/Login/Login.js";
-import {Register} from "./pages/Login,Register/Register/Register.js";
+import { Login } from "./pages/Auth/Login/Login.js";
+import { Register } from "./pages/Auth/Register/Register.js";
 import { Restaurantes } from "./pages/Restaurantes/Restaurantes.js";
 import MyRestaurante from "./pages/MyRestaurante/MyRestaurante.js";
 import MyRestauranteEdit from "./pages/MyRestaurante/MyRestauranteEdit/MyRestauranteEdit.js";
@@ -24,18 +24,12 @@ import Pedidos from "./pages/Pedidos/Pedidos.js";
 import Pendente from "./pages/Pedidos/Pendente.js";
 import pedidos from "./pages/Cart/PedidosLista.js";
 
-
 // Components
 const App = () => {
   // Functions
-  const [restaurantesLista, setRestaurantesLista] = useState(RestaurantesLista)
-  const [cartItems, setCartItems] = useState([])
+  const [restaurantesLista, setRestaurantesLista] = useState(RestaurantesLista);
+  const [cartItems, setCartItems] = useState([]);
   const [PedidosLista, setPedidosLista] = useState(pedidos);
-
-
-  
-
-
 
   // Render
   return (
@@ -59,7 +53,7 @@ const App = () => {
             path="/about"
             element={
               <>
-                <Navbar cartItems={cartItems}/>
+                <Navbar cartItems={cartItems} />
                 <div className="container">
                   <About />
                 </div>
@@ -69,98 +63,157 @@ const App = () => {
           />
           <Route path="/login" element={<Login />} />
           <Route path="/register" element={<Register />} />
-          <Route path="/restaurantes" element={
-              <>
-                <Navbar cartItems={cartItems}/>
-                <div className="container">
-                  <Restaurantes/>
-                </div>
-                <Footer />
-              </>} />
-              <Route path="/myrestaurant/:restaurantId" element={
-              <>
-                <Navbar cartItems={cartItems}/>
-                <div className="container">
-                  <MyRestaurante/>
-                </div>
-                <Footer />
-              </>} />
-              <Route path="/myrestaurant/MyRestauranteEdit" element={
+          <Route
+            path="/restaurantes"
+            element={
               <>
                 <Navbar cartItems={cartItems} />
                 <div className="container">
-                  <MyRestauranteEdit/>
+                  <Restaurantes />
                 </div>
                 <Footer />
-              </>} />
-              <Route path="/myrestaurant/:restaurantId/AddNewProduct" element={
+              </>
+            }
+          />
+          <Route
+            path="/myrestaurant/:restaurantId"
+            element={
               <>
-                <Navbar cartItems={cartItems}/>
+                <Navbar cartItems={cartItems} />
                 <div className="container">
-                  <AddNewProduct/>
+                  <MyRestaurante />
                 </div>
                 <Footer />
-              </>} />
-              <Route path="/admin" element={
+              </>
+            }
+          />
+          <Route
+            path="/myrestaurant/MyRestauranteEdit"
+            element={
               <>
-                <Navbar cartItems={cartItems}/>
+                <Navbar cartItems={cartItems} />
                 <div className="container">
-                  <Admin PedidosLista={PedidosLista} setPedidosLista={setPedidosLista}/>
+                  <MyRestauranteEdit />
                 </div>
                 <Footer />
-              </>} />
-              <Route path="/admin/create" element={
-  <>
-    <Navbar cartItems={cartItems}/>
-    <div className="container">
-      <CreateRestaurant restaurantesLista={restaurantesLista} setRestaurantesLista={setRestaurantesLista} />
-    </div>
-    <Footer />
-  </>
-} />
-<Route path="/sobre" element={
-  <>
-    <Navbar cartItems={cartItems}/>
-    <div className="container">
-      <About />
-    </div>
-    <Footer />
-  </>
-} />
-  <Route path="/restaurantes/:restaurantId" element={
+              </>
+            }
+          />
+          <Route
+            path="/myrestaurant/:restaurantId/AddNewProduct"
+            element={
               <>
-                <Navbar cartItems={cartItems}/>
+                <Navbar cartItems={cartItems} />
                 <div className="container">
-                  <RestaurantesId cartItems={cartItems} setCartItems={setCartItems} />
+                  <AddNewProduct />
                 </div>
                 <Footer />
-              </>} />
-              <Route path="/cart" element={
+              </>
+            }
+          />
+          <Route
+            path="/admin"
+            element={
               <>
-                <Navbar cartItems={cartItems}/>
+                <Navbar cartItems={cartItems} />
                 <div className="container">
-                  <Cart cartItems={cartItems} setCartItems={setCartItems} PedidosLista={PedidosLista} setPedidosLista={setPedidosLista} />
+                  <Admin
+                    PedidosLista={PedidosLista}
+                    setPedidosLista={setPedidosLista}
+                  />
                 </div>
                 <Footer />
-              </>} />
+              </>
+            }
+          />
+          <Route
+            path="/admin/create"
+            element={
+              <>
+                <Navbar cartItems={cartItems} />
+                <div className="container">
+                  <CreateRestaurant
+                    restaurantesLista={restaurantesLista}
+                    setRestaurantesLista={setRestaurantesLista}
+                  />
+                </div>
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/sobre"
+            element={
+              <>
+                <Navbar cartItems={cartItems} />
+                <div className="container">
+                  <About />
+                </div>
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/restaurantes/:restaurantId"
+            element={
+              <>
+                <Navbar cartItems={cartItems} />
+                <div className="container">
+                  <RestaurantesId
+                    cartItems={cartItems}
+                    setCartItems={setCartItems}
+                  />
+                </div>
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/cart"
+            element={
+              <>
+                <Navbar cartItems={cartItems} />
+                <div className="container">
+                  <Cart
+                    cartItems={cartItems}
+                    setCartItems={setCartItems}
+                    PedidosLista={PedidosLista}
+                    setPedidosLista={setPedidosLista}
+                  />
+                </div>
+                <Footer />
+              </>
+            }
+          />
 
-              <Route path="/myrestaurant/:restaurantId/Pedidos" element={
-  <>
-    <Navbar cartItems={cartItems}/>
-    <div className="container">
-      <Pedidos PedidosLista={PedidosLista} setPedidosLista={setPedidosLista}/>
-    </div>
-    <Footer />
-  </>} />
-
-              <Route path="/Pedidos/:pedidoId" element={
+          <Route
+            path="/myrestaurant/:restaurantId/Pedidos"
+            element={
               <>
-                <Navbar cartItems={cartItems}/>
+                <Navbar cartItems={cartItems} />
                 <div className="container">
-                <Pendente setPedidosLista={setPedidosLista} />
+                  <Pedidos
+                    PedidosLista={PedidosLista}
+                    setPedidosLista={setPedidosLista}
+                  />
                 </div>
                 <Footer />
-              </>} />
+              </>
+            }
+          />
+
+          <Route
+            path="/Pedidos/:pedidoId"
+            element={
+              <>
+                <Navbar cartItems={cartItems} />
+                <div className="container">
+                  <Pendente setPedidosLista={setPedidosLista} />
+                </div>
+                <Footer />
+              </>
+            }
+          />
         </Routes>
       </BrowserRouter>
     </div>

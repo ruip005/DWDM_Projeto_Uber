@@ -1,74 +1,70 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ProductsLista from '../ProductsLista';
-import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
-import RestaurantesList from '../../Restaurantes/RestaurantesLista';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ProductsLista from "../ProductsLista";
+import { useParams } from "react-router-dom";
+import { useEffect } from "react";
+import RestaurantesList from "../../Restaurantes/RestaurantesLista";
+import axios from "axios";
 
 function AddNewProduct() {
   const { restaurantId } = useParams();
-    const Navigate = useNavigate();
+  const Navigate = useNavigate();
 
-
-    const [newProduct, setNewProduct] = useState({
-        name: '',
-        price: '',
-        description: '',
-        image: null,
-    });
-
-
-    const [restaurantInfo, setRestaurantInfo] = useState({
-      name: '',
-      logo: '',
-      workingDays: {},
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    price: "",
+    description: "",
+    image: null,
   });
 
+  const [restaurantInfo, setRestaurantInfo] = useState({
+    name: "",
+    logo: "",
+    workingDays: {},
+  });
 
-    useEffect(() => {
-      const fetchedRestaurant = RestaurantesList.find(restaurant => restaurant.id === restaurantId);
+  useEffect(() => {
+    const fetchedRestaurant = RestaurantesList.find(
+      (restaurant) => restaurant.id === restaurantId
+    );
 
-      if (fetchedRestaurant) {
-          setRestaurantInfo({
-              name: fetchedRestaurant.name,
-              logo: fetchedRestaurant.image,
-              workingDays: fetchedRestaurant.workingDays,
-          });
-      }
+    if (fetchedRestaurant) {
+      setRestaurantInfo({
+        name: fetchedRestaurant.name,
+        logo: fetchedRestaurant.image,
+        workingDays: fetchedRestaurant.workingDays,
+      });
+    }
   }, [restaurantId]);
 
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }
 
-    function getBase64(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = error => reject(error);
-        });
-      }
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value,
+    }));
+  };
 
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    getBase64(imageFile).then((base64Image) => {
+      setNewProduct((prevProduct) => ({
+        ...prevProduct,
+        image: base64Image,
+      }));
+    });
+  };
 
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewProduct((prevProduct) => ({
-            ...prevProduct,
-            [name]: value,
-        }));
-    };
-
-
-    const handleImageChange = (e) => {
-        const imageFile = e.target.files[0];
-        getBase64(imageFile).then(base64Image => {
-          setNewProduct((prevProduct) => ({
-            ...prevProduct,
-            image: base64Image,
-          }));
-        });
-      };
-
-
-    const handleAddProduct = () => {
+  /*   const handleAddProduct = () => {
       if (newProduct.name && newProduct.price && newProduct.description && newProduct.image) {
         const newProductWithId = {
           ...newProduct,
@@ -93,8 +89,41 @@ function AddNewProduct() {
       } else {
         alert('Please fill in all fields before adding the product.');
       }
-    };
+    };*/
 
+  const handleAddProduct = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const url = `http://localhost:9000/product`;
+
+      const response = await axios.post(
+        url,
+        {
+          name: newProduct.name, // Change from newProduct.productName to newProduct.name
+          price: newProduct.price,
+          description: newProduct.description,
+          quantity: "1",
+          restaurantId: restaurantId,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      console.log(response.data);
+      Navigate(-1);
+    } catch (error) {
+      console.error("Error making POST request:", error.message);
+      console.log("Request config:", error.config);
+      if (error.response) {
+        console.log("Response data:", error.response.data);
+        console.log("Response status:", error.response.status);
+        console.log("Response headers:", error.response.headers);
+      }
+    }
+  };
 
   return (
     <div className="container">
@@ -104,7 +133,7 @@ function AddNewProduct() {
           <img
             src={restaurantInfo.logo}
             className="MyRestaurant-Logo"
-            alt={restaurantInfo.name + ' Logo'}
+            alt={restaurantInfo.name + " Logo"}
           />
         </h1>
       </div>

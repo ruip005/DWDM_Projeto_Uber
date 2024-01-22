@@ -59,9 +59,8 @@ const restaurantController = {
       deliversToHome,
       Address,
       userId,
+      staffId,
     } = req.body;
-
-    console.log(req.body);
 
     if (
       !userId ||
@@ -71,10 +70,10 @@ const restaurantController = {
       !contactEmail ||
       !contactPhone ||
       !deliversToHome ||
-      !Address
+      !Address ||
+      !staffId
     ) {
       // Verificar se todos os dados foram recebidos
-      console.log("Falta dados:");
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
@@ -119,6 +118,10 @@ const restaurantController = {
           { BoxID, ContainerID },
           { new: true }
         );
+        await restaurantAdmin.create({
+          campanyId: restauranteSalvo._id,
+          userId: staffId,
+        });
 
         await createLog(
           "create",
