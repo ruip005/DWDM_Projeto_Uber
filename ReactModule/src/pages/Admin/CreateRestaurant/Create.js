@@ -56,24 +56,23 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
     }));
   };
   const handleImageChange = (e) => {
-        const imageFile = e.target.files[0];
-        getBase64(imageFile).then((base64Image) => {
-          setNewRestaurant((prevRestaurant) => ({
-            ...prevRestaurant,
-            image: base64Image,
-          }));
-        });
-      };
-    
-      const getBase64 = (file) => {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = (error) => reject(error);
-        });
-      };
-    
+    const imageFile = e.target.files[0];
+    getBase64(imageFile).then((base64Image) => {
+      setNewRestaurant((prevRestaurant) => ({
+        ...prevRestaurant,
+        image: base64Image,
+      }));
+    });
+  };
+
+  const getBase64 = (file) => {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  };
 
   const handleBusinessHoursChange = (day, type, value) => {
     setNewRestaurant((prevRestaurant) => {
@@ -174,152 +173,151 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
   };
 
   return (
-    <div>
-      <label>
-        Company Name:
-        <input
-          type="text"
-          name="campanyName"
-          value={newRestaurant.campanyName}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
+    <>
+      <div>
+        <label>
+          Company Name:
+          <input
+            type="text"
+            name="companyName"
+            value={newRestaurant.companyName}
+            onChange={handleInputChange}
+          />
+        </label>
+        <p />
 
-      <label>
-        Delivery Fee:
-        <input
-          type="number"
-          name="deliveryFee"
-          value={newRestaurant.deliveryFee}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
+        <label>
+          Delivery Fee:
+          <input
+            type="number"
+            name="deliveryFee"
+            value={newRestaurant.deliveryFee}
+            onChange={handleInputChange}
+          />
+        </label>
+        <p />
 
-      {/* Input fields for business hours */}
-      {Object.keys(newRestaurant.businessHours).map((day) => (
-        <div key={day}>
-          <label>
-            {day}:
-            <input
-              type="number"
-              min="0"
-              max="24"
-              value={newRestaurant.businessHours[day].open}
-              onChange={(e) =>
-                handleBusinessHoursChange(day, "open", e.target.value)
-              }
-              placeholder="Open"
-              disabled={newRestaurant.closingDays[day]}
-            />
-            <input
-              type="number"
-              min="0"
-              max="24"
-              value={newRestaurant.businessHours[day].close}
-              onChange={(e) =>
-                handleBusinessHoursChange(day, "close", e.target.value)
-              }
-              placeholder="Close"
-              disabled={newRestaurant.closingDays[day]}
-            />
+        {/* Input fields for business hours */}
+        {Object.keys(newRestaurant.businessHours).map((day) => (
+          <div key={day}>
             <label>
-              Closing Day:
+              {day}:
               <input
-                type="checkbox"
-                onChange={() => handleCheckboxChange(day)}
+                type="number"
+                min="0"
+                max="24"
+                value={newRestaurant.businessHours[day].open}
+                onChange={(e) =>
+                  handleBusinessHoursChange(day, "open", e.target.value)
+                }
+                placeholder="Open"
+                disabled={newRestaurant.closingDays[day]}
               />
+              <input
+                type="number"
+                min="0"
+                max="24"
+                value={newRestaurant.businessHours[day].close}
+                onChange={(e) =>
+                  handleBusinessHoursChange(day, "close", e.target.value)
+                }
+                placeholder="Close"
+                disabled={newRestaurant.closingDays[day]}
+              />
+              <label>
+                Closing Day:
+                <input
+                  type="checkbox"
+                  onChange={() => handleCheckboxChange(day)}
+                />
+              </label>
             </label>
-          </label>
-        </div>
-      ))}
+          </div>
+        ))}
 
-      <label>
-        Contact Email:
-        <input
-          type="email"
-          name="contactEmail"
-          value={newRestaurant.contactEmail}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
+        <label>
+          Contact Email:
+          <input
+            type="email"
+            name="contactEmail"
+            value={newRestaurant.contactEmail}
+            onChange={handleInputChange}
+          />
+        </label>
+        <p />
 
-      <label>
-        Contact Phone:
-        <input
-          type="text"
-          name="contactPhone"
-          value={newRestaurant.contactPhone}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
+        <label>
+          Contact Phone:
+          <input
+            type="text"
+            name="contactPhone"
+            value={newRestaurant.contactPhone}
+            onChange={handleInputChange}
+          />
+        </label>
+        <p />
 
-      <label>
-        Address:
-        <input
-          type="text"
-          name="Address"
-          value={newRestaurant.Address}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
+        <label>
+          Address:
+          <input
+            type="text"
+            name="address"
+            value={newRestaurant.address}
+            onChange={handleInputChange}
+          />
+        </label>
+        <p />
 
-      <label>
-        Delivers to Home:
-        <input
-          type="checkbox"
-          name="deliversToHome"
-          checked={newRestaurant.deliversToHome}
-          onChange={() =>
-            setNewRestaurant((prevRestaurant) => ({
-              ...prevRestaurant,
-              deliversToHome: !prevRestaurant.deliversToHome,
-            }))
-          }
-        />
-      </label>
-      <p />
+        <label>
+          Delivers to Home:
+          <input
+            type="checkbox"
+            name="deliversToHome"
+            checked={newRestaurant.deliversToHome}
+            onChange={() =>
+              setNewRestaurant((prevRestaurant) => ({
+                ...prevRestaurant,
+                deliversToHome: !prevRestaurant.deliversToHome,
+              }))
+            }
+          />
+        </label>
+        <p />
 
-      <label>
-        User ID:
-        <select
-          name="UserId"
-          value={newRestaurant.UserId}
-          onChange={handleInputChange}
-        >
-          <option value="" disabled>
-            Select a user
-          </option>
-          {usersList.map((user) => (
-            <option key={user._id} value={user._id}>
-              {user.firstName} {user.lastName}
+        <label>
+          User ID:
+          <select
+            name="userId"
+            value={newRestaurant.userId}
+            onChange={handleInputChange}
+          >
+            <option value="" disabled>
+              Select a user
             </option>
-          ))}
-        </select>
-      </label>
-      <p />
-          </label>
-      <p />
-      <p>
-      <label>
-        Imagem:
-        <input
-          type="file"
-          name="image"
-          accept="image/*"
-          onChange={handleImageChange}
-        />
-      </label>
-      </p>
+            {usersList.map((user) => (
+              <option key={user._id} value={user._id}>
+                {user.firstName} {user.lastName}
+              </option>
+            ))}
+          </select>
+        </label>
+        <p />
 
-      <button onClick={createRestaurant}>Create Restaurant</button>
+        <label>
+          Imagem:
+          <input
+            type="file"
+            name="image"
+            accept="image/*"
+            onChange={handleImageChange}
+          />
+        </label>
+
+        <button onClick={createRestaurant}>Create Restaurant</button>
+      </div>
       {/* ToastContainer for displaying notifications */}
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
-    </div>
+    </>
   );
 }
 
