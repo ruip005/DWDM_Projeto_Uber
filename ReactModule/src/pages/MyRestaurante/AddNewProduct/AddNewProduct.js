@@ -94,16 +94,16 @@ function AddNewProduct() {
   const handleAddProduct = async () => {
     try {
       const token = localStorage.getItem("token");
-      const url = `http://localhost:9000/product`;
+      const url = `http://192.168.1.2:9000/restaurant/product/${restaurantId}`;
 
       const response = await axios.post(
         url,
         {
-          name: newProduct.name, // Change from newProduct.productName to newProduct.name
+          name: newProduct.name, 
           price: newProduct.price,
           description: newProduct.description,
           quantity: "1",
-          restaurantId: restaurantId,
+         
         },
         {
           headers: {
