@@ -2,9 +2,11 @@ import React, { useState, useEffect } from 'react';
 import styles from './Cart.module.css';
 import pedidos from './PedidosLista'; // Make sure this import is correct
 import RestaurantesList from '../Restaurantes/RestaurantesLista';
+import { useNavigate } from 'react-router-dom';
 
 const Cart = ({ cartItems, setCartItems,setPedidosLista,PedidosLista }) => {
   const [price, setPrice] = useState(0);
+  const Navigate = useNavigate();
 
   const handleRemove = (itemToRemove) => {
     setCartItems(cartItems.filter(item => item !== itemToRemove));
@@ -68,7 +70,7 @@ const Cart = ({ cartItems, setCartItems,setPedidosLista,PedidosLista }) => {
     setPedidosLista(prevPedidos => [...prevPedidos, newOrder]); 
 
     setCartItems([]);
-
+    Navigate('/cart/confirmation');
     console.log('New order:', newOrder);
   };
 

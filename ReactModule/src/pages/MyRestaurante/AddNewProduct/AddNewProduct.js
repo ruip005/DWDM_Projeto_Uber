@@ -179,6 +179,7 @@ function AddNewProduct() {
             />
           </label>
           <p />
+          
           <button type="button" onClick={handleAddProduct}>
             Adicionar Produto
           </button>
