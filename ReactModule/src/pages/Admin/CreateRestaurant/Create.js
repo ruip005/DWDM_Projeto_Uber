@@ -35,11 +35,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-<<<<<<< HEAD
         const url = "http://192.168.1.115:9000/admin/users";
-=======
-        const url = "http://192.168.1.2:9000/admin/users";
->>>>>>> a032e314c5620120528d8f240c502587b495ca1d
         const response = await axios.get(url, {
           headers: {
             Authorization: token,
@@ -117,11 +113,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
 
     try {
       const token = localStorage.getItem("token");
-<<<<<<< HEAD
       const url = "http://192.168.1.115:9000/admin/restaurants";
-=======
-      const url = "http://192.168.1.2:9000/admin/restaurants";
->>>>>>> a032e314c5620120528d8f240c502587b495ca1d
       const response = await axios.post(
         url,
         {
@@ -348,7 +340,6 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
               <option value="" disabled>
                 Select a user
               </option>
-<<<<<<< HEAD
               {usersList.map((user) => (
                 <option key={user._id} value={user._id}>
                   {user.firstName} {user.lastName}
@@ -357,23 +348,6 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
             </select>
           </label>
         </div>
-=======
-            ))}
-          </select>
-        </label>
-        <p />
-
-        <label>
-          Imagem:
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </label>
-        <p> </p>
->>>>>>> a032e314c5620120528d8f240c502587b495ca1d
 
         <button onClick={createRestaurant}>Create Restaurant</button>
       </div>
