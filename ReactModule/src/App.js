@@ -186,7 +186,11 @@ const App = () => {
               </>
             }
           />
+<<<<<<< HEAD
           <Route
+=======
+           <Route
+>>>>>>> a032e314c5620120528d8f240c502587b495ca1d
             path="/cart/confirmation"
             element={
               <>

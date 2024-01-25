@@ -1,3 +1,4 @@
+<<<<<<< HEAD
 import React, { useState, useEffect } from "react";
 import styles from "./Cart.module.css";
 import pedidos from "./PedidosLista"; // Make sure this import is correct
@@ -9,10 +10,18 @@ import { toast } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
 import { ToastContainer } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
+=======
+import React, { useState, useEffect } from 'react';
+import styles from './Cart.module.css';
+import pedidos from './PedidosLista'; // Make sure this import is correct
+import RestaurantesList from '../Restaurantes/RestaurantesLista';
+import { useNavigate } from 'react-router-dom';
+>>>>>>> a032e314c5620120528d8f240c502587b495ca1d
 
 const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
   const [modal, setmodal] = useState(false);
   const [price, setPrice] = useState(0);
+<<<<<<< HEAD
   const [paymentMethod, setPaymentMethod] = useState("");
   const [address, setAddress] = useState("");
   const Navigate = useNavigate();
@@ -43,6 +52,9 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
   };
 
   const [usersList, setUsersList] = useState([]);
+=======
+  const Navigate = useNavigate();
+>>>>>>> a032e314c5620120528d8f240c502587b495ca1d
 
   const handleRemove = (itemToRemove) => {
     setCartItems(cartItems.filter((item) => item !== itemToRemove));
