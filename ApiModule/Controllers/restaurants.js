@@ -1,5 +1,6 @@
 const Restaurant = require("../Models/restaurant");
 const FileContainer = require("../Models/fileContainer");
+const FileContent = require("../Models/fileContent");
 const Box = require("../Models/box");
 const restaurantAdmin = require("../Models/restaurantsAdmins");
 const user = require("../Models/user");
@@ -50,7 +51,6 @@ const restaurantController = {
   // Criar um novo restaurante
   createRestaurant: async (req, res) => {
     const {
-      // Dados do restaurante a receber
       campanyName,
       deliveryFee,
       businessHours,
@@ -60,7 +60,11 @@ const restaurantController = {
       Address,
       userId,
       staffId,
+      img,
+      category,
     } = req.body;
+
+    console.log(req.body);
 
     if (
       !userId ||
@@ -69,73 +73,89 @@ const restaurantController = {
       !deliveryFee ||
       !contactEmail ||
       !contactPhone ||
-      !deliversToHome ||
       !Address ||
-      !staffId
+      !staffId ||
+      !category
     ) {
-      // Verificar se todos os dados foram recebidos
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
       });
     }
 
-    let BoxID, ContainerID; // IDs que serão gerados
-    let novoRestaurante = new Restaurant({
-      // Criar novo restaurante com os dados recebidos
-      campanyName,
-      deliveryFee,
-      businessHours,
-      contactEmail,
-      contactPhone,
-      deliversToHome,
-      BoxID,
-      ContainerID,
-      Address,
-    });
+    const imgData = img && img.split(";base64,").pop();
 
-    const novoContainer = new FileContainer(); // Criar o container com data de criação atual
-    const novoBox = new Box(); // Criar a box com data de criação atual
+    if (!imgData) {
+      return res.status(400).json({
+        success: false,
+        message: "Imagem não recebida ou inválida!",
+      });
+    }
 
     try {
-      // Tentar guardar o restaurante, o container e a box
+      const newImage = await new FileContent({
+        img: Buffer.from(imgData, "base64"),
+      }).save();
 
-      if ((await isAdmin(userId)) == false) {
+      let BoxID, ContainerID;
+      let novoRestaurante = new Restaurant({
+        campanyName,
+        deliveryFee,
+        businessHours,
+        contactEmail,
+        contactPhone,
+        deliversToHome,
+        BoxID,
+        ContainerID,
+        Address,
+        type: category,
+      });
+
+      if (!(await isAdmin(userId))) {
         return res.status(401).json({
           success: false,
           userId,
           message: "Acesso negado!",
         });
-      } else {
-        const containerSalvo = await novoContainer.save();
-        const boxSalvo = await novoBox.save();
-        BoxID = boxSalvo._id;
-        ContainerID = containerSalvo._id;
-        const restauranteSalvo = await novoRestaurante.save();
-        // Atualizar o restaurante c/ as FKs
-        await Restaurant.findByIdAndUpdate(
-          restauranteSalvo._id,
-          { BoxID, ContainerID },
-          { new: true }
-        );
-        await restaurantAdmin.create({
-          campanyId: restauranteSalvo._id,
-          userId: staffId,
-        });
-
-        await createLog(
-          "create",
-          `Restaurante ${campanyName} criado com sucesso!`,
-          userId,
-          restauranteSalvo._id,
-          true
-        );
-
-        res.status(201).json({
-          success: true,
-          message: "Restaurante criado com sucesso!",
-        });
       }
+
+      const novoContainer = new FileContainer({
+        dateCreated: Date.now(),
+        binaryId: newImage._id || null,
+      });
+
+      const novoBox = new Box();
+      const containerSalvo = await novoContainer.save();
+      const boxSalvo = await novoBox.save();
+
+      BoxID = boxSalvo._id;
+      ContainerID = containerSalvo._id;
+
+      const restauranteSalvo = await novoRestaurante.save();
+
+      await Restaurant.findByIdAndUpdate(
+        restauranteSalvo._id,
+        { BoxID, ContainerID },
+        { new: true }
+      );
+
+      await restaurantAdmin.create({
+        campanyId: restauranteSalvo._id,
+        userId: staffId,
+      });
+
+      await createLog(
+        "create",
+        `Restaurante ${campanyName} criado com sucesso!`,
+        userId,
+        restauranteSalvo._id,
+        true
+      );
+
+      res.status(201).json({
+        success: true,
+        message: "Restaurante criado com sucesso!",
+      });
     } catch (err) {
       res.status(400).json({
         success: false,
@@ -192,6 +212,7 @@ const restaurantController = {
       deliversToHome,
       Address,
       userId,
+      category,
     } = req.body;
 
     if (
@@ -202,7 +223,8 @@ const restaurantController = {
       !contactEmail ||
       !contactPhone ||
       !deliversToHome ||
-      !Address
+      !Address ||
+      !category
     ) {
       // Verificar se todos os dados foram recebidos
       return res.status(400).json({
@@ -229,6 +251,7 @@ const restaurantController = {
           contactPhone,
           deliversToHome,
           Address,
+          category,
         },
         { new: true }
       );
@@ -497,6 +520,59 @@ const restaurantController = {
         success: false,
         message: err.message || "Ocorreu um erro ao apagar o admin.",
       });
+    }
+  },
+
+  getBasicInfos: async (req, res) => {
+    // Obter apenas o id, nome e imagem dos restaurantes
+    try {
+      const restaurantes = await Restaurant.find(
+        {},
+        { campanyName: 1, ContainerID: 1 }
+      );
+
+      const restaurantesComImagens = await Promise.all(
+        restaurantes.map(async (restaurante) => {
+          const container = await FileContainer.findOne({
+            _id: restaurante.ContainerID,
+          });
+
+          if (container) {
+            const fileContent = await FileContent.findOne({
+              _id: container.binaryId,
+            });
+
+            if (fileContent) {
+              const imgBase64 = fileContent.img.toString("base64");
+
+              return {
+                id: restaurante._id,
+                campanyName: restaurante.campanyName,
+                img: imgBase64,
+              };
+            } else {
+              console.log(
+                "File Content not found for restaurant:",
+                restaurante.campanyName
+              );
+              return null;
+            }
+          } else {
+            console.log(
+              "Container not found for restaurant:",
+              restaurante.campanyName
+            );
+            return null;
+          }
+        })
+      );
+
+      console.log("Restaurantes com imagens:", restaurantesComImagens);
+
+      res.json(restaurantesComImagens.filter(Boolean));
+    } catch (error) {
+      console.error(error);
+      res.status(500).json({ message: "Erro ao buscar restaurantes." });
     }
   },
 };

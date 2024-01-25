@@ -3,6 +3,7 @@ import { useNavigate } from "react-router-dom";
 import axios from "axios";
 import { toast, ToastContainer } from "react-toastify";
 import "react-toastify/dist/ReactToastify.css";
+import "./create.css";
 
 function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
   const Navigate = useNavigate();
@@ -24,6 +25,8 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
     Address: "",
     UserId: "",
     closingDays: {},
+    category: "",
+    image: null,
   });
 
   const [usersList, setUsersList] = useState([]);
@@ -32,7 +35,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const url = "http://localhost:9000/admin/users";
+        const url = "http://192.168.1.115:9000/admin/users";
         const response = await axios.get(url, {
           headers: {
             Authorization: token,
@@ -48,30 +51,28 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
     fetchUsers();
   }, []);
 
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      // Lê o arquivo como base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewRestaurant((prevRestaurant) => ({
+          ...prevRestaurant,
+          image: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
+
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewRestaurant((prevRestaurant) => ({
       ...prevRestaurant,
       [name]: value,
     }));
-  };
-  const handleImageChange = (e) => {
-    const imageFile = e.target.files[0];
-    getBase64(imageFile).then((base64Image) => {
-      setNewRestaurant((prevRestaurant) => ({
-        ...prevRestaurant,
-        image: base64Image,
-      }));
-    });
-  };
-
-  const getBase64 = (file) => {
-    return new Promise((resolve, reject) => {
-      const reader = new FileReader();
-      reader.readAsDataURL(file);
-      reader.onload = () => resolve(reader.result);
-      reader.onerror = (error) => reject(error);
-    });
   };
 
   const handleBusinessHoursChange = (day, type, value) => {
@@ -112,7 +113,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
 
     try {
       const token = localStorage.getItem("token");
-      const url = "http://localhost:9000/admin/restaurants";
+      const url = "http://192.168.1.115:9000/admin/restaurants";
       const response = await axios.post(
         url,
         {
@@ -123,8 +124,10 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
           contactPhone: newRestaurant.contactPhone,
           deliversToHome: newRestaurant.deliversToHome,
           Address: newRestaurant.Address,
-          staffId: newRestaurant.UserId,
           userId: newRestaurant.UserId,
+          staffId: newRestaurant.UserId,
+          category: newRestaurant.category,
+          img: newRestaurant.image,
         },
         {
           headers: {
@@ -156,10 +159,9 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
           deliversToHome: false,
           Address: "",
           UserId: "",
-          StaffId: "",
           closingDays: {},
+          category: "",
         });
-
         toast.success("Restaurante criado com sucesso!");
         setTimeout(() => {
           Navigate("/admin");
@@ -168,6 +170,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
         toast.error("Não conseguimos criar o seu restaurante!");
       }
     } catch (error) {
+      console.error("Error creating restaurant:", error);
       toast.error(error.response.data.message);
     }
   };
@@ -175,143 +178,176 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
   return (
     <>
       <div>
-        <label>
-          Company Name:
-          <input
-            type="text"
-            name="companyName"
-            value={newRestaurant.companyName}
-            onChange={handleInputChange}
-          />
-        </label>
-        <p />
+        <div className="border-item">
+          <label>
+            Company Name:
+            <input
+              type="text"
+              name="campanyName"
+              value={newRestaurant.campanyName}
+              onChange={handleInputChange}
+            />
+          </label>
+          <p />
 
-        <label>
-          Delivery Fee:
-          <input
-            type="number"
-            name="deliveryFee"
-            value={newRestaurant.deliveryFee}
-            onChange={handleInputChange}
-          />
-        </label>
-        <p />
+          <label>
+            Delivery Fee:
+            <input
+              type="number"
+              name="deliveryFee"
+              value={newRestaurant.deliveryFee}
+              onChange={handleInputChange}
+            />
+          </label>
+          <p />
 
-        {/* Input fields for business hours */}
-        {Object.keys(newRestaurant.businessHours).map((day) => (
-          <div key={day}>
-            <label>
-              {day}:
-              <input
-                type="number"
-                min="0"
-                max="24"
-                value={newRestaurant.businessHours[day].open}
-                onChange={(e) =>
-                  handleBusinessHoursChange(day, "open", e.target.value)
-                }
-                placeholder="Open"
-                disabled={newRestaurant.closingDays[day]}
-              />
-              <input
-                type="number"
-                min="0"
-                max="24"
-                value={newRestaurant.businessHours[day].close}
-                onChange={(e) =>
-                  handleBusinessHoursChange(day, "close", e.target.value)
-                }
-                placeholder="Close"
-                disabled={newRestaurant.closingDays[day]}
-              />
+          {/* Input fields for business hours */}
+          {Object.keys(newRestaurant.businessHours).map((day) => (
+            <div key={day}>
               <label>
-                Closing Day:
+                {day}:
                 <input
-                  type="checkbox"
-                  onChange={() => handleCheckboxChange(day)}
+                  type="number"
+                  min="0"
+                  max="24"
+                  value={newRestaurant.businessHours[day].open}
+                  onChange={(e) =>
+                    handleBusinessHoursChange(day, "open", e.target.value)
+                  }
+                  placeholder="Open"
+                  disabled={newRestaurant.closingDays[day]}
                 />
+                <input
+                  type="number"
+                  min="0"
+                  max="24"
+                  value={newRestaurant.businessHours[day].close}
+                  onChange={(e) =>
+                    handleBusinessHoursChange(day, "close", e.target.value)
+                  }
+                  placeholder="Close"
+                  disabled={newRestaurant.closingDays[day]}
+                />
+                <label>
+                  Closing Day:
+                  <input
+                    type="checkbox"
+                    onChange={() => handleCheckboxChange(day)}
+                  />
+                </label>
               </label>
-            </label>
-          </div>
-        ))}
+            </div>
+          ))}
 
-        <label>
-          Contact Email:
-          <input
-            type="email"
-            name="contactEmail"
-            value={newRestaurant.contactEmail}
-            onChange={handleInputChange}
-          />
-        </label>
-        <p />
+          <label>
+            Contact Email:
+            <input
+              type="email"
+              name="contactEmail"
+              value={newRestaurant.contactEmail}
+              onChange={handleInputChange}
+            />
+          </label>
+          <p />
 
-        <label>
-          Contact Phone:
-          <input
-            type="text"
-            name="contactPhone"
-            value={newRestaurant.contactPhone}
-            onChange={handleInputChange}
-          />
-        </label>
-        <p />
+          <label>
+            Contact Phone:
+            <input
+              type="text"
+              name="contactPhone"
+              value={newRestaurant.contactPhone}
+              onChange={handleInputChange}
+            />
+          </label>
+          <p />
 
-        <label>
-          Address:
-          <input
-            type="text"
-            name="address"
-            value={newRestaurant.address}
-            onChange={handleInputChange}
-          />
-        </label>
-        <p />
+          <label>
+            Address:
+            <input
+              type="text"
+              name="Address"
+              value={newRestaurant.Address}
+              onChange={handleInputChange}
+            />
+          </label>
+          <p />
 
-        <label>
-          Delivers to Home:
-          <input
-            type="checkbox"
-            name="deliversToHome"
-            checked={newRestaurant.deliversToHome}
-            onChange={() =>
-              setNewRestaurant((prevRestaurant) => ({
-                ...prevRestaurant,
-                deliversToHome: !prevRestaurant.deliversToHome,
-              }))
-            }
-          />
-        </label>
-        <p />
+          <label>
+            Select Image:
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+          </label>
+          <p />
 
-        <label>
-          User ID:
-          <select
-            name="userId"
-            value={newRestaurant.userId}
-            onChange={handleInputChange}
-          >
-            <option value="" disabled>
-              Select a user
-            </option>
-            {usersList.map((user) => (
-              <option key={user._id} value={user._id}>
-                {user.firstName} {user.lastName}
+          {/* Exibir a imagem */}
+          {newRestaurant.image && (
+            <img
+              src={newRestaurant.image}
+              alt="Selected Restaurant Image"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "200px",
+                borderRadius: "200px",
+                bordercolor: "black",
+              }}
+            />
+          )}
+        </div>
+        <div className="border-last-item">
+          <label>
+            Delivers to Home:
+            <input
+              type="checkbox"
+              name="deliversToHome"
+              checked={newRestaurant.deliversToHome}
+              onChange={() =>
+                setNewRestaurant((prevRestaurant) => ({
+                  ...prevRestaurant,
+                  deliversToHome: !prevRestaurant.deliversToHome,
+                }))
+              }
+            />
+          </label>
+          <p></p>
+          <br />
+
+          <label>
+            Categoria:
+            <select
+              name="category"
+              value={newRestaurant.category}
+              onChange={handleInputChange}
+            >
+              <option value="">Seleciona a categoria</option>
+              <option value="pizza">Pizza</option>
+              <option value="cafe">Café</option>
+              <option value="fastfood">FastFood</option>
+              <option value="asiatico">Asiatico</option>
+              <option value="sandes">Sandes</option>
+              <option value="gelataria">Gelataria</option>
+              <option value="pastelaria">Pastelaria</option>
+            </select>
+          </label>
+          <p></p>
+          <br />
+
+          <label>
+            User ID:
+            <select
+              name="UserId"
+              value={newRestaurant.UserId}
+              onChange={handleInputChange}
+            >
+              <option value="" disabled>
+                Select a user
               </option>
-            ))}
-          </select>
-        </label>
-        <p />
-
-        <label>
-          Imagem:
-          <input
-            type="file"
-            name="image"
-            accept="image/*"
-            onChange={handleImageChange}
-          />
-        </label>
+              {usersList.map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.firstName} {user.lastName}
+                </option>
+              ))}
+            </select>
+          </label>
+        </div>
 
         <button onClick={createRestaurant}>Create Restaurant</button>
       </div>

@@ -1,21 +1,23 @@
-import React, { useState, useEffect } from 'react';
-import RestaurantesList from '../Restaurantes/RestaurantesLista';
-import ProductsLista from '../MyRestaurante/ProductsLista';
-import { useNavigate, useParams } from 'react-router-dom';
-import './RestaurantesId.css';
+import React, { useState, useEffect } from "react";
+import RestaurantesList from "../Restaurantes/RestaurantesLista";
+import ProductsLista from "../MyRestaurante/ProductsLista";
+import { useNavigate, useParams } from "react-router-dom";
+import "./RestaurantesId.css";
 
 const RestaurantesId = ({ cartItems, setCartItems }) => {
   const { restaurantId } = useParams();
   const Navigate = useNavigate();
 
   const [restaurantInfo, setRestaurantInfo] = useState({
-    name: '',
-    logo: '',
+    name: "",
+    logo: "",
     workingDays: {},
   });
 
   useEffect(() => {
-    const fetchedRestaurant = RestaurantesList.find(restaurant => restaurant.id === restaurantId);
+    const fetchedRestaurant = RestaurantesList.find(
+      (restaurant) => restaurant.id === restaurantId
+    );
 
     if (fetchedRestaurant) {
       setRestaurantInfo({
@@ -27,12 +29,14 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
   }, [restaurantId]);
 
   // Filter ProductsLista based on the current restaurantId
-  const filteredProducts = ProductsLista.filter(produto => produto.restaurantId === restaurantId);
+  const filteredProducts = ProductsLista.filter(
+    (produto) => produto.restaurantId === restaurantId
+  );
 
-  const addToCart = produto => {
-    const isItemInCart = cartItems.some(item => item.id === produto.id);
+  const addToCart = (produto) => {
+    const isItemInCart = cartItems.some((item) => item.id === produto.id);
     if (isItemInCart) {
-      alert('Produto já adicionado ao carrinho');
+      alert("Produto já adicionado ao carrinho");
       return;
     }
     setCartItems([...cartItems, produto]);
@@ -41,19 +45,27 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
   return (
     <div className="container">
       <div className="MyRestaurante-Name">
-        <h1>
+        <h1 className="titulo_restaurante">
           {restaurantInfo.name}
-          <img src={restaurantInfo.logo} className="MyRestaurant-Logo" alt={`${restaurantInfo.name} Logo`} />
+          <img
+            src={restaurantInfo.logo}
+            className="MyRestaurant-Logo"
+            alt={`${restaurantInfo.name} Logo`}
+          />
         </h1>
       </div>
       <div className="MyRestaurante-Products">
-        <h3 style={{ marginTop: '10px' }}>Produtos</h3>
+        <h3 style={{ marginTop: "10px" }}>Produtos</h3>
         <div className="grid-containerProduto">
-          {filteredProducts.map(produto => (
+          {filteredProducts.map((produto) => (
             <div className="grid-itemProduto" key={produto.id}>
-              <img className="imagemProduto" src={produto.image} alt={produto.name} />
+              <img
+                className="imagemProduto"
+                src={produto.image}
+                alt={produto.name}
+              />
               <p>{produto.name}</p>
-              <p>{produto.price + '€'}</p>
+              <p>{produto.price + "€"}</p>
               <button onClick={() => addToCart(produto)}>Adicionar</button>
             </div>
           ))}
@@ -67,7 +79,7 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
           ))}
         </ul>
       </div>
-      <button onClick={() => Navigate('/admin')}> aaaaaa</button>
+      <button onClick={() => Navigate("/admin")}> aaaaaa</button>
     </div>
   );
 };

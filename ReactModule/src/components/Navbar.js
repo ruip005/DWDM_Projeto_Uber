@@ -12,7 +12,7 @@ const Navbar = (cartItems) => {
   const [userInfo, setUserInfo] = useState(null);
 
   const getUserInfo = async () => {
-    const url = `http://localhost:9000/user/infos`;
+    const url = `http://192.168.1.115:9000/user/infos`;
 
     try {
       const token = localStorage.getItem("token");
@@ -93,16 +93,6 @@ const Navbar = (cartItems) => {
           <div className={styles.optionsNav}>
             {!checkUse() ? (
               <>
-                <span className={styles.cart}>
-                  <Link to="/cart">
-                    <FaShoppingCart
-                      style={{ position: "absolute", right: "170px" }}
-                    />
-                    <span className={styles.cartCount}>
-                      {cartItems.cartItems.length}
-                    </span>
-                  </Link>
-                </span>
                 <NavLink
                   to="/login"
                   element={<Login />}
@@ -110,25 +100,44 @@ const Navbar = (cartItems) => {
                 >
                   Entrar
                 </NavLink>
-                <NavLink
+                {/*<NavLink
                   to="/register"
                   element={<Register />}
                   className={styles.navLink}
                 >
                   Registar
-                </NavLink>
+            </NavLink>*/}
               </>
             ) : (
-              <NavLink
-                to="/"
-                className={styles.navLink}
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.reload();
-                }}
-              >
-                Logout
-              </NavLink>
+              <>
+                <span className={styles.cart}>
+                  <Link to="/cart">
+                    <FaShoppingCart
+                      style={{ position: "absolute", right: "170px" }}
+                    />
+                    <span
+                      style={{
+                        position: "absolute",
+                        right: "154px",
+                        top: "10px",
+                      }}
+                      className={styles.cartCount}
+                    >
+                      {cartItems.cartItems.length}
+                    </span>
+                  </Link>
+                </span>
+                <NavLink
+                  to="/"
+                  className={styles.navLink}
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                  }}
+                >
+                  Logout
+                </NavLink>
+              </>
             )}
           </div>
         </div>

@@ -23,6 +23,7 @@ import Cart from "./pages/Cart/Cart.js";
 import Pedidos from "./pages/Pedidos/Pedidos.js";
 import Pendente from "./pages/Pedidos/Pendente.js";
 import pedidos from "./pages/Cart/PedidosLista.js";
+import Confirmation from "./pages/Cart/Confirmation/Confirmation.js";
 
 // Components
 const App = () => {
@@ -180,6 +181,18 @@ const App = () => {
                     PedidosLista={PedidosLista}
                     setPedidosLista={setPedidosLista}
                   />
+                </div>
+                <Footer />
+              </>
+            }
+          />
+          <Route
+            path="/cart/confirmation"
+            element={
+              <>
+                <Navbar cartItems={cartItems} />
+                <div className="container">
+                  <Confirmation></Confirmation>
                 </div>
                 <Footer />
               </>

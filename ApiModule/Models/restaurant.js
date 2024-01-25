@@ -13,71 +13,71 @@ const restauranteSchema = new mongoose.Schema({
     Monday: {
       open: {
         type: String,
-        required: true,
+        required: false,
       },
       close: {
         type: String,
-        required: true,
+        required: false,
       },
     },
     Tuesday: {
       open: {
         type: String,
-        required: true,
+        required: false,
       },
       close: {
         type: String,
-        required: true,
+        required: false,
       },
     },
     Wednesday: {
       open: {
         type: String,
-        required: true,
+        required: false,
       },
       close: {
         type: String,
-        required: true,
+        required: false,
       },
     },
     Thursday: {
       open: {
         type: String,
-        required: true,
+        required: false,
       },
       close: {
         type: String,
-        required: true,
+        required: false,
       },
     },
     Friday: {
       open: {
         type: String,
-        required: true,
+        required: false,
       },
       close: {
         type: String,
-        required: true,
+        required: false,
       },
     },
     Saturday: {
       open: {
         type: String,
-        required: true,
+        required: false,
       },
       close: {
         type: String,
-        required: true,
+        required: false,
       },
     },
     Sunday: {
       open: {
         type: String,
-        required: true,
+        required: false,
       },
       close: {
         type: String,
-        required: true,
+        required: false,
       },
     },
   },
@@ -108,6 +108,10 @@ const restauranteSchema = new mongoose.Schema({
   Address: {
     type: String,
     required: true,
+  },
+  type: {
+    type: String,
+    required: false,
   },
 });
 

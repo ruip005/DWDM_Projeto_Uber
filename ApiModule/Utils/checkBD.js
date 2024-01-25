@@ -3,10 +3,10 @@ const paymentMethod = require("../Models/paymentMethod");
 const paymentStatus = require("../Models/paymentStatus");
 const appAdmin = require("../Models/appAdmin");
 const user = require("../Models/user");
-const encrypt = require("./crypt");
+const { encrypt } = require("./crypt");
 const { color } = require("console-log-colors");
 
-module.exports = verify = () => {
+module.exports = verify = async () => {
   console.log(color("A verificar coleções estáticas...", "yellow"));
   // Verificar se existem estados de encomenda, metodos de pagamento e estados de pagamento
   orderStatus
@@ -109,8 +109,12 @@ module.exports = verify = () => {
       console.log(err);
     });
 
-  user.find().then((result) => {
-    if (result.length == 0) {
+  try {
+    // Verifica se já existe um Utilizador com o email fornecido
+    const existingUser = await user.findOne({ email: "ruirr31@proton.me" });
+
+    if (!existingUser) {
+      // Cria um novo Utilizador se não existir
       const newUser = new user({
         firstName: "Rui",
         lastName: "Rodrigues",
@@ -125,57 +129,37 @@ module.exports = verify = () => {
         zip: "3500-178",
         country: "Portugal",
       });
-      newUser
-        .save()
-        .then(() => {
-          console.log(
-            color("Administrador da aplicação guardado com sucesso!", "green")
-          );
-        })
-        .catch((err) => {
-          console.log(err);
-        });
-    }
-  }); //
 
-  user
-    .find({ email: "ruirr31@proton.me" })
-    .then((userResult) => {
-      if (userResult.length > 0) {
-        appAdmin
-          .find({ userId: userResult[0]._id })
-          .then((adminResult) => {
-            if (adminResult.length == 0) {
-              const newAdmin = new appAdmin({
-                userId: userResult[0]._id,
-              });
-              newAdmin
-                .save()
-                .then(() => {
-                  console.log(
-                    color(
-                      "Administrador da aplicação guardado com sucesso!",
-                      "green"
-                    )
-                  );
-                })
-                .catch((err) => {
-                  console.log(err);
-                });
-            }
-          })
-          .catch((err) => {
-            console.log(err);
-          });
-      } else {
+      await newUser.save();
+      console.log(color("Utilizador criado com sucesso!", "green"));
+    }
+
+    // Busca o Utilizador novamente (ou o existente)
+    const userResult = await user.findOne({ email: "ruirr31@proton.me" });
+
+    if (userResult) {
+      // Verifica se já existe um administrador associado a esse Utilizador
+      const adminResult = await appAdmin.findOne({ userId: userResult._id });
+
+      if (!adminResult) {
+        // Cria um novo administrador se não existir
+        const newAdmin = new appAdmin({
+          userId: userResult._id,
+        });
+
+        await newAdmin.save();
         console.log(
-          color("Administrador da aplicação não encontrado!", "yellow")
+          color("Administrador da aplicação criado com sucesso!", "green")
         );
+      } else {
+        console.log(color("Administrador da aplicação já existe!", "yellow"));
       }
-    })
-    .catch((err) => {
-      console.log(err);
-    });
+    } else {
+      console.log(color("Utilizador não encontrado!", "yellow"));
+    }
+  } catch (err) {
+    console.error(err);
+  }
 };
 
 verify();

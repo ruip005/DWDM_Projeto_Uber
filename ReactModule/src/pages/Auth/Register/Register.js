@@ -25,19 +25,17 @@ export const Register = () => {
   const submitForm = (e) => {
     e.preventDefault();
 
-    // Verifica se as senhas coincidem
     if (!validatePasswords()) {
       alert("As senhas não coincidem!");
       return;
     }
 
-    // Verifica se o último nome é válido
     if (!userData.lastName.trim()) {
       alert("O último nome é obrigatório!");
       return;
     }
 
-    const url = "http://localhost:9000/user/profile";
+    const url = "http://192.168.1.115:9000/user/profile";
     axios
       .post(url, {
         name: userData.lastName,
@@ -53,6 +51,7 @@ export const Register = () => {
       })
       .catch(function (error) {
         try {
+          console.log(error.response.data);
           toast.error(error.response.data.message);
         } catch (err) {
           toast.error("Erro ao criar conta!");

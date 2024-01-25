@@ -528,6 +528,7 @@ const userController = {
           firstName: userExist.firstName,
           lastName: userExist.lastName,
           email: userExist.email,
+          state: userExist.state,
           userId: userExist._id,
         },
         secret

@@ -3,8 +3,8 @@ import { useNavigate } from "react-router-dom";
 import ProductsLista from "../ProductsLista";
 import { useParams } from "react-router-dom";
 import { useEffect } from "react";
-import RestaurantesList from "../../Restaurantes/RestaurantesLista";
 import axios from "axios";
+import RestaurantesId from "../../Restaurantes/RestaurantesId";
 
 function AddNewProduct() {
   const { restaurantId } = useParams();
@@ -17,24 +17,27 @@ function AddNewProduct() {
     image: null,
   });
 
-  const [restaurantInfo, setRestaurantInfo] = useState({
-    name: "",
-    logo: "",
-    workingDays: {},
-  });
+  const [restaurant, setRestaurant] = useState({});
 
   useEffect(() => {
-    const fetchedRestaurant = RestaurantesList.find(
-      (restaurant) => restaurant.id === restaurantId
-    );
+    const fetchRestaurants = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const url = `http://192.168.1.115:9000/user/restaurants/${restaurantId}`;
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const data = response.data.restaurante;
+        console.log(data);
+        setRestaurant(data);
+      } catch (error) {
+        console.error("Error fetching restaurants:", error);
+      }
+    };
 
-    if (fetchedRestaurant) {
-      setRestaurantInfo({
-        name: fetchedRestaurant.name,
-        logo: fetchedRestaurant.image,
-        workingDays: fetchedRestaurant.workingDays,
-      });
-    }
+    fetchRestaurants();
   }, [restaurantId]);
 
   function getBase64(file) {
@@ -94,20 +97,23 @@ function AddNewProduct() {
   const handleAddProduct = async () => {
     try {
       const token = localStorage.getItem("token");
-      const url = `http://192.168.1.2:9000/restaurant/product/${restaurantId}`;
+      const url = `http://192.168.1.115:9000/restaurant/product/`;
 
       const response = await axios.post(
         url,
         {
-          name: newProduct.name, 
+          name: newProduct.name,
           price: newProduct.price,
           description: newProduct.description,
           quantity: "1",
-         
+          userId: "teste",
         },
         {
           headers: {
             Authorization: token,
+          },
+          params: {
+            id: restaurantId,
           },
         }
       );
@@ -129,16 +135,16 @@ function AddNewProduct() {
     <div className="container">
       <div className="MyRestaurante-Name">
         <h1>
-          {restaurantInfo.name}
+          {restaurant.campanyName}
           <img
-            src={restaurantInfo.logo}
+            src={restaurant.logo}
             className="MyRestaurant-Logo"
-            alt={restaurantInfo.name + " Logo"}
+            alt={restaurant.name + " Logo"}
           />
         </h1>
       </div>
       <div className="AddNewProduct-Form">
-        <h2>Adicionar Novo Produto</h2>
+        <h2>Adicionar Novo Produto </h2>
         <form>
           <label>
             Nome do Produto:
@@ -179,6 +185,7 @@ function AddNewProduct() {
             />
           </label>
           <p />
+
           <button type="button" onClick={handleAddProduct}>
             Adicionar Produto
           </button>

@@ -10,7 +10,7 @@ export const Restaurantes = () => {
   const [restaurantesList, setRestaurantesList] = useState([]);
 
   useEffect(() => {
-    const url = "http://localhost:9000/user/restaurants";
+    const url = "https://98a3-89-155-175-148.ngrok-free.app/user/restaurants";
     axios
       .get(url)
       .then((response) => {

@@ -20,6 +20,9 @@ const restaurantStaffController = {
       size,
     } = req.body;
 
+    console.log(req.body);
+    console.log(req.params);
+
     if (!id) {
       return res.status(400).json({
         success: false,

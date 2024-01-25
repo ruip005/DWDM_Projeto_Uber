@@ -4,10 +4,11 @@ const order = require("../Models/order");
 const orderStatus = require("../Models/orderStatus");
 const ingredient = require("../Models/ingredients");
 const paymentStatus = require("../Models/paymentStatus");
+const paymentMethod = require("../Models/paymentMethod");
+const user = require("../Models/user");
 const { createLog } = require("../Utils/Logs");
 const createImage = require("../Utils/saveImage");
 const deleteImage = require("../Utils/deleteImage");
-const user = require("../Models/user");
 const { isAdmin } = require("../Utils/middleware");
 
 const appController = {
@@ -253,6 +254,7 @@ const appController = {
       orderPaymentMethod,
     } = req.body;
 
+    console.log(req.body);
     if (
       !userId ||
       !restaurantId ||
@@ -319,6 +321,22 @@ const appController = {
     }
   },
 
+  getPaymentMethods: async (req, res) => {
+    try {
+      const paymentMethods = await paymentMethod.find();
+
+      res.json({
+        success: true,
+        paymentMethods,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message:
+          err.message || "Ocorreu um erro ao obter os métodos de pagamento.",
+      });
+    }
+  },
   /*
     updateOrder: async (req, res) => {
     },*/
