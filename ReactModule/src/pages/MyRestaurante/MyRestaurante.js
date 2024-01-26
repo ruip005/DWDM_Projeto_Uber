@@ -13,7 +13,7 @@ const MyRestaurante = () => {
     const fetchRestaurants = async () => {
       try {
         const token = localStorage.getItem("token");
-        const url = `http://192.168.1.115:9000/user/restaurants/${restaurantId}`;
+        const url = `http://localhost:9000/user/restaurants/${restaurantId}`;
         const response = await axios.get(url, {
           headers: {
             Authorization: token,

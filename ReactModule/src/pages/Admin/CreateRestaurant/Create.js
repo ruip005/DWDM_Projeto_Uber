@@ -35,7 +35,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
     const fetchUsers = async () => {
       try {
         const token = localStorage.getItem("token");
-        const url = "http://192.168.1.115:9000/admin/users";
+        const url = "http://localhost:9000/admin/users";
         const response = await axios.get(url, {
           headers: {
             Authorization: token,
@@ -113,7 +113,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
 
     try {
       const token = localStorage.getItem("token");
-      const url = "http://192.168.1.115:9000/admin/restaurants";
+      const url = "http://localhost:9000/admin/restaurants";
       const response = await axios.post(
         url,
         {

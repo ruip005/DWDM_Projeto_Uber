@@ -16,14 +16,16 @@ function Admin({ PedidosLista }) {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
-      const url = "http://192.168.1.115:9000/admin/users";
+      const url = "http://localhost:9000/admin/users";
       const response = await axios.get(url, {
         headers: {
           Authorization: token,
         },
       });
+      console.log("API Response:", response);
       const data = response.data.utilizadores;
       setUsersList(data);
+      console.log("lista de users :" + data)
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -33,11 +35,13 @@ function Admin({ PedidosLista }) {
     fetchUsers();
   }, []);
 
+  
+
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
         const token = localStorage.getItem("token");
-        const url = "http://192.168.1.115:9000/user/restaurants";
+        const url = "http://localhost:9000/user/restaurants";
         const response = await axios.get(url, {
           headers: {
             Authorization: token,
@@ -45,7 +49,7 @@ function Admin({ PedidosLista }) {
         });
         const data = response.data.restaurantes; // Access 'restaurantes' property
         setRestaurantes(data);
-        const url2 = "http://192.168.1.115:9000/system/image";
+        const url2 = "http://localhost:9000/system/image";
         const response2 = await axios.get(url2, {
           headers: {
             Authorization: token,
@@ -65,11 +69,15 @@ function Admin({ PedidosLista }) {
     Navigate(`/myrestaurant/${restaurantId}`);
   };
 
-  const [users, setUsers] = useState([usersList]);
+  const [users, setUsers] = useState([]);
 
   useEffect(() => {
-    console.log(usersList);
-  });
+    setUsers(usersList);
+  }, [usersList]);
+
+  useEffect(() => {
+    console.log("lista: " + usersList);
+  }, []);
 
   useEffect(() => {
     const updateRestaurantes = (updatedList) => {
@@ -166,12 +174,12 @@ function Admin({ PedidosLista }) {
             </tr>
           </thead>
           <tbody>
-            {users.map((user) => (
-              <tr key={user._id}>
-                <td>{`${user.firstName} ${user.lastName}`}</td>
-                <td>{user.email}</td>
-              </tr>
-            ))}
+          {users.map((user) => (
+  <tr key={user._id}>
+    <td>{`${user.firstName} ${user.lastName}`}</td>
+    <td>{user.email}</td>
+  </tr>
+))}
           </tbody>
         </table>
       )}

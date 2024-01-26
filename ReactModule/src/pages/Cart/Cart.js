@@ -13,6 +13,7 @@ import { jwtDecode } from "jwt-decode";
 const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
   const [modal, setmodal] = useState(false);
   const [price, setPrice] = useState(0);
+  const [items, setItems] = useState([]);
   const [paymentMethod, setPaymentMethod] = useState("");
   const [address, setAddress] = useState("");
   const Navigate = useNavigate();
@@ -83,6 +84,16 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
     });
     setPrice(ans);
   };
+  useEffect(() => {
+    // Map the cart items whenever cartItems change
+    const updatedItems = cartItems.map((item) => ({
+      name: item.name,
+      quantity: item.quantity,
+    }));
+
+    // Update the state with the new items
+    setItems(updatedItems);
+  }, [cartItems]);
 
   /*const handlePedido = () => {
     const restaurantId = cartItems[0]?.restaurantId;
@@ -110,14 +121,12 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
     console.log('New order:', newOrder);
   };*/
   const handlePedido = async () => {
-    try {
-      const token = localStorage.getItem("token");
-      const url = `http://192.168.1.115:9000/system/order`;
-
-      const items = cartItems.map((item) => ({
-        name: item.name,
-        quantity: item.quantity,
-      }));
+    try{
+      console.log("1")
+      //const token = localStorage.getItem("token");
+      const url = `http://localhost:9000/system/order`;
+      console.log("2")
+      
       const response = await axios.post(
         url,
         {
@@ -130,16 +139,14 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
           orderState: decoded.state,
           orderZip: "A",
           orderPaymentMethod: paymentMethod,
+          orderTotal: price,
         },
         {
           headers: {
             Authorization: token,
           },
-          params: {
-            id: restaurantId,
-          },
-        }
-      );
+        },     
+         );
 
       console.log(response.data);
       Navigate(-1);

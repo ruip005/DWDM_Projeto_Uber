@@ -1,29 +1,32 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import ProductsLista from "../ProductsLista";
-import { useParams } from "react-router-dom";
+import { useParams } from "react-router";
 import { useEffect } from "react";
 import axios from "axios";
 import RestaurantesId from "../../Restaurantes/RestaurantesId";
+import { jwtDecode } from "jwt-decode";
+
 
 function AddNewProduct() {
   const { restaurantId } = useParams();
-  const Navigate = useNavigate();
-
+  const [restaurant, setRestaurant] = useState({});
   const [newProduct, setNewProduct] = useState({
     name: "",
     price: "",
     description: "",
     image: null,
   });
-
-  const [restaurant, setRestaurant] = useState({});
-
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
+        if (!restaurantId) {
+          console.error("restaurantId is not defined");
+          return;
+        }
+  
         const token = localStorage.getItem("token");
-        const url = `http://192.168.1.115:9000/user/restaurants/${restaurantId}`;
+        const url = `http://localhost:9000/user/restaurants/${restaurantId}`;
         const response = await axios.get(url, {
           headers: {
             Authorization: token,
@@ -36,9 +39,32 @@ function AddNewProduct() {
         console.error("Error fetching restaurants:", error);
       }
     };
-
+  
     fetchRestaurants();
   }, [restaurantId]);
+  
+  
+
+  let decoded;
+  const token = localStorage.getItem("token");
+  const Navigate = useNavigate();
+
+  if (!restaurantId) {
+    // Handle the case where restaurantId is not defined
+    console.error("restaurantId is not defined");
+    return null; // or some other error handling logic
+  }
+
+  try {
+    decoded = jwtDecode(token);
+    console.log("Token decodificado:", decoded);
+  } catch (error) {
+    console.error("Erro ao decodificar o token:", error);
+  }
+
+  
+
+
 
   function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -97,7 +123,7 @@ function AddNewProduct() {
   const handleAddProduct = async () => {
     try {
       const token = localStorage.getItem("token");
-      const url = `http://192.168.1.115:9000/restaurant/product/`;
+      const url = `http://localhost:9000/restaurant/product/`;
 
       const response = await axios.post(
         url,
@@ -106,14 +132,14 @@ function AddNewProduct() {
           price: newProduct.price,
           description: newProduct.description,
           quantity: "1",
-          userId: "teste",
+          userId: decoded.userId,
+          id: restaurantId,
+          img: "path/to/image.jpg", 
+          fileContainerId: "containerId123",
         },
         {
           headers: {
             Authorization: token,
-          },
-          params: {
-            id: restaurantId,
           },
         }
       );
