@@ -7,8 +7,8 @@ const ingredient = require("../Models/ingredients");
 
 const restaurantStaffController = {
   createNewProduct: async (req, res) => {
-    const { id } = req.params;
     const {
+      id,
       name,
       description,
       price,
@@ -39,7 +39,8 @@ const restaurantStaffController = {
 
     try {
       const getRestaurant = await restaurant.find({ _id: id });
-
+      const restaurantId = getRestaurant[0]._id; // or getRestaurant._id depending on your data structure
+            
       if (!getRestaurant) {
         return res.status(400).json({
           success: false,

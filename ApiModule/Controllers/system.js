@@ -3,8 +3,6 @@ const ratingComments = require("../Models/ratingComments");
 const order = require("../Models/order");
 const orderStatus = require("../Models/orderStatus");
 const ingredient = require("../Models/ingredients");
-const paymentStatus = require("../Models/paymentStatus");
-const paymentMethod = require("../Models/paymentMethod");
 const user = require("../Models/user");
 const { createLog } = require("../Utils/Logs");
 const createImage = require("../Utils/saveImage");
@@ -251,6 +249,7 @@ const appController = {
       orderCity,
       orderState,
       orderZip,
+      orderTotal,
       orderPaymentMethod,
     } = req.body;
 
@@ -274,29 +273,22 @@ const appController = {
     try {
       const utilizador = await user.find({ _id: userId });
 
-      let total = 0;
-
-      for (let i = 0; i < items.length; i++) {
-        const item = await item.find({ _id: items[i].id });
-        total += item[0].price;
-      }
-
       const newOrder = new order({
-        userId,
-        orderDate: Date.now(),
-        orderStatus: orderStatus.find({ name: "Pendente" }),
-        orderTotal: total,
-        orderItems: items,
-        orderAddress,
-        orderCity,
-        orderState,
-        orderZip,
-        orderPhone: utilizador[0].phone,
-        orderEmail: utilizador[0].email,
-        orderPaymentMethod,
-        orderPaymentStatus: paymentStatus.find({ name: "Pendente" }),
-        campanyId: restaurantId,
-      });
+            userId,
+            orderDate: Date.now(),
+            orderStatus,
+            orderItems: items,
+            orderAddress,
+            orderCity,
+            orderState,
+            orderZip,
+            orderPaymentMethod,
+            campanyId: restaurantId,
+            orderEmail: "example@email.com", 
+            orderPhone: "123456789", 
+            orderTotal,
+});
+
 
       await newOrder.save();
 
