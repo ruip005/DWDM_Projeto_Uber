@@ -1,11 +1,6 @@
 const mongoose = require('mongoose');
 
 const itemSchema = new mongoose.Schema({
-  boxId: { 
-    type: mongoose.Schema.Types.ObjectId,
-    ref: 'boxes',
-    required: true 
-  },
   itemName: {
     type: String,
     required: true
@@ -18,13 +13,12 @@ const itemSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
-  itemImage: {
+  restaurantId: {
     type: String,
     required: true
   },
-  itemType: {
+  itemImage: {
     type: String,
-    required: true
   },
 });
 

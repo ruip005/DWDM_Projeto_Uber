@@ -2,7 +2,7 @@ const mongoose = require('mongoose');
 
 const orderSchema = new mongoose.Schema({
     userId: { 
-        type: mongoose.Schema.Types.ObjectId,
+        type: String,
         ref: 'user',
         required: true 
     },
@@ -12,9 +12,9 @@ const orderSchema = new mongoose.Schema({
         default: Date.now
     },
     orderStatus: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'order_status',
+        type: String,
         required: true,
+        default: "Pending"
     },
     orderTotal: {
         type: Number,
@@ -49,18 +49,16 @@ const orderSchema = new mongoose.Schema({
         required: true
     },
     orderPaymentMethod: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'payment_method',
+        type: String,
         required: true
     },
     orderPaymentStatus: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'payment_status',
-        required: true
+        type: String,
+        required: true,
+        default: "Pending"
     },
-    CampanyId: {
-        type: mongoose.Schema.Types.ObjectId,
-        ref: 'restaurant',
+    campanyId: {
+        type: String,
         required: true
     },
 });

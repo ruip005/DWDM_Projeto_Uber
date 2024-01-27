@@ -1,6 +1,9 @@
 import React, { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
+import { toast, ToastContainer } from "react-toastify";
+import "react-toastify/dist/ReactToastify.css";
+import "./create.css";
 
 function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
   const Navigate = useNavigate();
@@ -22,6 +25,8 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
     Address: "",
     UserId: "",
     closingDays: {},
+    category: "",
+    image: null,
   });
 
   const [usersList, setUsersList] = useState([]);
@@ -45,6 +50,22 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
 
     fetchUsers();
   }, []);
+
+  const handleImageChange = (e) => {
+    const file = e.target.files[0];
+
+    if (file) {
+      // Lê o arquivo como base64
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setNewRestaurant((prevRestaurant) => ({
+          ...prevRestaurant,
+          image: reader.result,
+        }));
+      };
+      reader.readAsDataURL(file);
+    }
+  };
 
   const handleInputChange = (e) => {
     const { name, value } = e.target;
@@ -104,6 +125,9 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
           deliversToHome: newRestaurant.deliversToHome,
           Address: newRestaurant.Address,
           userId: newRestaurant.UserId,
+          staffId: newRestaurant.UserId,
+          category: newRestaurant.category,
+          img: newRestaurant.image,
         },
         {
           headers: {
@@ -114,6 +138,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
 
       // Verifica se a requisição foi bem-sucedida
       if (response.status === 201) {
+        document.getElementById("criar").disabled = true;
         const createdRestaurant = response.data.restaurant;
         const updatedRestaurantList = [...restaurantesLista, createdRestaurant];
         setRestaurantesLista(updatedRestaurantList);
@@ -136,151 +161,202 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
           Address: "",
           UserId: "",
           closingDays: {},
+          category: "",
         });
-
-        Navigate("/admin");
+        toast.success("Restaurante criado com sucesso!");
+        setTimeout(() => {
+          Navigate("/admin");
+        }, 4000);
       } else {
-        // Handle error or display appropriate message
-        alert("Failed to create restaurant");
+        toast.error("Não conseguimos criar o seu restaurante!");
       }
     } catch (error) {
       console.error("Error creating restaurant:", error);
-      alert("Failed to create restaurant. Please try again.");
+      toast.error(error.response.data.message);
     }
   };
 
   return (
-    <div>
-      <label>
-        Company Name:
-        <input
-          type="text"
-          name="campanyName"
-          value={newRestaurant.campanyName}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
-
-      <label>
-        Delivery Fee:
-        <input
-          type="number"
-          name="deliveryFee"
-          value={newRestaurant.deliveryFee}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
-
-      {/* Input fields for business hours */}
-      {Object.keys(newRestaurant.businessHours).map((day) => (
-        <div key={day}>
+    <>
+      <div>
+        <div className="border-item">
           <label>
-            {day}:
+            Company Name:
+            <input
+              type="text"
+              name="campanyName"
+              value={newRestaurant.campanyName}
+              onChange={handleInputChange}
+            />
+          </label>
+          <p />
+
+          <label>
+            Delivery Fee:
             <input
               type="number"
-              min="0"
-              max="24"
-              value={newRestaurant.businessHours[day].open}
-              onChange={(e) =>
-                handleBusinessHoursChange(day, "open", e.target.value)
-              }
-              placeholder="Open"
-              disabled={newRestaurant.closingDays[day]}
+              name="deliveryFee"
+              value={newRestaurant.deliveryFee}
+              onChange={handleInputChange}
             />
+          </label>
+          <p />
+
+          {/* Input fields for business hours */}
+          {Object.keys(newRestaurant.businessHours).map((day) => (
+            <div key={day}>
+              <label>
+                {day}:
+                <input
+                  type="number"
+                  min="0"
+                  max="24"
+                  value={newRestaurant.businessHours[day].open}
+                  onChange={(e) =>
+                    handleBusinessHoursChange(day, "open", e.target.value)
+                  }
+                  placeholder="Open"
+                  disabled={newRestaurant.closingDays[day]}
+                />
+                <input
+                  type="number"
+                  min="0"
+                  max="24"
+                  value={newRestaurant.businessHours[day].close}
+                  onChange={(e) =>
+                    handleBusinessHoursChange(day, "close", e.target.value)
+                  }
+                  placeholder="Close"
+                  disabled={newRestaurant.closingDays[day]}
+                />
+                <label>
+                  Closing Day:
+                  <input
+                    type="checkbox"
+                    onChange={() => handleCheckboxChange(day)}
+                  />
+                </label>
+              </label>
+            </div>
+          ))}
+
+          <label>
+            Contact Email:
             <input
-              type="number"
-              min="0"
-              max="24"
-              value={newRestaurant.businessHours[day].close}
-              onChange={(e) =>
-                handleBusinessHoursChange(day, "close", e.target.value)
-              }
-              placeholder="Close"
-              disabled={newRestaurant.closingDays[day]}
+              type="email"
+              name="contactEmail"
+              value={newRestaurant.contactEmail}
+              onChange={handleInputChange}
             />
-            <label>
-              Closing Day:
-              <input
-                type="checkbox"
-                onChange={() => handleCheckboxChange(day)}
-              />
-            </label>
+          </label>
+          <p />
+
+          <label>
+            Contact Phone:
+            <input
+              type="text"
+              name="contactPhone"
+              value={newRestaurant.contactPhone}
+              onChange={handleInputChange}
+            />
+          </label>
+          <p />
+
+          <label>
+            Address:
+            <input
+              type="text"
+              name="Address"
+              value={newRestaurant.Address}
+              onChange={handleInputChange}
+            />
+          </label>
+          <p />
+
+          <label>
+            Select Image:
+            <input type="file" accept="image/*" onChange={handleImageChange} />
+          </label>
+          <p />
+
+          {/* Exibir a imagem */}
+          {newRestaurant.image && (
+            <img
+              src={newRestaurant.image}
+              alt="Selected Restaurant Image"
+              style={{
+                maxWidth: "100%",
+                maxHeight: "200px",
+                borderRadius: "200px",
+                bordercolor: "black",
+              }}
+            />
+          )}
+        </div>
+        <div className="border-last-item">
+          <label>
+            Delivers to Home:
+            <input
+              type="checkbox"
+              name="deliversToHome"
+              checked={newRestaurant.deliversToHome}
+              onChange={() =>
+                setNewRestaurant((prevRestaurant) => ({
+                  ...prevRestaurant,
+                  deliversToHome: !prevRestaurant.deliversToHome,
+                }))
+              }
+            />
+          </label>
+          <p></p>
+          <br />
+
+          <label>
+            Categoria:
+            <select
+              name="category"
+              value={newRestaurant.category}
+              onChange={handleInputChange}
+            >
+              <option value="">Seleciona a categoria</option>
+              <option value="pizza">Pizza</option>
+              <option value="cafe">Café</option>
+              <option value="fastfood">FastFood</option>
+              <option value="asiatico">Asiatico</option>
+              <option value="sandes">Sandes</option>
+              <option value="gelataria">Gelataria</option>
+              <option value="pastelaria">Pastelaria</option>
+            </select>
+          </label>
+          <p></p>
+          <br />
+
+          <label>
+            User ID:
+            <select
+              name="UserId"
+              value={newRestaurant.UserId}
+              onChange={handleInputChange}
+            >
+              <option value="" disabled>
+                Select a user
+              </option>
+              {usersList.map((user) => (
+                <option key={user._id} value={user._id}>
+                  {user.firstName} {user.lastName}
+                </option>
+              ))}
+            </select>
           </label>
         </div>
-      ))}
 
-      <label>
-        Contact Email:
-        <input
-          type="email"
-          name="contactEmail"
-          value={newRestaurant.contactEmail}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
-
-      <label>
-        Contact Phone:
-        <input
-          type="text"
-          name="contactPhone"
-          value={newRestaurant.contactPhone}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
-
-      <label>
-        Address:
-        <input
-          type="text"
-          name="Address"
-          value={newRestaurant.Address}
-          onChange={handleInputChange}
-        />
-      </label>
-      <p />
-
-      <label>
-        Delivers to Home:
-        <input
-          type="checkbox"
-          name="deliversToHome"
-          checked={newRestaurant.deliversToHome}
-          onChange={() =>
-            setNewRestaurant((prevRestaurant) => ({
-              ...prevRestaurant,
-              deliversToHome: !prevRestaurant.deliversToHome,
-            }))
-          }
-        />
-      </label>
-      <p />
-
-      <label>
-        User ID:
-        <select
-          name="UserId"
-          value={newRestaurant.UserId}
-          onChange={handleInputChange}
-        >
-          <option value="" disabled>
-            Select a user
-          </option>
-          {usersList.map((user) => (
-            <option key={user._id} value={user._id}>
-              {user.firstName} {user.lastName}
-            </option>
-          ))}
-        </select>
-      </label>
-      <p />
-
-      <button onClick={createRestaurant}>Create Restaurant</button>
-    </div>
+        <button id="criar" onClick={createRestaurant}>
+          Create Restaurant
+        </button>
+      </div>
+      {/* ToastContainer for displaying notifications */}
+      <ToastContainer position="top-right" autoClose={5000} hideProgressBar />
+    </>
   );
 }
 

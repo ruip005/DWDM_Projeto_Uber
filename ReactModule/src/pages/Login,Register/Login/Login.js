@@ -24,7 +24,7 @@ export const Login = () => {
   }, []);
 
   const login = () => {
-    const url = "http://localhost:9000/user/login";
+    const url = "http://192.168.1.2:9000/user/login";
 
     axios
       .post(url, {

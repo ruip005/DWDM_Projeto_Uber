@@ -8,7 +8,7 @@ const { authenticate, logging, antiVPN } = require("./Utils/middleware");
 const { color } = require("console-log-colors");
 
 app.use(cors());
-app.use(express.json());
+app.use(express.json({ limit: "30mb" }));
 
 connectDB = async () => {
   // Função para ligar à base de dados

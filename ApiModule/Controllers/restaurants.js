@@ -1,10 +1,10 @@
 const Restaurant = require("../Models/restaurant");
-const FileContainer = require("../Models/fileContainer");
 const Box = require("../Models/box");
 const restaurantAdmin = require("../Models/restaurantsAdmins");
 const user = require("../Models/user");
 const { createLog } = require("../Utils/Logs");
 const { isAdmin } = require("../Utils/middleware");
+const { createImage } = require("./images");
 
 const restaurantController = {
   // Listar todos os restaurantes
@@ -50,7 +50,6 @@ const restaurantController = {
   // Criar um novo restaurante
   createRestaurant: async (req, res) => {
     const {
-      // Dados do restaurante a receber
       campanyName,
       deliveryFee,
       businessHours,
@@ -59,6 +58,9 @@ const restaurantController = {
       deliversToHome,
       Address,
       userId,
+      staffId,
+      img,
+      category,
     } = req.body;
 
     console.log(req.body);
@@ -70,69 +72,79 @@ const restaurantController = {
       !deliveryFee ||
       !contactEmail ||
       !contactPhone ||
-      !deliversToHome ||
-      !Address
+      !Address ||
+      !staffId ||
+      !category
     ) {
-      // Verificar se todos os dados foram recebidos
-      console.log("Falta dados:");
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
       });
     }
 
-    let BoxID, ContainerID; // IDs que serão gerados
-    let novoRestaurante = new Restaurant({
-      // Criar novo restaurante com os dados recebidos
-      campanyName,
-      deliveryFee,
-      businessHours,
-      contactEmail,
-      contactPhone,
-      deliversToHome,
-      BoxID,
-      ContainerID,
-      Address,
-    });
-
-    const novoContainer = new FileContainer(); // Criar o container com data de criação atual
-    const novoBox = new Box(); // Criar a box com data de criação atual
+    if (!img) {
+      return res.status(400).json({
+        success: false,
+        message: "Imagem não recebida ou inválida!",
+      });
+    }
 
     try {
-      // Tentar guardar o restaurante, o container e a box
 
-      if ((await isAdmin(userId)) == false) {
+      let BoxID;
+      let novoRestaurante = new Restaurant({
+        campanyName,
+        deliveryFee,
+        businessHours,
+        contactEmail,
+        contactPhone,
+        deliversToHome,
+        BoxID,
+        Address,
+        type: category,
+      });
+
+      if (!(await isAdmin(userId))) {
         return res.status(401).json({
           success: false,
           userId,
           message: "Acesso negado!",
         });
-      } else {
-        const containerSalvo = await novoContainer.save();
-        const boxSalvo = await novoBox.save();
-        BoxID = boxSalvo._id;
-        ContainerID = containerSalvo._id;
-        const restauranteSalvo = await novoRestaurante.save();
-        // Atualizar o restaurante c/ as FKs
-        await Restaurant.findByIdAndUpdate(
-          restauranteSalvo._id,
-          { BoxID, ContainerID },
-          { new: true }
-        );
-
-        await createLog(
-          "create",
-          `Restaurante ${campanyName} criado com sucesso!`,
-          userId,
-          restauranteSalvo._id,
-          true
-        );
-
-        res.status(201).json({
-          success: true,
-          message: "Restaurante criado com sucesso!",
-        });
       }
+
+
+      const novoBox = new Box();
+      const boxSalvo = await novoBox.save();
+
+      BoxID = boxSalvo._id;
+
+      const restauranteSalvo = await novoRestaurante.save();
+
+      const newImage = await createImage(restauranteSalvo._id, img);
+
+      await Restaurant.findByIdAndUpdate(
+        restauranteSalvo._id,
+        { BoxID},
+        { new: true }
+      );
+
+      await restaurantAdmin.create({
+        campanyId: restauranteSalvo._id,
+        userId: staffId,
+      });
+
+      await createLog(
+        "create",
+        `Restaurante ${campanyName} criado com sucesso!`,
+        userId,
+        restauranteSalvo._id,
+        true
+      );
+
+      res.status(201).json({
+        success: true,
+        message: "Restaurante criado com sucesso!",
+      });
     } catch (err) {
       res.status(400).json({
         success: false,
@@ -189,6 +201,7 @@ const restaurantController = {
       deliversToHome,
       Address,
       userId,
+      category,
     } = req.body;
 
     if (
@@ -199,7 +212,8 @@ const restaurantController = {
       !contactEmail ||
       !contactPhone ||
       !deliversToHome ||
-      !Address
+      !Address ||
+      !category
     ) {
       // Verificar se todos os dados foram recebidos
       return res.status(400).json({
@@ -226,6 +240,7 @@ const restaurantController = {
           contactPhone,
           deliversToHome,
           Address,
+          category,
         },
         { new: true }
       );

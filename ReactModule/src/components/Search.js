@@ -22,7 +22,7 @@ const Search = () => {
   // Função para obter os nomes dos restaurantes com base na pesquisa
   const getRestaurantNames = async () => {
     try {
-      const url = `http://192.168.1.102:9000/user/restaurants/name?campanyName=${search}`;
+      const url = `http://localhost:9000/user/restaurants/name?campanyName=${search}`;
       const response = await axios.get(url);
       const data = response.data;
 
@@ -103,7 +103,9 @@ const Search = () => {
       />
 
       {/* Botão "Encontrar" */}
-      <button className={styles['botao-feio']} onClick={onBtnClickEvent}>Encontrar</button>
+      <button className={styles["botao-feio"]} onClick={onBtnClickEvent}>
+        Encontrar
+      </button>
 
       {/* Dropdown de resultados (renderizada quando a dropdown está aberta) */}
       {isDropdownOpen && (
@@ -112,7 +114,10 @@ const Search = () => {
           {filteredResults.map((result) => (
             <li key={result.id}>
               {/* Link para a página do restaurante */}
-              <Link to={`/restaurantes/${result.id}`} onClick={() => handleRestaurantClick(result.id)}>
+              <Link
+                to={`/restaurantes/${result.id}`}
+                onClick={() => handleRestaurantClick(result.id)}
+              >
                 {result.name}
               </Link>
             </li>

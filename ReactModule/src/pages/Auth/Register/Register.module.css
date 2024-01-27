@@ -1,0 +1,224 @@
+.wrappera {
+    width: 420px;
+    background: green;
+    color: white;
+    border-radius: 20px;
+    padding: 30px 40px;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    margin: auto; 
+    margin-top: 200px
+  }
+
+.wrappera h1{
+    font-size: 36px;
+    text-align: center;
+}
+
+.wrappera .input-box {
+    position: relative;
+    width: 100%;
+    height: 50px;
+    margin: 30px 0;
+
+}
+
+.input-box input {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    outline: none;
+    border: 2px solid rgba(255,255,255, .2);
+    border-radius: 40px;
+    font-size: 16px;
+    color: white;
+    padding: 20px 45px 20px 20px;
+}
+
+.input-box input::placeholder {
+    color: white
+}
+
+.input-box .icon {
+    position: absolute;
+    right: 20px;
+    top: 50%;
+    transform: translateY(-50%);
+    font-size: 16px;
+}
+
+.wrappera .remember-forgot {
+    display: flex;
+    justify-content: space-between ;
+
+    font-size: 14.5px;
+    margin: -15px 0 15px;
+}
+
+.remember-forgot label input {
+    accent-color: white;
+    margin-right: 4px;
+}
+
+.remember-forgot a {
+    color: white;
+    text-decoration: none;
+}
+
+.remember-forgot a:hover {
+    text-decoration: underline;
+}
+
+.wrappera button{
+    width: 100%;
+    height: 45px;
+    background: white;
+    border: none;
+    outline: none;
+    border-radius: 40px;
+    box-shadow: 0 0 10px rgba(0,0,0, .1);
+    cursor: pointer;
+    font-size: 16px;
+    color: #333;
+    font-weight: 700;
+}
+
+.wrappera .register-link {
+    font-size:  14.5px;
+    text-align: center;
+    margin: 20px 0 15px;
+}
+
+.register-link p a {
+    color: white;
+    text-decoration: none;
+    font-weight: 600;
+}
+
+.register-link p a:hover {
+    text-decoration: underline;
+}
+
+@keyframes animate {
+    0%{
+        transform: translateY(0) rotate(0deg);
+        opacity: 1;
+        border-radius: 0;
+    }
+    100%{
+        transform: translateY(-1000px) rotate(720deg);
+        opacity: 0;
+        border-radius: 50%;
+    }
+}
+
+.background {
+    position: fixed;
+    width: 100vw;
+    height: 100vh;
+    top: 0;
+    left: 0;
+    margin: 0;
+    padding: 0;
+    background: #2b2b2b;
+    overflow: hidden;
+}
+.background li {
+    position: absolute;
+    display: block;
+    list-style: none;
+    width: 20px;
+    height: 20px;
+    background: rgba(255, 255, 255, 0.2);
+    animation: animate 16s linear infinite;
+}
+
+
+
+
+.background li:nth-child(0) {
+    left: 36%;
+    width: 235px;
+    height: 235px;
+    bottom: -235px;
+    animation-delay: 1s;
+}
+.background li:nth-child(1) {
+    left: 42%;
+    width: 110px;
+    height: 110px;
+    bottom: -110px;
+    animation-delay: 1s;
+}
+.background li:nth-child(2) {
+    left: 48%;
+    width: 215px;
+    height: 215px;
+    bottom: -215px;
+    animation-delay: 5s;
+}
+.background li:nth-child(3) {
+    left: 15%;
+    width: 143px;
+    height: 143px;
+    bottom: -143px;
+    animation-delay: 13s;
+}
+.background li:nth-child(4) {
+    left: 9%;
+    width: 205px;
+    height: 205px;
+    bottom: -205px;
+    animation-delay: 19s;
+}
+.background li:nth-child(5) {
+    left: 41%;
+    width: 160px;
+    height: 160px;
+    bottom: -160px;
+    animation-delay: 1s;
+}
+.background li:nth-child(6) {
+    left: 16%;
+    width: 194px;
+    height: 194px;
+    bottom: -194px;
+    animation-delay: 1s;
+}
+.background li:nth-child(7) {
+    left: 51%;
+    width: 122px;
+    height: 122px;
+    bottom: -122px;
+    animation-delay: 18s;
+}
+.background li:nth-child(8) {
+    left: 80%;
+    width: 167px;
+    height: 167px;
+    bottom: -167px;
+    animation-delay: 32s;
+}
+.background li:nth-child(9) {
+    left: 27%;
+    width: 164px;
+    height: 164px;
+    bottom: -164px;
+    animation-delay: 35s;
+}
+.background li:nth-child(10) {
+    left: 83%;
+    width: 130px;
+    height: 130px;
+    bottom: -130px;
+    animation-delay: 33s;
+}
+.background li:nth-child(11) {
+    left: 12%;
+    width: 236px;
+    height: 236px;
+    bottom: -236px;
+    animation-delay: 33s;
+}

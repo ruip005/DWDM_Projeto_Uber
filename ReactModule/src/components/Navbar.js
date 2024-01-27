@@ -1,71 +1,43 @@
-import { NavLink } from "react-router-dom";
+import { NavLink, Navigate } from "react-router-dom";
 import styles from "./Navbar.module.css";
-import { Login } from "../pages/Login,Register/Login/Login.js";
-import { Register } from "../pages/Login,Register/Register/Register.js";
+import { Login } from "../pages/Auth/Login/Login.js";
+import { Register } from "../pages/Auth/Register/Register.js";
 import MyRestaurante from "../pages/MyRestaurante/MyRestaurante.js";
 import axios from "axios";
 import React, { useState, useEffect } from "react";
 import { FaShoppingCart } from "react-icons/fa";
 import { Link } from "react-router-dom";
-
+import { jwtDecode } from "jwt-decode";
 const Navbar = (cartItems) => {
-  const [userInfo, setUserInfo] = useState(null);
-
-  const getUserInfo = async () => {
-    const url = `http://localhost:9000/user/infos`;
-
-    try {
-      const token = localStorage.getItem("token");
-
-      if (!token) {
-        // Lidar com a ausência de token, se necessário
-        return null;
-      }
-
-      const response = await axios.get(url, {
-        headers: {
-          Authorization: token,
-        },
-      });
-      return response.data;
-    } catch (error) {
-      // Lidar com erros de requisição
-      console.log(error);
+  const checkUser = () => {
+    if (localStorage.getItem("token") == null) {
+      return null;
     }
-  };
+    const token = jwtDecode(localStorage.getItem("token"));
 
-  const checkUse = () => {
-    const token = localStorage.getItem("token");
-
+    if (token.exp < Date.now() / 1000) {
+      localStorage.removeItem("token");
+      return null;
+    }
     return token;
   };
-
-  useEffect(() => {
-    if (checkUse()) {
-      getUserInfo().then((data) => {
-        setUserInfo(data);
-        console.log(data);
-      });
-    }
-  }, []);
-  console.log(cartItems.cartItems);
 
   return (
     <>
       <nav className={styles.navbar}>
         <img className={styles.navImg} src="./logo.png" alt="Logo" />
         <ul className={styles.navList}>
-          {userInfo?.haveAdmin && (
+          {checkUser() != null && checkUser().isAdmin && (
             <li>
               <NavLink to="/admin" className={styles.navLink}>
                 Admin
               </NavLink>
             </li>
           )}
-          {userInfo?.haveStaff && (
+          {checkUser() != null && checkUser().isStaff != null && (
             <li>
               <NavLink
-                to="/myrestaurant"
+                to={`/myrestaurant/${checkUser().isStaff}`}
                 element={<MyRestaurante />}
                 className={styles.navLink}
               >
@@ -91,7 +63,17 @@ const Navbar = (cartItems) => {
         </ul>
         <div className={styles.itemNav}>
           <div className={styles.optionsNav}>
-            {!checkUse() ? (
+            {checkUser() == null ? (
+              <>
+                <NavLink
+                  to="/login"
+                  element={<Login />}
+                  className={styles.navLink}
+                >
+                  Entrar
+                </NavLink>
+              </>
+            ) : (
               <>
                 <span className={styles.cart}>
                   <Link to="/cart">
@@ -104,31 +86,16 @@ const Navbar = (cartItems) => {
                   </Link>
                 </span>
                 <NavLink
-                  to="/login"
-                  element={<Login />}
+                  to="/"
                   className={styles.navLink}
+                  onClick={() => {
+                    localStorage.removeItem("token");
+                    window.location.reload();
+                  }}
                 >
-                  Entrar
-                </NavLink>
-                <NavLink
-                  to="/register"
-                  element={<Register />}
-                  className={styles.navLink}
-                >
-                  Registar
+                  Logout
                 </NavLink>
               </>
-            ) : (
-              <NavLink
-                to="/"
-                className={styles.navLink}
-                onClick={() => {
-                  localStorage.removeItem("token");
-                  window.location.reload();
-                }}
-              >
-                Logout
-              </NavLink>
             )}
           </div>
         </div>

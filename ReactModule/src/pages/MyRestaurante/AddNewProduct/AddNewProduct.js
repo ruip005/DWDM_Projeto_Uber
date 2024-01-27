@@ -1,74 +1,99 @@
-import React, { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import ProductsLista from '../ProductsLista';
-import { useParams } from 'react-router-dom';
-import { useEffect } from 'react';
-import RestaurantesList from '../../Restaurantes/RestaurantesLista';
+import React, { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import ProductsLista from "../ProductsLista";
+import { useParams } from "react-router";
+import { useEffect } from "react";
+import axios from "axios";
+import RestaurantesId from "../../Restaurantes/RestaurantesId";
+import { jwtDecode } from "jwt-decode";
+
 
 function AddNewProduct() {
   const { restaurantId } = useParams();
-    const Navigate = useNavigate();
-
-
-    const [newProduct, setNewProduct] = useState({
-        name: '',
-        price: '',
-        description: '',
-        image: null,
-    });
-
-
-    const [restaurantInfo, setRestaurantInfo] = useState({
-      name: '',
-      logo: '',
-      workingDays: {},
+  const [restaurant, setRestaurant] = useState({});
+  const [newProduct, setNewProduct] = useState({
+    name: "",
+    price: "",
+    description: "",
+    image: null,
   });
-
-
-    useEffect(() => {
-      const fetchedRestaurant = RestaurantesList.find(restaurant => restaurant.id === restaurantId);
-
-      if (fetchedRestaurant) {
-          setRestaurantInfo({
-              name: fetchedRestaurant.name,
-              logo: fetchedRestaurant.image,
-              workingDays: fetchedRestaurant.workingDays,
-          });
-      }
-  }, [restaurantId]);
-
-
-    function getBase64(file) {
-        return new Promise((resolve, reject) => {
-          const reader = new FileReader();
-          reader.readAsDataURL(file);
-          reader.onload = () => resolve(reader.result);
-          reader.onerror = error => reject(error);
+  useEffect(() => {
+    const fetchRestaurants = async () => {
+      try {
+        if (!restaurantId) {
+          console.error("restaurantId is not defined");
+          return;
+        }
+  
+        const token = localStorage.getItem("token");
+        const url = `http://localhost:9000/user/restaurants/${restaurantId}`;
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: token,
+          },
         });
+        const data = response.data.restaurante;
+        console.log(data);
+        setRestaurant(data);
+      } catch (error) {
+        console.error("Error fetching restaurants:", error);
       }
-
-
-    const handleInputChange = (e) => {
-        const { name, value } = e.target;
-        setNewProduct((prevProduct) => ({
-            ...prevProduct,
-            [name]: value,
-        }));
     };
+  
+    fetchRestaurants();
+  }, [restaurantId]);
+  
+  
+
+  let decoded;
+  const token = localStorage.getItem("token");
+  const Navigate = useNavigate();
+
+  if (!restaurantId) {
+    // Handle the case where restaurantId is not defined
+    console.error("restaurantId is not defined");
+    return null; // or some other error handling logic
+  }
+
+  try {
+    decoded = jwtDecode(token);
+    console.log("Token decodificado:", decoded);
+  } catch (error) {
+    console.error("Erro ao decodificar o token:", error);
+  }
+
+  
 
 
-    const handleImageChange = (e) => {
-        const imageFile = e.target.files[0];
-        getBase64(imageFile).then(base64Image => {
-          setNewProduct((prevProduct) => ({
-            ...prevProduct,
-            image: base64Image,
-          }));
-        });
-      };
 
+  function getBase64(file) {
+    return new Promise((resolve, reject) => {
+      const reader = new FileReader();
+      reader.readAsDataURL(file);
+      reader.onload = () => resolve(reader.result);
+      reader.onerror = (error) => reject(error);
+    });
+  }
 
-    const handleAddProduct = () => {
+  const handleInputChange = (e) => {
+    const { name, value } = e.target;
+    setNewProduct((prevProduct) => ({
+      ...prevProduct,
+      [name]: value,
+    }));
+  };
+
+  const handleImageChange = (e) => {
+    const imageFile = e.target.files[0];
+    getBase64(imageFile).then((base64Image) => {
+      setNewProduct((prevProduct) => ({
+        ...prevProduct,
+        image: base64Image,
+      }));
+    });
+  };
+
+  /*   const handleAddProduct = () => {
       if (newProduct.name && newProduct.price && newProduct.description && newProduct.image) {
         const newProductWithId = {
           ...newProduct,
@@ -93,23 +118,59 @@ function AddNewProduct() {
       } else {
         alert('Please fill in all fields before adding the product.');
       }
-    };
+    };*/
 
+  const handleAddProduct = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const url = `http://localhost:9000/restaurant/product/`;
+
+      const response = await axios.post(
+        url,
+        {
+          name: newProduct.name,
+          price: newProduct.price,
+          description: newProduct.description,
+          quantity: "1",
+          userId: decoded.userId,
+          id: restaurantId,
+          img: "path/to/image.jpg", 
+          fileContainerId: "containerId123",
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
+        }
+      );
+
+      console.log(response.data);
+      Navigate(-1);
+    } catch (error) {
+      console.error("Error making POST request:", error.message);
+      console.log("Request config:", error.config);
+      if (error.response) {
+        console.log("Response data:", error.response.data);
+        console.log("Response status:", error.response.status);
+        console.log("Response headers:", error.response.headers);
+      }
+    }
+  };
 
   return (
     <div className="container">
       <div className="MyRestaurante-Name">
         <h1>
-          {restaurantInfo.name}
+          {restaurant.campanyName}
           <img
-            src={restaurantInfo.logo}
+            src={restaurant.logo}
             className="MyRestaurant-Logo"
-            alt={restaurantInfo.name + ' Logo'}
+            alt={restaurant.name + " Logo"}
           />
         </h1>
       </div>
       <div className="AddNewProduct-Form">
-        <h2>Adicionar Novo Produto</h2>
+        <h2>Adicionar Novo Produto </h2>
         <form>
           <label>
             Nome do Produto:
@@ -150,6 +211,7 @@ function AddNewProduct() {
             />
           </label>
           <p />
+
           <button type="button" onClick={handleAddProduct}>
             Adicionar Produto
           </button>
