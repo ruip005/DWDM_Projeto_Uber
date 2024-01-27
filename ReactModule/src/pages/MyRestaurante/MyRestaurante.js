@@ -40,7 +40,7 @@ const MyRestaurante = () => {
         <h1>
           {restaurant.campanyName}
           <img
-            src={restaurant.logo}
+            src={`http://localhost:9000/system/image/${restaurant._id}`}
             className="MyRestaurant-Logo"
             alt={`${restaurant.campanyName} Logo`}
           />
@@ -60,13 +60,13 @@ const MyRestaurante = () => {
                 <div>
                   <label>Horas de Abertura:</label>
                   <span className="Horas" style={{ marginLeft: "40px" }}>
-                    {restaurant.businessHours[day].open}
+                    {restaurant.businessHours[day].open + ":00h"}
                   </span>
                 </div>
                 <div>
                   <label>Horas de Encerramento:</label>
                   <span className="Horas">
-                    {restaurant.businessHours[day].close}
+                    {restaurant.businessHours[day].close + ":00h"}
                   </span>
                 </div>
               </div>

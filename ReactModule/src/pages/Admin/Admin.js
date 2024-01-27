@@ -8,13 +8,11 @@ import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
 function Admin() {
-  const [PedidosLista, setPedidosLista] = useState([]); 
+  const [PedidosLista, setPedidosLista] = useState([]);
   const [selectedTable, setSelectedTable] = useState("");
   const [restaurantes, setRestaurantes] = useState([]);
   const Navigate = useNavigate();
   const [usersList, setUsersList] = useState([]);
-
-
 
   const fetchOrders = async () => {
     try {
@@ -25,13 +23,7 @@ function Admin() {
           Authorization: token,
         },
       });
-  
-      console.log("API Response for orders:", response);
-  
       const data = response.data;
-  
-      console.log("Data received for orders:", data);
-  
       if (data.success) {
         setPedidosLista(data.orders);
       } else {
@@ -41,7 +33,7 @@ function Admin() {
       console.error("Error fetching orders:", error);
     }
   };
-  
+
   /*
   const getImage = async (id) => {
     try {
@@ -56,16 +48,21 @@ function Admin() {
   const fetchUsers = async () => {
     try {
       const token = localStorage.getItem("token");
+      if (!token) {
+        Navigate("/login");
+      }
+      const tokenData = jwtDecode(token);
+      if (!tokenData.isAdmin) {
+        Navigate("/#");
+      }
       const url = "http://localhost:9000/admin/users";
       const response = await axios.get(url, {
         headers: {
           Authorization: token,
         },
       });
-      console.log("API Response:", response);
       const data = response.data.utilizadores;
       setUsersList(data);
-      console.log("lista de users :" + data)
     } catch (error) {
       console.error("Error fetching users:", error);
     }
@@ -89,9 +86,8 @@ function Admin() {
             Authorization: token,
           },
         });
-        const data = response.data.restaurantes; 
+        const data = response.data.restaurantes;
         setRestaurantes(data);
-        console.log("Data received:", data);
       } catch (error) {
         console.error("Error fetching restaurants:", error);
       }
@@ -111,7 +107,7 @@ function Admin() {
   }, [usersList]);
 
   useEffect(() => {
-    console.log("PedidosLista in useEffect:", PedidosLista);
+    //console.log("PedidosLista in useEffect:", PedidosLista);
   }, [PedidosLista]);
 
   useEffect(() => {
@@ -149,60 +145,75 @@ function Admin() {
             <tbody>
               {restaurantes.map((restaurante) => (
                 <tr key={restaurante._id}>
-                <td onClick={() => handleRestaurantClick(restaurante._id)}>
-                  {restaurante.campanyName}
-                  <img src={`http://localhost:9000/system/image/${restaurante._id}`} alt={restaurante.campanyName} />
-                </td>
-              </tr>
+                  <td onClick={() => handleRestaurantClick(restaurante._id)}>
+                    {restaurante.campanyName}
+                    <img
+                      src={`http://localhost:9000/system/image/${restaurante._id}`}
+                      alt={restaurante.campanyName}
+                    />
+                  </td>
+                </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
 
-{selectedTable === "Pedidos" && (
-  <table className="tableAdmin">
-    <thead>
-      <tr>
-        <th>User</th>
-        <th>Restaurant</th>
-        <th>Items</th>
-        <th>Preço</th>
-        <th>Estado</th>
-      </tr>
-    </thead>
-    <tbody>
-      {PedidosLista && PedidosLista.length > 0 ? (
-        PedidosLista.map((pedido) => {
-          const user = usersList.find(user => user._id === pedido.userId);
-          const restaurant = restaurantes.find(restaurant => restaurant && restaurant.id === pedido._id);
-
-          return (
-            <tr key={pedido._id}>
-              <td>{user ? `${user.firstName} ${user.lastName}` : 'Unknown User'}</td>
-              <td>{restaurant ? restaurant.campanyName : 'Unknown Restaurant'}</td>
-              <td>
-                <ul>
-                  {pedido.orderItems.map((item) => (
-                    <li key={item.name}>
-                      {item.name} - Quantity: {item.quantity}
-                    </li>
-                  ))}
-                </ul>
-              </td>
-              <td>{pedido.orderTotal}</td>
-              <td>{pedido.orderStatus}</td>
+      {selectedTable === "Pedidos" && (
+        <table className="tableAdmin">
+          <thead>
+            <tr>
+              <th>User</th>
+              <th>Restaurant</th>
+              <th>Items</th>
+              <th>Preço</th>
+              <th>Estado</th>
             </tr>
-          );
-        })
-      ) : (
-        <tr>
-          <td colSpan="5">No orders available</td>
-        </tr>
+          </thead>
+          <tbody>
+            {PedidosLista && PedidosLista.length > 0 ? (
+              PedidosLista.map((pedido) => {
+                const user = usersList.find(
+                  (user) => user._id === pedido.userId
+                );
+                const restaurant = restaurantes.find(
+                  (restaurant) => restaurant && restaurant.id === pedido._id
+                );
+
+                return (
+                  <tr key={pedido._id}>
+                    <td>
+                      {user
+                        ? `${user.firstName} ${user.lastName}`
+                        : "Unknown User"}
+                    </td>
+                    <td>
+                      {restaurant
+                        ? restaurant.campanyName
+                        : "Unknown Restaurant"}
+                    </td>
+                    <td>
+                      <ul>
+                        {pedido.orderItems.map((item) => (
+                          <li key={item.name}>
+                            {item.name} - Quantity: {item.quantity}
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td>{pedido.orderTotal}</td>
+                    <td>{pedido.orderStatus}</td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="5">No orders available</td>
+              </tr>
+            )}
+          </tbody>
+        </table>
       )}
-    </tbody>
-  </table>
-)}
 
       {selectedTable === "Users" && (
         <table className="tableAdmin">
@@ -213,12 +224,12 @@ function Admin() {
             </tr>
           </thead>
           <tbody>
-          {users.map((user) => (
-  <tr key={user._id}>
-    <td>{`${user.firstName} ${user.lastName}`}</td>
-    <td>{user.email}</td>
-  </tr>
-))}
+            {users.map((user) => (
+              <tr key={user._id}>
+                <td>{`${user.firstName} ${user.lastName}`}</td>
+                <td>{user.email}</td>
+              </tr>
+            ))}
           </tbody>
         </table>
       )}

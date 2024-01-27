@@ -138,6 +138,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
 
       // Verifica se a requisição foi bem-sucedida
       if (response.status === 201) {
+        document.getElementById("criar").disabled = true;
         const createdRestaurant = response.data.restaurant;
         const updatedRestaurantList = [...restaurantesLista, createdRestaurant];
         setRestaurantesLista(updatedRestaurantList);
@@ -349,7 +350,9 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
           </label>
         </div>
 
-        <button onClick={createRestaurant}>Create Restaurant</button>
+        <button id="criar" onClick={createRestaurant}>
+          Create Restaurant
+        </button>
       </div>
       {/* ToastContainer for displaying notifications */}
       <ToastContainer position="top-right" autoClose={5000} hideProgressBar />

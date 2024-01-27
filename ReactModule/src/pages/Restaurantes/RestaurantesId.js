@@ -10,7 +10,6 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
   const Navigate = useNavigate();
   const [restaurant, setRestaurant] = useState({});
 
-
   useEffect(() => {
     const fetchRestaurants = async () => {
       try {
@@ -50,7 +49,7 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
         <h1 className="titulo_restaurante">
           {restaurant.campanyName}
           <img
-            src={restaurant.logo}
+            src={`http://localhost:9000/system/image/${restaurant._id}`}
             className="MyRestaurant-Logo"
             alt={`${restaurant.campanyName} Logo`}
           />

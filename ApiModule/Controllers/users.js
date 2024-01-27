@@ -523,6 +523,7 @@ const userController = {
 
     try {
       const secret = process.env.JWT_SECRET;
+      const isStaff = await resStaff.findOne({ userId: userExist._id });
       const token = await jwt.sign(
         {
           firstName: userExist.firstName,
@@ -531,8 +532,11 @@ const userController = {
           state: userExist.state,
           userId: userExist._id,
           address: userExist.address,
+          isAdmin: await isAdmin(userExist._id),
+          isStaff: isStaff ? isStaff.campanyId : null,
         },
-        secret
+        secret,
+        { expiresIn: "7d" }
       );
       return res.json({
         success: true,

@@ -18,7 +18,7 @@ export const Restaurantes = () => {
             Authorization: token,
           },
         });
-        const data = response.data.restaurantes; 
+        const data = response.data.restaurantes;
         setRestaurantes(data);
         console.log("Data received:", data);
       } catch (error) {
@@ -47,10 +47,10 @@ export const Restaurantes = () => {
             >
               <img
                 className="imagem"
-                src={restaurante.img}
+                src={`http://localhost:9000/system/image/${restaurante._id}`}
                 alt={restaurante.campanyName}
               />
-              <p>{restaurante.name}</p>
+              <p>{restaurante.campanyName}</p>
             </div>
           </Link>
         ))}
@@ -58,4 +58,3 @@ export const Restaurantes = () => {
     </>
   );
 };
-
