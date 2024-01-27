@@ -89,7 +89,7 @@ const App = () => {
             }
           />
           <Route
-            path="/myrestaurant/MyRestauranteEdit"
+            path="/myrestaurant/:restaurantId/MyRestauranteEdit"
             element={
               <>
                 <Navbar cartItems={cartItems} />
