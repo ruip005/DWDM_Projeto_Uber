@@ -1,23 +1,32 @@
 import React, { useEffect, useState } from "react";
 import "./Restaurantes.css";
-import RestaurantesList from "./RestaurantesLista";
 import axios from "axios";
 import { Link } from "react-router-dom";
 import { useParams } from "react-router-dom";
 
 export const Restaurantes = () => {
   const { id } = useParams();
-  const [restaurantesList, setRestaurantesList] = useState([]);
+  const [RestaurantesList, setRestaurantes] = useState([]);
 
   useEffect(() => {
-    const url = "https://98a3-89-155-175-148.ngrok-free.app/user/restaurants";
-    axios
-      .get(url)
-      .then((response) => {
-        setRestaurantesList(response.data);
-        console.log(response.data);
-      })
-      .catch((error) => console.log(error));
+    const fetchRestaurants = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const url = "http://localhost:9000/user/restaurants";
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const data = response.data.restaurantes; 
+        setRestaurantes(data);
+        console.log("Data received:", data);
+      } catch (error) {
+        console.error("Error fetching restaurants:", error);
+      }
+    };
+
+    fetchRestaurants();
   }, []);
 
   return (
@@ -29,7 +38,7 @@ export const Restaurantes = () => {
 
       <div className="grid-container">
         {RestaurantesList.map((restaurante) => (
-          <Link to={restaurante.id} key={restaurante.id}>
+          <Link to={`/restaurantes/${restaurante._id}`} key={restaurante.id}>
             <div
               className="grid-item"
               key={restaurante.id}
@@ -38,8 +47,8 @@ export const Restaurantes = () => {
             >
               <img
                 className="imagem"
-                src={restaurante.image}
-                alt={restaurante.name}
+                src={restaurante.img}
+                alt={restaurante.campanyName}
               />
               <p>{restaurante.name}</p>
             </div>
@@ -49,3 +58,4 @@ export const Restaurantes = () => {
     </>
   );
 };
+

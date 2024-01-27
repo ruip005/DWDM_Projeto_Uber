@@ -7,11 +7,51 @@ import pedidos from "../Cart/PedidosLista";
 import axios from "axios";
 import { jwtDecode } from "jwt-decode";
 
-function Admin({ PedidosLista }) {
+function Admin() {
+  const [PedidosLista, setPedidosLista] = useState([]); 
   const [selectedTable, setSelectedTable] = useState("");
   const [restaurantes, setRestaurantes] = useState([]);
   const Navigate = useNavigate();
   const [usersList, setUsersList] = useState([]);
+
+
+
+  const fetchOrders = async () => {
+    try {
+      const token = localStorage.getItem("token");
+      const url = "http://localhost:9000/system/order";
+      const response = await axios.get(url, {
+        headers: {
+          Authorization: token,
+        },
+      });
+  
+      console.log("API Response for orders:", response);
+  
+      const data = response.data;
+  
+      console.log("Data received for orders:", data);
+  
+      if (data.success) {
+        setPedidosLista(data.orders);
+      } else {
+        console.error("API request for orders was not successful");
+      }
+    } catch (error) {
+      console.error("Error fetching orders:", error);
+    }
+  };
+  
+  /*
+  const getImage = async (id) => {
+    try {
+      const url = `http://localhost:9000/system/image/${id}`;
+      const response = await axios.get(url);
+      return response.data;
+    } catch (error) {
+      console.error("Error fetching image:", error);
+    }
+  }*/
 
   const fetchUsers = async () => {
     try {
@@ -35,7 +75,9 @@ function Admin({ PedidosLista }) {
     fetchUsers();
   }, []);
 
-  
+  useEffect(() => {
+    fetchOrders();
+  }, []);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -47,16 +89,9 @@ function Admin({ PedidosLista }) {
             Authorization: token,
           },
         });
-        const data = response.data.restaurantes; // Access 'restaurantes' property
+        const data = response.data.restaurantes; 
         setRestaurantes(data);
-        const url2 = "http://localhost:9000/system/image";
-        const response2 = await axios.get(url2, {
-          headers: {
-            Authorization: token,
-          },
-        });
-        const data2 = response2.data.image;
-        console.log(data2);
+        console.log("Data received:", data);
       } catch (error) {
         console.error("Error fetching restaurants:", error);
       }
@@ -76,8 +111,8 @@ function Admin({ PedidosLista }) {
   }, [usersList]);
 
   useEffect(() => {
-    console.log("lista: " + usersList);
-  }, []);
+    console.log("PedidosLista in useEffect:", PedidosLista);
+  }, [PedidosLista]);
 
   useEffect(() => {
     const updateRestaurantes = (updatedList) => {
@@ -114,57 +149,61 @@ function Admin({ PedidosLista }) {
             <tbody>
               {restaurantes.map((restaurante) => (
                 <tr key={restaurante._id}>
-                  <td onClick={() => handleRestaurantClick(restaurante._id)}>
-                    {restaurante.campanyName}
-                  </td>
-                </tr>
+                <td onClick={() => handleRestaurantClick(restaurante._id)}>
+                  {restaurante.campanyName}
+                  <img src={`http://localhost:9000/system/image/${restaurante._id}`} alt={restaurante.campanyName} />
+                </td>
+              </tr>
               ))}
             </tbody>
           </table>
         </div>
       )}
 
-      {selectedTable === "Pedidos" && (
-        <table className="tableAdmin">
-          <thead>
-            <tr>
-              <th>User</th>
-              <p className="espaco"></p>
-              <th>Restaurant</th>
-              <p className="espaco"></p>
-              <th>Items</th>
-              <p className="espaco"></p>
-              <th>Preço </th>
-              <p className="espaco"></p>
-              <th>Estado</th>
+{selectedTable === "Pedidos" && (
+  <table className="tableAdmin">
+    <thead>
+      <tr>
+        <th>User</th>
+        <th>Restaurant</th>
+        <th>Items</th>
+        <th>Preço</th>
+        <th>Estado</th>
+      </tr>
+    </thead>
+    <tbody>
+      {PedidosLista && PedidosLista.length > 0 ? (
+        PedidosLista.map((pedido) => {
+          const user = usersList.find(user => user._id === pedido.userId);
+          const restaurant = restaurantes.find(restaurant => restaurant && restaurant.id === pedido._id);
+
+          return (
+            <tr key={pedido._id}>
+              <td>{user ? `${user.firstName} ${user.lastName}` : 'Unknown User'}</td>
+              <td>{restaurant ? restaurant.campanyName : 'Unknown Restaurant'}</td>
+              <td>
+                <ul>
+                  {pedido.orderItems.map((item) => (
+                    <li key={item.name}>
+                      {item.name} - Quantity: {item.quantity}
+                    </li>
+                  ))}
+                </ul>
+              </td>
+              <td>{pedido.orderTotal}</td>
+              <td>{pedido.orderStatus}</td>
             </tr>
-          </thead>
-          <tbody>
-            {PedidosLista.map((pedido) => (
-              <tr key={pedido.id}>
-                <td className="pedido_user">{pedido.user}</td>
-                <td>{pedido.restaurant}</td>
-                <p></p>
-                <td>
-                  {pedido.items
-                    .map((item, index) => `${item.name}(${item.quantity})`)
-                    .join(",")
-                    .slice(0, 30)}
-                  {pedido.items
-                    .map((item, index) => `${item.name}(${item.quantity})`)
-                    .join(",").length > 30
-                    ? "..."
-                    : ""}
-                </td>
-                <p></p>
-                <td>{pedido.total_price + "€"}</td>
-                <p></p>
-                <td>{pedido.status}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+          );
+        })
+      ) : (
+        <tr>
+          <td colSpan="5">No orders available</td>
+        </tr>
       )}
+    </tbody>
+  </table>
+)}
+
       {selectedTable === "Users" && (
         <table className="tableAdmin">
           <thead>

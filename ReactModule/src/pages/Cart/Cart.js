@@ -1,6 +1,5 @@
 import React, { useState, useEffect } from "react";
 import styles from "./Cart.module.css";
-import pedidos from "./PedidosLista"; // Make sure this import is correct
 import RestaurantesList from "../Restaurantes/RestaurantesLista";
 import { useNavigate } from "react-router-dom";
 import axios from "axios";
@@ -14,6 +13,7 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
   const [modal, setmodal] = useState(false);
   const [price, setPrice] = useState(0);
   const [items, setItems] = useState([]);
+  const [estado, setEstado] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("");
   const [address, setAddress] = useState("");
   const Navigate = useNavigate();
@@ -123,7 +123,7 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
   const handlePedido = async () => {
     try{
       console.log("1")
-      //const token = localStorage.getItem("token");
+      const token = localStorage.getItem("token");
       const url = `http://localhost:9000/system/order`;
       console.log("2")
       
@@ -149,7 +149,8 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
          );
 
       console.log(response.data);
-      Navigate(-1);
+      setCartItems([]);
+      Navigate("/");
     } catch (error) {
       console.error("Error making POST request:", error.message);
       console.log("Request config:", error.config);
@@ -167,6 +168,10 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
 
   const handleAddressChange = (event) => {
     setAddress(event.target.value);
+  };
+
+  const handleestadoChange = (event) => {
+    setEstado(event.target.value);
   };
 
   const handleSubmit = (event) => {
@@ -241,6 +246,7 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
                     <option value="">Select Payment Method</option>
                     <option value="mbway">MBWay</option>
                     <option value="paypal">PayPal</option>
+                    <option value="paypal">Dinheiro</option>
                   </select>
                 </label>
                 <br />
@@ -249,6 +255,15 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
                   <input
                     type="text"
                     value={decoded.state}
+                    onChange={handleestadoChange}
+                  />
+                </label>
+                <br />
+                <label>
+                  Endereço:
+                  <input
+                    type="text"
+                    value={decoded.address}
                     onChange={handleAddressChange}
                   />
                 </label>

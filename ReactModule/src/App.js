@@ -30,7 +30,7 @@ const App = () => {
   // Functions
   const [restaurantesLista, setRestaurantesLista] = useState(RestaurantesLista);
   const [cartItems, setCartItems] = useState([]);
-  const [PedidosLista, setPedidosLista] = useState(pedidos);
+  const [PedidosLista, setPedidosLista] = useState([]);
 
   // Render
   return (

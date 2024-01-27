@@ -3,32 +3,34 @@ import RestaurantesList from "../Restaurantes/RestaurantesLista";
 import ProductsLista from "../MyRestaurante/ProductsLista";
 import { useNavigate, useParams } from "react-router-dom";
 import "./RestaurantesId.css";
+import axios from "axios";
 
 const RestaurantesId = ({ cartItems, setCartItems }) => {
   const { restaurantId } = useParams();
   const Navigate = useNavigate();
+  const [restaurant, setRestaurant] = useState({});
 
-  const [restaurantInfo, setRestaurantInfo] = useState({
-    name: "",
-    logo: "",
-    workingDays: {},
-  });
 
   useEffect(() => {
-    const fetchedRestaurant = RestaurantesList.find(
-      (restaurant) => restaurant.id === restaurantId
-    );
+    const fetchRestaurants = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const url = `http://localhost:9000/user/restaurants/${restaurantId}`;
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const data = response.data.restaurante;
+        setRestaurant(data);
+      } catch (error) {
+        console.error("Error fetching restaurants:", error);
+      }
+    };
 
-    if (fetchedRestaurant) {
-      setRestaurantInfo({
-        name: fetchedRestaurant.name,
-        logo: fetchedRestaurant.image,
-        workingDays: fetchedRestaurant.workingDays,
-      });
-    }
+    fetchRestaurants();
   }, [restaurantId]);
 
-  // Filter ProductsLista based on the current restaurantId
   const filteredProducts = ProductsLista.filter(
     (produto) => produto.restaurantId === restaurantId
   );
@@ -46,11 +48,11 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
     <div className="container">
       <div className="MyRestaurante-Name">
         <h1 className="titulo_restaurante">
-          {restaurantInfo.name}
+          {restaurant.campanyName}
           <img
-            src={restaurantInfo.logo}
+            src={restaurant.logo}
             className="MyRestaurant-Logo"
-            alt={`${restaurantInfo.name} Logo`}
+            alt={`${restaurant.campanyName} Logo`}
           />
         </h1>
       </div>
