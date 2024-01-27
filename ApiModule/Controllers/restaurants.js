@@ -60,7 +60,7 @@ const restaurantController = {
       userId,
       staffId,
       img,
-      category,
+      type,
     } = req.body;
 
     console.log(req.body);
@@ -74,7 +74,7 @@ const restaurantController = {
       !contactPhone ||
       !Address ||
       !staffId ||
-      !category
+      !type
     ) {
       return res.status(400).json({
         success: false,
@@ -101,14 +101,14 @@ const restaurantController = {
         deliversToHome,
         BoxID,
         Address,
-        type: category,
+        type: type,
       });
 
       if (!(await isAdmin(userId))) {
         return res.status(401).json({
           success: false,
           userId,
-          message: "Acesso negado!",
+          message: "Acesso negado!", 
         });
       }
 
@@ -183,16 +183,17 @@ const restaurantController = {
   // Atualizar um restaurante por ID
   updateRestaurantById: async (req, res) => {
     const { id } = req.params;
-
+    console.log("Update Request Body:", req.body);
+  
     if (!id) {
-      // Verificar se o ID foi recebido
       return res.status(400).json({
         success: false,
         message: "ID do restaurante não recebido!",
       });
     }
-
+  
     const {
+      
       campanyName,
       deliveryFee,
       businessHours,
@@ -200,12 +201,10 @@ const restaurantController = {
       contactPhone,
       deliversToHome,
       Address,
-      userId,
-      category,
+      type,
     } = req.body;
-
+  
     if (
-      !userId ||
       !campanyName ||
       !deliveryFee ||
       !businessHours ||
@@ -213,23 +212,28 @@ const restaurantController = {
       !contactPhone ||
       !deliversToHome ||
       !Address ||
-      !category
+      !type
     ) {
-      // Verificar se todos os dados foram recebidos
       return res.status(400).json({
         success: false,
         message: "Todos os campos são obrigatórios!",
       });
     }
-
+  
     try {
-      if ((await isAdmin(userId)) == false) {
-        return res.status(401).json({
+      // Check if the restaurant with the provided ID exists
+      const existingRestaurant = await Restaurant.findById(id);
+
+      console.log("Existing Restaurant:", existingRestaurant);
+
+      if (!existingRestaurant) {
+        return res.status(404).json({
           success: false,
-          message: "Acesso negado!",
+          message: "Restaurante não encontrado!",
         });
       }
-
+  
+      // Update the restaurant data
       const restaurante = await Restaurant.findByIdAndUpdate(
         id,
         {
@@ -240,19 +244,11 @@ const restaurantController = {
           contactPhone,
           deliversToHome,
           Address,
-          category,
+          type,
         },
         { new: true }
       );
-
-      if (!restaurante) {
-        // Verificar se o restaurante existe
-        return res.status(404).json({
-          success: false,
-          message: "Restaurante não encontrado!",
-        });
-      }
-
+  
       await createLog(
         "update",
         `Restaurante ${campanyName} atualizado com sucesso!`,
@@ -260,7 +256,7 @@ const restaurantController = {
         restaurante._id,
         true
       );
-
+  
       res.json({
         success: true,
         message: "Restaurante atualizado com sucesso!",
@@ -268,7 +264,8 @@ const restaurantController = {
     } catch (err) {
       res.status(500).json({
         success: false,
-        message: err.message || "Ocorreu um erro ao atualizar o restaurante.",
+        message:
+          err.message || "Ocorreu um erro ao atualizar o restaurante.",
       });
     }
   },
