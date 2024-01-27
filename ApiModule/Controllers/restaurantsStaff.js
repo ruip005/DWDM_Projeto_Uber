@@ -1,10 +1,8 @@
 const item = require("../Models/item");
 const restaurant = require("../Models/restaurant");
 const staff = require("../Models/restaurantsAdmins");
-const imageCreate = require("../Utils/saveImage");
-const imageDelete = require("../Utils/deleteImage");
 const ingredient = require("../Models/ingredients");
-
+const { createImage} = require("../Controllers/images");
 const restaurantStaffController = {
   createNewProduct: async (req, res) => {
     const {
@@ -13,11 +11,7 @@ const restaurantStaffController = {
       description,
       price,
       userId,
-      data,
-      contentType,
-      nameFile,
-      format,
-      size,
+      data, // todo - image
     } = req.body;
 
     console.log(req.body);
@@ -39,7 +33,7 @@ const restaurantStaffController = {
 
     try {
       const getRestaurant = await restaurant.find({ _id: id });
-      const restaurantId = getRestaurant[0]._id; // or getRestaurant._id depending on your data structure
+      const restaurantId = getRestaurant[0]._id; 
             
       if (!getRestaurant) {
         return res.status(400).json({
@@ -58,22 +52,16 @@ const restaurantStaffController = {
         });
       }
 
-      await imageCreate(
-        getRestaurant[0].restaurantContainerId,
-        data,
-        nameFile,
-        format,
-        size
-      );
-
       const newItem = new item({
-        name,
-        description,
-        price,
-        restaurantId,
+        itemName: name,
+        itemDescription: description,
+        itemPrice: price,
+        restaurantId: restaurantId,
       });
 
       await newItem.save();
+
+      await createImage(newItem._id, data);
 
       await createLog(
         "createNewProduct",
@@ -138,8 +126,6 @@ const restaurantStaffController = {
         });
       }
 
-      await imageDelete(getProduct[0].imageId);
-
       const updateProduct = await item.updateOne(
         { _id: id },
         {
@@ -149,13 +135,6 @@ const restaurantStaffController = {
         }
       );
 
-      await imageCreate(
-        getRestaurant.ContainerID,
-        data,
-        nameFile,
-        format,
-        size
-      );
 
       await createLog(
         "updateProduct",
@@ -215,8 +194,6 @@ const restaurantStaffController = {
             "Você não tem permissões para apagar produtos neste restaurante!",
         });
       }
-
-      await imageDelete(getProduct[0].imageId);
 
       const deleteProduct = await item.deleteOne({ _id: id });
 

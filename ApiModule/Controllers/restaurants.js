@@ -1,11 +1,10 @@
 const Restaurant = require("../Models/restaurant");
-const FileContainer = require("../Models/fileContainer");
-const FileContent = require("../Models/fileContent");
 const Box = require("../Models/box");
 const restaurantAdmin = require("../Models/restaurantsAdmins");
 const user = require("../Models/user");
 const { createLog } = require("../Utils/Logs");
 const { isAdmin } = require("../Utils/middleware");
+const { createImage } = require("./images");
 
 const restaurantController = {
   // Listar todos os restaurantes
@@ -83,9 +82,7 @@ const restaurantController = {
       });
     }
 
-    const imgData = img && img.split(";base64,").pop();
-
-    if (!imgData) {
+    if (!img) {
       return res.status(400).json({
         success: false,
         message: "Imagem não recebida ou inválida!",
@@ -93,11 +90,8 @@ const restaurantController = {
     }
 
     try {
-      const newImage = await new FileContent({
-        img: Buffer.from(imgData, "base64"),
-      }).save();
 
-      let BoxID, ContainerID;
+      let BoxID;
       let novoRestaurante = new Restaurant({
         campanyName,
         deliveryFee,
@@ -106,7 +100,6 @@ const restaurantController = {
         contactPhone,
         deliversToHome,
         BoxID,
-        ContainerID,
         Address,
         type: category,
       });
@@ -119,23 +112,19 @@ const restaurantController = {
         });
       }
 
-      const novoContainer = new FileContainer({
-        dateCreated: Date.now(),
-        binaryId: newImage._id || null,
-      });
 
       const novoBox = new Box();
-      const containerSalvo = await novoContainer.save();
       const boxSalvo = await novoBox.save();
 
       BoxID = boxSalvo._id;
-      ContainerID = containerSalvo._id;
 
       const restauranteSalvo = await novoRestaurante.save();
 
+      const newImage = await createImage(restauranteSalvo._id, img);
+
       await Restaurant.findByIdAndUpdate(
         restauranteSalvo._id,
-        { BoxID, ContainerID },
+        { BoxID},
         { new: true }
       );
 
@@ -520,59 +509,6 @@ const restaurantController = {
         success: false,
         message: err.message || "Ocorreu um erro ao apagar o admin.",
       });
-    }
-  },
-
-  getBasicInfos: async (req, res) => {
-    // Obter apenas o id, nome e imagem dos restaurantes
-    try {
-      const restaurantes = await Restaurant.find(
-        {},
-        { campanyName: 1, ContainerID: 1 }
-      );
-
-      const restaurantesComImagens = await Promise.all(
-        restaurantes.map(async (restaurante) => {
-          const container = await FileContainer.findOne({
-            _id: restaurante.ContainerID,
-          });
-
-          if (container) {
-            const fileContent = await FileContent.findOne({
-              _id: container.binaryId,
-            });
-
-            if (fileContent) {
-              const imgBase64 = fileContent.img.toString("base64");
-
-              return {
-                id: restaurante._id,
-                campanyName: restaurante.campanyName,
-                img: imgBase64,
-              };
-            } else {
-              console.log(
-                "File Content not found for restaurant:",
-                restaurante.campanyName
-              );
-              return null;
-            }
-          } else {
-            console.log(
-              "Container not found for restaurant:",
-              restaurante.campanyName
-            );
-            return null;
-          }
-        })
-      );
-
-      console.log("Restaurantes com imagens:", restaurantesComImagens);
-
-      res.json(restaurantesComImagens.filter(Boolean));
-    } catch (error) {
-      console.error(error);
-      res.status(500).json({ message: "Erro ao buscar restaurantes." });
     }
   },
 };

@@ -2,13 +2,13 @@ const express = require("express");
 const app = express();
 const db = require("mongoose");
 const port = 9000;
+const cors = require("cors");
 require("dotenv").config();
 const { authenticate, logging, antiVPN } = require("./Utils/middleware");
 const { color } = require("console-log-colors");
 
-app.use(require("cors")());
+app.use(cors());
 app.use(express.json());
-app.use(require("body-parser").json());
 
 connectDB = async () => {
   // Função para ligar à base de dados

@@ -530,6 +530,7 @@ const userController = {
           email: userExist.email,
           state: userExist.state,
           userId: userExist._id,
+          address: userExist.address,
         },
         secret
       );

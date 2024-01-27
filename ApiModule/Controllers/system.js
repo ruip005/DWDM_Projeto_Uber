@@ -1,12 +1,9 @@
 const rating = require("../Models/rating");
 const ratingComments = require("../Models/ratingComments");
 const order = require("../Models/order");
-const orderStatus = require("../Models/orderStatus");
 const ingredient = require("../Models/ingredients");
 const user = require("../Models/user");
 const { createLog } = require("../Utils/Logs");
-const createImage = require("../Utils/saveImage");
-const deleteImage = require("../Utils/deleteImage");
 const { isAdmin } = require("../Utils/middleware");
 
 const appController = {
@@ -124,22 +121,14 @@ const appController = {
       name,
       description,
       userId,
-      data,
-      contentType,
-      nameFile,
-      format,
-      size,
+      data, // todo image
     } = req.body;
 
     if (
       !name ||
       !description ||
       !userId ||
-      !data ||
-      !contentType ||
-      !nameFile ||
-      !format ||
-      !size
+      !data
     ) {
       return res.status(400).json({
         success: false,
@@ -155,19 +144,12 @@ const appController = {
         });
       }
 
-      const imageCreated = await createImage(
-        null,
-        data,
-        nameFile,
-        format,
-        size
-      );
 
       const newIngredient = new ingredient({
         name,
         description,
         userId,
-        imageId: imageCreated, // N sei se está certo TO DO
+        //imageId: imageCreated, // N sei se está certo TO DO
       });
 
       await newIngredient.save();
@@ -215,8 +197,6 @@ const appController = {
           message: "Acesso negado!",
         });
       }
-
-      await deleteImage(ingredient.find({ _id: id }).imageId);
 
       await ingredient.deleteOne({ _id: id });
 
@@ -276,13 +256,13 @@ const appController = {
       const newOrder = new order({
             userId,
             orderDate: Date.now(),
-            orderStatus,
+            orderstatus: "Pendente",
             orderItems: items,
             orderAddress,
             orderCity,
             orderState,
             orderZip,
-            orderPaymentMethod,
+            orderPaymentMethod, 
             campanyId: restaurantId,
             orderEmail: "example@email.com", 
             orderPhone: "123456789", 
@@ -312,23 +292,48 @@ const appController = {
       });
     }
   },
-
-  getPaymentMethods: async (req, res) => {
+  getAllOrders: async (req, res) => {
     try {
-      const paymentMethods = await paymentMethod.find();
+      const allOrders = await order.find();
 
       res.json({
         success: true,
-        paymentMethods,
+        orders: allOrders,
       });
     } catch (err) {
       res.status(500).json({
         success: false,
-        message:
-          err.message || "Ocorreu um erro ao obter os métodos de pagamento.",
+        message: err.message || "Ocorreu um erro ao obter todas as encomendas.",
       });
     }
   },
+  
+  getOrderById: async (req, res) => {
+    const { orderId } = req.params;
+
+    try {
+      const foundOrder = await order.findById(orderId);
+
+      if (!foundOrder) {
+        return res.status(404).json({
+          success: false,
+          message: "Encomenda não encontrada.",
+        });
+      }
+
+      res.json({
+        success: true,
+        order: foundOrder,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: err.message || "Ocorreu um erro ao obter a encomenda.",
+      });
+    }
+  },
+
+
   /*
     updateOrder: async (req, res) => {
     },*/
