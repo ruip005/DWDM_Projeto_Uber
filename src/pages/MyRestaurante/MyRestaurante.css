@@ -1,0 +1,80 @@
+.MyRestaurante-Name {
+  font-weight: bold;
+  font-size: 64px;
+}
+
+.container {
+  margin-top: 50px;
+  text-align: center;
+}
+
+.MyRestaurant-Logo {
+  width: 50px;
+  height: 50px;
+  margin-bottom: 10px;
+  margin-left: 10px;
+}
+
+.grid-containerProduto {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  align-items: center;
+  justify-content: center;
+  margin: auto;
+  border-radius: 10px;
+}
+
+.grid-itemProduto {
+  background-color: #f7f7f7;
+  border: 1px solid #333;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+  padding: 30px;
+  font-size: 24px;
+  text-align: center;
+  border-spacing: 0 100px;
+}
+
+.imagemProduto {
+  width: 50px;
+  height: 50px;
+  border-radius: 10%;
+  object-fit: cover;
+}
+.Horas {
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+}
+
+.MyRestaurante-Info {
+  border: black 1px solid;
+  width: 400px;
+  height: 800px;
+  border-radius: 10px;
+  background-color: #ebeaea;
+  margin-left: 730px;
+}
+.label-item {
+  font-size: 20px;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-top: 30px;
+}
+
+.titulo {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 10px;
+  margin-bottom: 10px;
+  margin-top: 30px;
+  text-decoration: underline;
+}
+
+.Produtos_h3 {
+  font-size: 30px;
+  font-weight: bold;
+  margin-top: 30px;
+  margin-bottom: 20px;
+  text-decoration: underline;
+}

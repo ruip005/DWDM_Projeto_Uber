@@ -1,0 +1,37 @@
+.titulo_restaurante {
+  background-color: seagreen;
+  color: white;
+  font-size: 90px;
+  text-align: center;
+  margin-top: -50px;
+}
+
+.MyRestaurant-Logo {
+  width: 80px;
+  height: 80px;
+  margin-left: 40px;
+  margin-bottom: -5px;
+}
+
+.MyRestaurante-Products {
+  margin-left: 40px;
+  margin-top: 20px;
+  margin-bottom: 20px;
+  font-size: 40px;
+  text-decoration: underline;
+}
+
+.grid-containerProduto {
+  display: grid;
+  grid-template-columns: auto auto auto auto;
+  grid-gap: 30px;
+  padding: 20px;
+}
+
+.grid-itemProduto {
+  background-color: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(0, 0, 0, 0.8);
+  padding: 20px;
+  font-size: 30px;
+  text-align: center;
+}
