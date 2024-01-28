@@ -126,7 +126,7 @@ function CreateRestaurant({ restaurantesLista, setRestaurantesLista }) {
           Address: newRestaurant.Address,
           userId: newRestaurant.UserId,
           staffId: newRestaurant.UserId,
-          category: newRestaurant.category,
+          type: newRestaurant.category,
           img: newRestaurant.image,
         },
         {

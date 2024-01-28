@@ -86,33 +86,6 @@ function AddNewProduct() {
     });
   };
 
-  /*   const handleAddProduct = () => {
-      if (newProduct.name && newProduct.price && newProduct.description && newProduct.image) {
-        const newProductWithId = {
-          ...newProduct,
-          id: ProductsLista.length + 1,
-          restaurantId: restaurantId, 
-        };
-
-        ProductsLista.push(newProductWithId);
-
-        setNewProduct({
-          name: '',
-          price: '',
-          description: '',
-          image: null,
-          quantity: 1,
-          restaurantId: {restaurantId}, 
-
-        });
-
-        Navigate(-1);
-        console.log(ProductsLista);
-      } else {
-        alert('Please fill in all fields before adding the product.');
-      }
-    };*/
-
   const handleAddProduct = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -124,7 +97,7 @@ function AddNewProduct() {
           name: newProduct.name,
           price: newProduct.price,
           description: newProduct.description,
-          quantity: "1",
+          quantity: 1,
           userId: decoded.userId,
           id: restaurantId,
           img: "path/to/image.jpg",

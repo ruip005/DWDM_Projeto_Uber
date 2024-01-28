@@ -307,6 +307,47 @@ const appController = {
       });
     }
   },
+
+  updateOrderById: async (req, res) => {
+    const { orderId } = req.params;
+    const updateData = req.body;
+
+    try {
+      const foundOrder = await order.findById(orderId);
+
+      if (!foundOrder) {
+        return res.status(404).json({
+          success: false,
+          message: "Encomenda não encontrada.",
+        });
+      }
+
+      // Update order fields based on the data provided in the request body
+      Object.assign(foundOrder, updateData);
+
+      // Save the updated order
+      await foundOrder.save();
+
+      await createLog(
+        "updateOrder",
+        `A encomenda ${orderId} foi atualizada.`,
+        null, // If you have user information for the log, add it here
+        orderId,
+        true
+      );
+
+      res.json({
+        success: true,
+        message: "Encomenda atualizada com sucesso!",
+        updatedOrder: foundOrder,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: err.message || "Ocorreu um erro ao atualizar a encomenda.",
+      });
+    }
+  },
   
   getOrderById: async (req, res) => {
     const { orderId } = req.params;

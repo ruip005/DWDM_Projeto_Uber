@@ -9,5 +9,6 @@ router.put("/product/:id", staffController.updateProduct);
 router.delete("/product/:id", staffController.deleteProduct);
 router.put("/campany/:id", staffController.updateRestaurant);
 router.get("/ingredients", staffController.showAllIngredients);
+router.get("/products/:id", staffController.getProducts);
 
 module.exports = router;

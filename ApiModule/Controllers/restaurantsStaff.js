@@ -4,6 +4,8 @@ const staff = require("../Models/restaurantsAdmins");
 const ingredient = require("../Models/ingredients");
 const { createImage} = require("../Controllers/images");
 const restaurantStaffController = {
+  
+
   createNewProduct: async (req, res) => {
     const {
       id,
@@ -11,8 +13,13 @@ const restaurantStaffController = {
       description,
       price,
       userId,
+      quantity,
       data, // todo - image
     } = req.body;
+
+    const createLog = async (action, description, userId, entityId, success) => {
+      console.log(`Action: ${action}, Description: ${description}, User ID: ${userId}, Entity ID: ${entityId}, Success: ${success}`);
+    };
 
     console.log(req.body);
     console.log(req.params);
@@ -57,6 +64,7 @@ const restaurantStaffController = {
         itemDescription: description,
         itemPrice: price,
         restaurantId: restaurantId,
+        quantity: 1,
       });
 
       await newItem.save();
@@ -80,6 +88,32 @@ const restaurantStaffController = {
       res.status(500).json({
         success: false,
         message: err.message || "Ocorreu um erro ao criar o produto.",
+      });
+    }
+  },
+
+    getProducts: async (req, res) => {
+    const { id } = req.params;
+  
+    if (!id) {
+      return res.status(400).json({
+        success: false,
+        message: "ID do restaurante não recebido!",
+      });
+    }
+    try {
+  
+      const products = await item.find({ restaurantId: id });
+  
+      res.json({
+        success: true,
+        message: "Produtos encontrados com sucesso!",
+        products,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: err.message || "Ocorreu um erro ao encontrar os produtos.",
       });
     }
   },

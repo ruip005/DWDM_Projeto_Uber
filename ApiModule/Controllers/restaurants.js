@@ -27,9 +27,7 @@ const restaurantController = {
     try {
       let query = {};
 
-      // Verifica se foi fornecido um parâmetro de pesquisa (por exemplo, 'nome')
       if (req.query.campanyName) {
-        // Utiliza uma expressão regular para buscar parcialmente o nome
         query = {
           campanyName: { $regex: new RegExp(req.query.campanyName, "i") },
         };

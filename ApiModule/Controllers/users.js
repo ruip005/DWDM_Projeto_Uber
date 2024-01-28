@@ -83,7 +83,11 @@ const userController = {
       address,
     } = req.body;
 
+<<<<<<< HEAD
     console.log(req.body);
+=======
+    console.log(req.body)
+>>>>>>> 6625290bd867cc1123f35d1e357b8ffaf753c9b6
 
     if (!name || !email || !phone || !password) {
       return res.status(400).json({
