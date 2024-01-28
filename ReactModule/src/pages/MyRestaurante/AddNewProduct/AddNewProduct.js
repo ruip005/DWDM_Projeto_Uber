@@ -95,13 +95,12 @@ function AddNewProduct() {
         url,
         {
           name: newProduct.name,
-          price: newProduct.price,
           description: newProduct.description,
+          price: newProduct.price,
           quantity: 1,
           userId: decoded.userId,
           id: restaurantId,
-          img: "path/to/image.jpg",
-          fileContainerId: "containerId123",
+          data: newProduct.image,
         },
         {
           headers: {

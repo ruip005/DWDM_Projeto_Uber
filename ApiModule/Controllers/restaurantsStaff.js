@@ -2,10 +2,9 @@ const item = require("../Models/item");
 const restaurant = require("../Models/restaurant");
 const staff = require("../Models/restaurantsAdmins");
 const ingredient = require("../Models/ingredients");
-const { createImage} = require("../Controllers/images");
-const restaurantStaffController = {
-  
+const { createImage } = require("../Controllers/images");
 
+const restaurantStaffController = {
   createNewProduct: async (req, res) => {
     const {
       id,
@@ -16,10 +15,6 @@ const restaurantStaffController = {
       quantity,
       data, // todo - image
     } = req.body;
-
-    const createLog = async (action, description, userId, entityId, success) => {
-      console.log(`Action: ${action}, Description: ${description}, User ID: ${userId}, Entity ID: ${entityId}, Success: ${success}`);
-    };
 
     console.log(req.body);
     console.log(req.params);
@@ -40,8 +35,8 @@ const restaurantStaffController = {
 
     try {
       const getRestaurant = await restaurant.find({ _id: id });
-      const restaurantId = getRestaurant[0]._id; 
-            
+      const restaurantId = getRestaurant[0]._id;
+
       if (!getRestaurant) {
         return res.status(400).json({
           success: false,
@@ -59,6 +54,18 @@ const restaurantStaffController = {
         });
       }
 
+      const createLog = async (
+        action,
+        description,
+        userId,
+        entityId,
+        success
+      ) => {
+        console.log(
+          `Action: ${action}, Description: ${description}, User ID: ${userId}, Entity ID: ${entityId}, Success: ${success}`
+        );
+      };
+
       const newItem = new item({
         itemName: name,
         itemDescription: description,
@@ -69,7 +76,7 @@ const restaurantStaffController = {
 
       await newItem.save();
 
-      await createImage(newItem._id, data);
+      const newImage = await createImage(newItem._id, data);
 
       await createLog(
         "createNewProduct",
@@ -92,9 +99,9 @@ const restaurantStaffController = {
     }
   },
 
-    getProducts: async (req, res) => {
+  getProducts: async (req, res) => {
     const { id } = req.params;
-  
+
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -102,9 +109,8 @@ const restaurantStaffController = {
       });
     }
     try {
-  
       const products = await item.find({ restaurantId: id });
-  
+
       res.json({
         success: true,
         message: "Produtos encontrados com sucesso!",
@@ -168,7 +174,6 @@ const restaurantStaffController = {
           price,
         }
       );
-
 
       await createLog(
         "updateProduct",

@@ -70,8 +70,11 @@ const MyRestaurante = () => {
           {restaurant.businessHours &&
             Object.keys(restaurant.businessHours).map((day) => (
               <div className="label-item" key={day}>
-                <label style={{ fontWeight: "bold", padding: "10px" }}>{day}</label>
-                {restaurant.businessHours[day].open === restaurant.businessHours[day].close ? (
+                <label style={{ fontWeight: "bold", padding: "10px" }}>
+                  {day}
+                </label>
+                {restaurant.businessHours[day].open ===
+                restaurant.businessHours[day].close ? (
                   <div className="closedHours">
                     <label>Status:</label>
                     <span className="Horas">FECHADO</span>
@@ -104,18 +107,17 @@ const MyRestaurante = () => {
         </button>
         <h3 className="Produtos_h3">Produtos</h3>
         <div className="grid-containerProduto">
-          {productsLista
-            .map((produto) => (
-              <div className="grid-itemProduto" key={produto._id}>
-                <img
-                  className="imagemProduto"
-                  src={produto.image}
-                  alt={produto.itemName}
-                />
-                <p>{produto.itemName}</p>
-                <p>{produto.itemPrice + "€"}</p>
-              </div>
-            ))}
+          {productsLista.map((produto) => (
+            <div className="grid-itemProduto" key={produto._id}>
+              <img
+                className="imagemProduto"
+                src={`http://localhost:9000/system/image/${produto._id}`}
+                alt={produto.itemName}
+              />
+              <p>{produto.itemName}</p>
+              <p>{produto.itemPrice + "€"}</p>
+            </div>
+          ))}
         </div>
       </div>
     </div>
