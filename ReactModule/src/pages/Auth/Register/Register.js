@@ -26,16 +26,18 @@ export const Register = () => {
     e.preventDefault();
 
     if (!validatePasswords()) {
-      alert("As senhas não coincidem!");
+      toast.info("As senhas não coincidem!");
+      //alert("As senhas não coincidem!");
       return;
     }
 
     if (!userData.lastName.trim()) {
-      alert("O último nome é obrigatório!");
+      toast.info("O último nome é obrigatório!");
+      //alert("O último nome é obrigatório!");
       return;
     }
 
-    const url = "http://192.168.1.115:9000/user/profile";
+    const url = "http://localhost:9000/user/profile";
     axios
       .post(url, {
         name: userData.lastName,

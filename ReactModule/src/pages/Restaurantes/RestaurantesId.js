@@ -1,16 +1,45 @@
 import React, { useState, useEffect } from "react";
-import RestaurantesList from "../Restaurantes/RestaurantesLista";
-import ProductsLista from "../MyRestaurante/ProductsLista";
 import { useNavigate, useParams } from "react-router-dom";
-import "./RestaurantesId.css";
 import axios from "axios";
+import "./RestaurantesId.css";
 
 const RestaurantesId = ({ cartItems, setCartItems }) => {
+  // Estado para armazenar a lista de produtos do restaurante
+  const [productsLista, setProductsLista] = useState([]);
+
+  // Obter o ID do restaurante a partir dos parâmetros da URL
   const { restaurantId } = useParams();
+
+  // Utilizar o hook de navegação do React Router
   const Navigate = useNavigate();
+
+  // Estado para armazenar informações sobre o restaurante
   const [restaurant, setRestaurant] = useState({});
 
+  // Efeito useEffect para buscar os produtos e informações do restaurante ao carregar o componente
   useEffect(() => {
+    // Função assíncrona para buscar os produtos do restaurante
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const url = `http://localhost:9000/restaurant/products/${restaurantId}`;
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const data = response.data;
+        if (data.success) {
+          setProductsLista(data.products);
+        } else {
+          console.error("API request for products was not successful");
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
+    // Função assíncrona para buscar as informações do restaurante
     const fetchRestaurants = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -27,26 +56,28 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
       }
     };
 
+    // Chamar as funções de busca
+    fetchProducts();
     fetchRestaurants();
   }, [restaurantId]);
 
-  const filteredProducts = ProductsLista.filter(
-    (produto) => produto.restaurantId === restaurantId
-  );
-
+  // Função para adicionar um produto ao carrinho
   const addToCart = (produto) => {
-    const isItemInCart = cartItems.some((item) => item.id === produto.id);
+    const isItemInCart = cartItems.some((item) => item._id === produto._id);
     if (isItemInCart) {
       alert("Produto já adicionado ao carrinho");
       return;
     }
     setCartItems([...cartItems, produto]);
+    console.log(cartItems);
   };
 
+  // Componente de renderização
   return (
     <div className="container">
       <div className="MyRestaurante-Name">
         <h1 className="titulo_restaurante">
+          {/* Nome do restaurante e exibição do logo */}
           {restaurant.campanyName}
           <img
             src={`http://localhost:9000/system/image/${restaurant._id}`}
@@ -58,29 +89,22 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
       <div className="MyRestaurante-Products">
         <h3 style={{ marginTop: "10px" }}>Produtos</h3>
         <div className="grid-containerProduto">
-          {filteredProducts.map((produto) => (
-            <div className="grid-itemProduto" key={produto.id}>
+          {/* Mapear e exibir a lista de produtos */}
+          {productsLista.map((produto) => (
+            <div className="grid-itemProduto" key={produto._id}>
               <img
                 className="imagemProduto"
-                src={produto.image}
-                alt={produto.name}
+                src={`http://localhost:9000/system/image/${produto._id}`}
+                alt={produto.itemName}
               />
-              <p>{produto.name}</p>
-              <p>{produto.price + "€"}</p>
+              <p>{produto.itemName}</p>
+              <p>{produto.itemPrice + "€"}</p>
+              {/* Botão para adicionar o produto ao carrinho */}
               <button onClick={() => addToCart(produto)}>Adicionar</button>
             </div>
           ))}
         </div>
       </div>
-      <div className="ShoppingCart">
-        <h3>Shopping Cart</h3>
-        <ul>
-          {cartItems.map((item, index) => (
-            <li key={index}>{item.name}</li>
-          ))}
-        </ul>
-      </div>
-      <button onClick={() => Navigate("/admin")}> aaaaaa</button>
     </div>
   );
 };

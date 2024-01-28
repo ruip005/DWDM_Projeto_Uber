@@ -147,7 +147,10 @@ function Admin() {
                 <tr key={restaurante._id}>
                   <td onClick={() => handleRestaurantClick(restaurante._id)}>
                     {restaurante.campanyName}
+                  </td>
+                  <td>
                     <img
+                      style={{ width: "50px", height: "50px" }}
                       src={`http://localhost:9000/system/image/${restaurante._id}`}
                       alt={restaurante.campanyName}
                     />
@@ -177,7 +180,8 @@ function Admin() {
                   (user) => user._id === pedido.userId
                 );
                 const restaurant = restaurantes.find(
-                  (restaurant) => restaurant && restaurant.id === pedido._id
+                  (restaurant) =>
+                    restaurant && restaurant._id === pedido.campanyId
                 );
 
                 return (

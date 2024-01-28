@@ -12,6 +12,7 @@ router.post("/comment/:id", systemController.createComment);
 router.post("/order", systemController.newOrder);
 router.get("/order", systemController.getAllOrders);
 router.get("/orders/:orderId", systemController.getOrderById);
+router.patch("/order/:orderId", systemController.updateOrderById);
 router.get("/image/:id", getImage);
 router.post("/image", createImage);
 
