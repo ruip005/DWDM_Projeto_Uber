@@ -13,6 +13,10 @@ const itemSchema = new mongoose.Schema({
     type: Number,
     required: true
   },
+  quantity: {
+    type: Number,
+    required: true
+  },
   restaurantId: {
     type: String,
     required: true
