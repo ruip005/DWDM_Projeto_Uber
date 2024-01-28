@@ -7,7 +7,6 @@ import axios from "axios";
 import RestaurantesId from "../../Restaurantes/RestaurantesId";
 import { jwtDecode } from "jwt-decode";
 
-
 function AddNewProduct() {
   const { restaurantId } = useParams();
   const [restaurant, setRestaurant] = useState({});
@@ -24,7 +23,7 @@ function AddNewProduct() {
           console.error("restaurantId is not defined");
           return;
         }
-  
+
         const token = localStorage.getItem("token");
         const url = `http://localhost:9000/user/restaurants/${restaurantId}`;
         const response = await axios.get(url, {
@@ -39,11 +38,9 @@ function AddNewProduct() {
         console.error("Error fetching restaurants:", error);
       }
     };
-  
+
     fetchRestaurants();
   }, [restaurantId]);
-  
-  
 
   let decoded;
   const token = localStorage.getItem("token");
@@ -61,10 +58,6 @@ function AddNewProduct() {
   } catch (error) {
     console.error("Erro ao decodificar o token:", error);
   }
-
-  
-
-
 
   function getBase64(file) {
     return new Promise((resolve, reject) => {
@@ -134,7 +127,7 @@ function AddNewProduct() {
           quantity: "1",
           userId: decoded.userId,
           id: restaurantId,
-          img: "path/to/image.jpg", 
+          img: "path/to/image.jpg",
           fileContainerId: "containerId123",
         },
         {
@@ -163,7 +156,7 @@ function AddNewProduct() {
         <h1>
           {restaurant.campanyName}
           <img
-            src={restaurant.logo}
+            src={`http://localhost:9000/system/image/${restaurant._id}`}
             className="MyRestaurant-Logo"
             alt={restaurant.name + " Logo"}
           />
