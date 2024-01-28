@@ -25,7 +25,7 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
 
   try {
     decoded = jwtDecode(token);
-    console.log("Token decodificado:", decoded);
+    //console.log("Token decodificado:", decoded);
   } catch (error) {
     console.error("Erro ao decodificar o token:", error);
   }
@@ -159,27 +159,13 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
                 <p>{item.itemName}</p>
               </div>
               <spam>
-                <button
-                  onClick={() => handleAdd(item)}
-                >
-                  +
-                </button>
-                <button >
-                  {item.quantity}
-                </button>
-                <button
-                  onClick={() => handleMinus(item)}
-                >
-                  -
-                </button>
+                <button onClick={() => handleAdd(item)}>+</button>
+                <button>{item.quantity}</button>
+                <button onClick={() => handleMinus(item)}>-</button>
               </spam>
               <div>
                 <span>{item.itemPrice}</span>
-                <button
-                  onClick={() => handleRemove(item)}
-                >
-                  X
-                </button>
+                <button onClick={() => handleRemove(item)}>X</button>
               </div>
             </div>
           );

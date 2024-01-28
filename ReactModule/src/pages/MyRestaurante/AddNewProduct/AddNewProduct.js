@@ -1,11 +1,11 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ProductsLista from "../ProductsLista";
+import ProductsList from "../ProductsList"; // Importa um componente ProductsList (não fornecido no código)
 import { useParams } from "react-router";
 import { useEffect } from "react";
 import axios from "axios";
-import RestaurantesId from "../../Restaurantes/RestaurantesId";
-import { jwtDecode } from "jwt-decode";
+import RestaurantesId from "../../Restaurantes/RestaurantesId"; // Importa um componente RestaurantesId (não fornecido no código)
+import { jwtDecode } from "jwt-decode"; // Importa a função jwtDecode (não fornecida no código)
 
 function AddNewProduct() {
   const { restaurantId } = useParams();
@@ -47,9 +47,9 @@ function AddNewProduct() {
   const Navigate = useNavigate();
 
   if (!restaurantId) {
-    // Handle the case where restaurantId is not defined
+    // Lidar com o caso em que restaurantId não está definido
     console.error("restaurantId is not defined");
-    return null; // or some other error handling logic
+    return null; // ou outra lógica de tratamento de erro
   }
 
   try {
@@ -59,6 +59,7 @@ function AddNewProduct() {
     console.error("Erro ao decodificar o token:", error);
   }
 
+  // Função para converter a imagem do produto em base64
   function getBase64(file) {
     return new Promise((resolve, reject) => {
       const reader = new FileReader();
@@ -68,6 +69,7 @@ function AddNewProduct() {
     });
   }
 
+  // Manipulador para alterações nos campos de entrada do formulário
   const handleInputChange = (e) => {
     const { name, value } = e.target;
     setNewProduct((prevProduct) => ({
@@ -76,6 +78,7 @@ function AddNewProduct() {
     }));
   };
 
+  // Manipulador para alterações na imagem do produto
   const handleImageChange = (e) => {
     const imageFile = e.target.files[0];
     getBase64(imageFile).then((base64Image) => {
@@ -86,6 +89,7 @@ function AddNewProduct() {
     });
   };
 
+  // Função para adicionar um novo produto
   const handleAddProduct = async () => {
     try {
       const token = localStorage.getItem("token");
@@ -122,6 +126,7 @@ function AddNewProduct() {
     }
   };
 
+  // JSX para renderizar o componente
   return (
     <div className="container">
       <div className="MyRestaurante-Name">

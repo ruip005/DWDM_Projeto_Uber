@@ -147,10 +147,10 @@ function Admin() {
                 <tr key={restaurante._id}>
                   <td onClick={() => handleRestaurantClick(restaurante._id)}>
                     {restaurante.campanyName}
-                    </td>
-                    <td>
+                  </td>
+                  <td>
                     <img
-                      style={{ width: "50px", height: "50px"}}
+                      style={{ width: "50px", height: "50px" }}
                       src={`http://localhost:9000/system/image/${restaurante._id}`}
                       alt={restaurante.campanyName}
                     />
@@ -174,47 +174,48 @@ function Admin() {
             </tr>
           </thead>
           <tbody>
-      {PedidosLista && PedidosLista.length > 0 ? (
-        PedidosLista.map((pedido) => {
-          const user = usersList.find(
-            (user) => user._id === pedido.userId
-          );
-          const restaurant = restaurantes.find(
-            (restaurant) => restaurant && restaurant._id === pedido.campanyId
-          );
+            {PedidosLista && PedidosLista.length > 0 ? (
+              PedidosLista.map((pedido) => {
+                const user = usersList.find(
+                  (user) => user._id === pedido.userId
+                );
+                const restaurant = restaurantes.find(
+                  (restaurant) =>
+                    restaurant && restaurant._id === pedido.campanyId
+                );
 
-          return (
-            <tr key={pedido._id}>
-              <td>
-                {user
-                  ? `${user.firstName} ${user.lastName}`
-                  : "Unknown User"}
-              </td>
-              <td>
-                {restaurant
-                  ? restaurant.campanyName
-                  : "Unknown Restaurant"}
-              </td>
-              <td>
-                <ul>
-                  {pedido.orderItems.map((item) => (
-                    <li key={item.name}>
-                      {item.name} - Quantity: {item.quantity}
-                    </li>
-                  ))}
-                </ul>
-              </td>
-              <td>{pedido.orderTotal}</td>
-              <td>{pedido.orderStatus}</td>
-            </tr>
-          );
-        })
-      ) : (
-        <tr>
-          <td colSpan="5">No orders available</td>
-        </tr>
-      )}
-    </tbody>
+                return (
+                  <tr key={pedido._id}>
+                    <td>
+                      {user
+                        ? `${user.firstName} ${user.lastName}`
+                        : "Unknown User"}
+                    </td>
+                    <td>
+                      {restaurant
+                        ? restaurant.campanyName
+                        : "Unknown Restaurant"}
+                    </td>
+                    <td>
+                      <ul>
+                        {pedido.orderItems.map((item) => (
+                          <li key={item.name}>
+                            {item.name} - Quantity: {item.quantity}
+                          </li>
+                        ))}
+                      </ul>
+                    </td>
+                    <td>{pedido.orderTotal}</td>
+                    <td>{pedido.orderStatus}</td>
+                  </tr>
+                );
+              })
+            ) : (
+              <tr>
+                <td colSpan="5">No orders available</td>
+              </tr>
+            )}
+          </tbody>
         </table>
       )}
 

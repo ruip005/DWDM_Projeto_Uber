@@ -26,12 +26,14 @@ export const Register = () => {
     e.preventDefault();
 
     if (!validatePasswords()) {
-      alert("As senhas não coincidem!");
+      toast.info("As senhas não coincidem!");
+      //alert("As senhas não coincidem!");
       return;
     }
 
     if (!userData.lastName.trim()) {
-      alert("O último nome é obrigatório!");
+      toast.info("O último nome é obrigatório!");
+      //alert("O último nome é obrigatório!");
       return;
     }
 
