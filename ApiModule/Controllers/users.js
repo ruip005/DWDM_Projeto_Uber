@@ -83,7 +83,7 @@ const userController = {
       address,
     } = req.body;
 
-    console.log(req.body);
+    console.log(req.body)
 
     if (!name || !email || !phone || !password) {
       return res.status(400).json({
@@ -100,6 +100,8 @@ const userController = {
     }
 
     try {
+      const country = await getCountry(req.ip);
+
       let [firstName, ...lastName] = name.split(" ");
       lastName = lastName.join(" ");
 
@@ -135,9 +137,6 @@ const userController = {
             null,
             false
           );
-          res.json({
-            success: true,
-          });
         }
       }
 
@@ -145,7 +144,6 @@ const userController = {
         success: true,
       });
     } catch (err) {
-      console.log(err);
       res.status(500).json({
         success: false,
         message: err.message || "Ocorreu um erro ao criar o utilizador.",

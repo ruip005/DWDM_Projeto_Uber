@@ -2,9 +2,10 @@ const item = require("../Models/item");
 const restaurant = require("../Models/restaurant");
 const staff = require("../Models/restaurantsAdmins");
 const ingredient = require("../Models/ingredients");
-const { createImage } = require("../Controllers/images");
-
+const { createImage} = require("../Controllers/images");
 const restaurantStaffController = {
+  
+
   createNewProduct: async (req, res) => {
     const {
       id,
@@ -15,6 +16,10 @@ const restaurantStaffController = {
       quantity,
       data, // todo - image
     } = req.body;
+
+    const createLog = async (action, description, userId, entityId, success) => {
+      console.log(`Action: ${action}, Description: ${description}, User ID: ${userId}, Entity ID: ${entityId}, Success: ${success}`);
+    };
 
     console.log(req.body);
     console.log(req.params);
@@ -35,8 +40,8 @@ const restaurantStaffController = {
 
     try {
       const getRestaurant = await restaurant.find({ _id: id });
-      const restaurantId = getRestaurant[0]._id;
-
+      const restaurantId = getRestaurant[0]._id; 
+            
       if (!getRestaurant) {
         return res.status(400).json({
           success: false,
@@ -54,18 +59,6 @@ const restaurantStaffController = {
         });
       }
 
-      const createLog = async (
-        action,
-        description,
-        userId,
-        entityId,
-        success
-      ) => {
-        console.log(
-          `Action: ${action}, Description: ${description}, User ID: ${userId}, Entity ID: ${entityId}, Success: ${success}`
-        );
-      };
-
       const newItem = new item({
         itemName: name,
         itemDescription: description,
@@ -76,7 +69,7 @@ const restaurantStaffController = {
 
       await newItem.save();
 
-      const newImage = await createImage(newItem._id, data);
+      await createImage(newItem._id, data);
 
       await createLog(
         "createNewProduct",
@@ -98,10 +91,42 @@ const restaurantStaffController = {
       });
     }
   },
+  getProductById: async (req, res) => {
+    const { productId } = req.params;
 
-  getProducts: async (req, res) => {
+    if (!productId) {
+      return res.status(400).json({
+        success: false,
+        message: "ID do produto não recebido!",
+      });
+    }
+
+    try {
+      const product = await item.findById(productId);
+
+      if (!product) {
+        return res.status(404).json({
+          success: false,
+          message: "Produto não encontrado!",
+        });
+      }
+
+      res.json({
+        success: true,
+        message: "Produto encontrado com sucesso!",
+        product,
+      });
+    } catch (err) {
+      res.status(500).json({
+        success: false,
+        message: err.message || "Ocorreu um erro ao encontrar o produto.",
+      });
+    }
+  },
+
+    getProducts: async (req, res) => {
     const { id } = req.params;
-
+  
     if (!id) {
       return res.status(400).json({
         success: false,
@@ -109,8 +134,9 @@ const restaurantStaffController = {
       });
     }
     try {
+  
       const products = await item.find({ restaurantId: id });
-
+  
       res.json({
         success: true,
         message: "Produtos encontrados com sucesso!",
@@ -175,6 +201,7 @@ const restaurantStaffController = {
         }
       );
 
+
       await createLog(
         "updateProduct",
         `O utilizador ${userId} editou o produto ${name} no restaurante ${getProduct[0].restaurantId}.`,
@@ -198,19 +225,11 @@ const restaurantStaffController = {
 
   deleteProduct: async (req, res) => {
     const { id } = req.params;
-    const { userId } = req.body;
 
     if (!id) {
       return res.status(400).json({
         success: false,
         message: "ID do produto não recebido!",
-      });
-    }
-
-    if (!userId) {
-      return res.status(400).json({
-        success: false,
-        message: "ID do utilizador não recebido!",
       });
     }
 
@@ -224,25 +243,9 @@ const restaurantStaffController = {
         });
       }
 
-      const getRestaurantStaff = await staff.find({ userId });
-
-      if (!getRestaurantStaff) {
-        return res.status(401).json({
-          success: false,
-          message:
-            "Você não tem permissões para apagar produtos neste restaurante!",
-        });
-      }
 
       const deleteProduct = await item.deleteOne({ _id: id });
 
-      await createLog(
-        "deleteProduct",
-        `O utilizador ${userId} apagou o produto ${getProduct[0].name} no restaurante ${getProduct[0].restaurantId}.`,
-        userId,
-        id,
-        true
-      );
 
       res.json({
         success: true,
