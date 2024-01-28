@@ -19,6 +19,23 @@ function MyRestauranteEdit() {
         });
     };
 
+    const handleRemover = async () => {
+        try {
+            const token = localStorage.getItem("token");
+            const url = `http://localhost:9000/admin/restaurants/${restaurantId}`;
+            const response = await axios.delete(url, {
+                headers: {
+                    Authorization: token,
+                },
+            });
+            Navigate("/admin");
+        } catch (error) {
+            console.error("Erro ao eliminar o restaurante:", error);
+        }
+    };
+
+
+
     // Função para lidar com mudanças no checkbox para dias de fechamento
     const handleCheckboxChange = (day) => {
         setRestaurant((prevRestaurant) => {
@@ -140,6 +157,9 @@ function MyRestauranteEdit() {
             </div>
             {/* Botão para acionar a função de edição */}
             <button onClick={handleEditar}>Editar</button>
+            <p>
+            <button onClick={handleRemover}>Eliminar Restaurante</button>
+            </p>
             <p />
             {/* Botão para voltar à página anterior */}
             <button onClick={() => Navigate(-1)}>Voltar</button>
