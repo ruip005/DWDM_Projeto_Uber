@@ -35,7 +35,7 @@ export const Register = () => {
       return;
     }
 
-    const url = "http://192.168.1.115:9000/user/profile";
+    const url = "http://localhost:9000/user/profile";
     axios
       .post(url, {
         name: userData.lastName,
