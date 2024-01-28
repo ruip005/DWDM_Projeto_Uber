@@ -1,10 +1,10 @@
 import React, { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import ProductsList from "../ProductsList"; // Importa um componente ProductsList (não fornecido no código)
+//import ProductsList from "../ProductsList"; // Importa um componente ProductsList (não fornecido no código)
 import { useParams } from "react-router";
 import { useEffect } from "react";
 import axios from "axios";
-import RestaurantesId from "../../Restaurantes/RestaurantesId"; // Importa um componente RestaurantesId (não fornecido no código)
+//import RestaurantesId from "../../Restaurantes/RestaurantesId"; // Importa um componente RestaurantesId (não fornecido no código)
 import { jwtDecode } from "jwt-decode"; // Importa a função jwtDecode (não fornecida no código)
 
 function AddNewProduct() {
