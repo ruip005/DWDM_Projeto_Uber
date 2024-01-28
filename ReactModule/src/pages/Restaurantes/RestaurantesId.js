@@ -1,16 +1,35 @@
 import React, { useState, useEffect } from "react";
-import RestaurantesList from "../Restaurantes/RestaurantesLista";
-import ProductsLista from "../MyRestaurante/ProductsLista";
 import { useNavigate, useParams } from "react-router-dom";
-import "./RestaurantesId.css";
 import axios from "axios";
+import "./RestaurantesId.css";
 
 const RestaurantesId = ({ cartItems, setCartItems }) => {
+  const [productsLista, setProductsLista] = useState([]);
   const { restaurantId } = useParams();
   const Navigate = useNavigate();
   const [restaurant, setRestaurant] = useState({});
 
   useEffect(() => {
+    const fetchProducts = async () => {
+      try {
+        const token = localStorage.getItem("token");
+        const url = `http://localhost:9000/restaurant/products/${restaurantId}`;
+        const response = await axios.get(url, {
+          headers: {
+            Authorization: token,
+          },
+        });
+        const data = response.data;
+        if (data.success) {
+          setProductsLista(data.products);
+        } else {
+          console.error("API request for products was not successful");
+        }
+      } catch (error) {
+        console.error("Error fetching products:", error);
+      }
+    };
+
     const fetchRestaurants = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -27,20 +46,18 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
       }
     };
 
+    fetchProducts();
     fetchRestaurants();
   }, [restaurantId]);
 
-  const filteredProducts = ProductsLista.filter(
-    (produto) => produto.restaurantId === restaurantId
-  );
-
   const addToCart = (produto) => {
-    const isItemInCart = cartItems.some((item) => item.id === produto.id);
+    const isItemInCart = cartItems.some((item) => item._id === produto._id);
     if (isItemInCart) {
       alert("Produto já adicionado ao carrinho");
       return;
     }
     setCartItems([...cartItems, produto]);
+    console.log(cartItems)
   };
 
   return (
@@ -58,29 +75,21 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
       <div className="MyRestaurante-Products">
         <h3 style={{ marginTop: "10px" }}>Produtos</h3>
         <div className="grid-containerProduto">
-          {filteredProducts.map((produto) => (
-            <div className="grid-itemProduto" key={produto.id}>
+          {productsLista.map((produto) => (
+            <div className="grid-itemProduto" key={produto._id}>
               <img
                 className="imagemProduto"
                 src={produto.image}
-                alt={produto.name}
+                alt={produto.itemName}
               />
-              <p>{produto.name}</p>
-              <p>{produto.price + "€"}</p>
+              <p>{produto.itemName}</p>
+              <p>{produto.itemPrice + "€"}</p>
               <button onClick={() => addToCart(produto)}>Adicionar</button>
             </div>
           ))}
         </div>
       </div>
-      <div className="ShoppingCart">
-        <h3>Shopping Cart</h3>
-        <ul>
-          {cartItems.map((item, index) => (
-            <li key={index}>{item.name}</li>
-          ))}
-        </ul>
-      </div>
-      <button onClick={() => Navigate("/admin")}> aaaaaa</button>
+     
     </div>
   );
 };

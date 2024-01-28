@@ -97,7 +97,7 @@ function AddNewProduct() {
           name: newProduct.name,
           price: newProduct.price,
           description: newProduct.description,
-          quantity: "1",
+          quantity: 1,
           userId: decoded.userId,
           id: restaurantId,
           img: "path/to/image.jpg",

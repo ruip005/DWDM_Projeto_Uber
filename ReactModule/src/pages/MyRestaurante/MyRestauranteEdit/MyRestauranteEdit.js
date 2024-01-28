@@ -22,6 +22,7 @@ function MyRestauranteEdit() {
     const handleRemover = async () => {
         try {
             const token = localStorage.getItem("token");
+
             const url = `http://localhost:9000/admin/restaurants/${restaurantId}`;
             const response = await axios.delete(url, {
                 headers: {
@@ -36,7 +37,6 @@ function MyRestauranteEdit() {
 
 
 
-    // Função para lidar com mudanças no checkbox para dias de fechamento
     const handleCheckboxChange = (day) => {
         setRestaurant((prevRestaurant) => {
             const updatedClosingDays = { ...prevRestaurant.closingDays };

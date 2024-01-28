@@ -10,7 +10,7 @@ import { ToastContainer } from "react-toastify";
 import { jwtDecode } from "jwt-decode";
 
 const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
-  const [modal, setmodal] = useState(false);
+  const [modal, setModal] = useState(false);
   const [price, setPrice] = useState(0);
   const [items, setItems] = useState([]);
   const [estado, setEstado] = useState("");
@@ -30,28 +30,22 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
     console.error("Erro ao decodificar o token:", error);
   }
 
-  const restaurant = RestaurantesList.find(
-    (restaurant) => restaurant.id === restaurantId
-  );
-
   const toggleModal = () => {
     if (!restaurantId || cartItems.length === 0) {
       toast.error("Carrinho Vazio");
       return;
     }
 
-    setmodal(!modal);
+    setModal(!modal);
   };
 
-  const [usersList, setUsersList] = useState([]);
-
   const handleRemove = (itemToRemove) => {
-    setCartItems(cartItems.filter((item) => item !== itemToRemove));
+    setCartItems(cartItems.filter((item) => item._id !== itemToRemove._id));
   };
 
   const handleAdd = (itemToAdd) => {
     const updatedCartItems = cartItems.map((item) => {
-      if (item === itemToAdd) {
+      if (item._id === itemToAdd._id) {
         return {
           ...item,
           quantity: item.quantity + 1,
@@ -66,7 +60,7 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
     const updatedCartItems = cartItems.map((item) => {
       if (item.quantity === 1) {
         console.log("Cannot have less than 1 item in the cart");
-      } else if (item === itemToMinus) {
+      } else if (item._id === itemToMinus._id) {
         return {
           ...item,
           quantity: item.quantity - 1,
@@ -80,14 +74,15 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
   const handlePrice = () => {
     let ans = 0;
     cartItems.forEach((item) => {
-      ans += item.price * item.quantity;
+      ans += item.itemPrice * item.quantity;
     });
     setPrice(ans);
   };
+
   useEffect(() => {
     // Map the cart items whenever cartItems change
     const updatedItems = cartItems.map((item) => ({
-      name: item.name,
+      name: item.itemName,
       quantity: item.quantity,
     }));
 
@@ -95,49 +90,20 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
     setItems(updatedItems);
   }, [cartItems]);
 
-  /*const handlePedido = () => {
-    const restaurantId = cartItems[0]?.restaurantId;
-
-    if (!restaurantId) {
-      console.log('No items in the cart or invalid restaurant ID.');
-      return;
-    }
-
-    const restaurant = RestaurantesList.find(restaurant => restaurant.id === restaurantId);
-
-    const newOrder = {
-      id: pedidos.length + 1,
-      user: 'algumuser',
-      restaurant: restaurant.name,
-      items: cartItems.map(item => ({ name: item.name, quantity: item.quantity })),
-      total_price: price,
-      status: 'Pendente'
-    };
-
-    setPedidosLista(prevPedidos => [...prevPedidos, newOrder]); 
-
-    setCartItems([]);
-    Navigate('/cart/confirmation');
-    console.log('New order:', newOrder);
-  };*/
   const handlePedido = async () => {
-    try{
-      console.log("1")
-      const token = localStorage.getItem("token");
+    try {
       const url = `http://localhost:9000/system/order`;
-      console.log("2")
-      
+
       const response = await axios.post(
         url,
         {
           userId: decoded.userId,
-          restaurantId: restaurant.id,
+          restaurantId: restaurantId,
           items: items,
-          orderAddress: "adaw",
-          //add user.adress,user.city,user.state,user.zip
-          orderCity: "a",
+          orderAddress: address,
+          orderCity: "a", // You may update this field based on your data
           orderState: decoded.state,
-          orderZip: "A",
+          orderZip: "A", // You may update this field based on your data
           orderPaymentMethod: paymentMethod,
           orderTotal: price,
         },
@@ -145,8 +111,8 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
           headers: {
             Authorization: token,
           },
-        },     
-         );
+        }
+      );
 
       console.log(response.data);
       setCartItems([]);
@@ -170,7 +136,7 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
     setAddress(event.target.value);
   };
 
-  const handleestadoChange = (event) => {
+  const handleEstadoChange = (event) => {
     setEstado(event.target.value);
   };
 
@@ -188,34 +154,31 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
         {cartItems?.map((item) => {
           return (
             <div className={styles.cart_box} key={item.id}>
-              <div className={styles["cart_img"]}>
-                <img src={item.image} alt={item.name} />
-                <p>{item.name}</p>
+              <div className={styles.cart_img}>
+                <img src={item.image} alt={item.itemName} />
+                <p>{item.itemName}</p>
               </div>
-              <div>
+              <spam>
                 <button
-                  className={styles["botao-feio"]}
                   onClick={() => handleAdd(item)}
                 >
                   +
                 </button>
-                <button className={styles["botao-feio"]}>
+                <button >
                   {item.quantity}
                 </button>
                 <button
-                  className={styles["botao-feio"]}
                   onClick={() => handleMinus(item)}
                 >
                   -
                 </button>
-              </div>
+              </spam>
               <div>
-                <span>{item.price}</span>
+                <span>{item.itemPrice}</span>
                 <button
-                  className={styles["botao-feio"]}
                   onClick={() => handleRemove(item)}
                 >
-                  Remove
+                  X
                 </button>
               </div>
             </div>
@@ -255,7 +218,7 @@ const Cart = ({ cartItems, setCartItems, setPedidosLista, PedidosLista }) => {
                   <input
                     type="text"
                     value={decoded.state}
-                    onChange={handleestadoChange}
+                    onChange={handleEstadoChange}
                   />
                 </label>
                 <br />
