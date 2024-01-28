@@ -4,21 +4,12 @@ import axios from "axios";
 import "./RestaurantesId.css";
 
 const RestaurantesId = ({ cartItems, setCartItems }) => {
-  // Estado para armazenar a lista de produtos do restaurante
   const [productsLista, setProductsLista] = useState([]);
-
-  // Obter o ID do restaurante a partir dos parâmetros da URL
   const { restaurantId } = useParams();
-
-  // Utilizar o hook de navegação do React Router
   const Navigate = useNavigate();
-
-  // Estado para armazenar informações sobre o restaurante
   const [restaurant, setRestaurant] = useState({});
 
-  // Efeito useEffect para buscar os produtos e informações do restaurante ao carregar o componente
   useEffect(() => {
-    // Função assíncrona para buscar os produtos do restaurante
     const fetchProducts = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -39,7 +30,6 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
       }
     };
 
-    // Função assíncrona para buscar as informações do restaurante
     const fetchRestaurants = async () => {
       try {
         const token = localStorage.getItem("token");
@@ -56,12 +46,10 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
       }
     };
 
-    // Chamar as funções de busca
     fetchProducts();
     fetchRestaurants();
   }, [restaurantId]);
 
-  // Função para adicionar um produto ao carrinho
   const addToCart = (produto) => {
     const isItemInCart = cartItems.some((item) => item._id === produto._id);
     if (isItemInCart) {
@@ -69,15 +57,13 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
       return;
     }
     setCartItems([...cartItems, produto]);
-    console.log(cartItems);
+    console.log(cartItems)
   };
 
-  // Componente de renderização
   return (
     <div className="container">
       <div className="MyRestaurante-Name">
         <h1 className="titulo_restaurante">
-          {/* Nome do restaurante e exibição do logo */}
           {restaurant.campanyName}
           <img
             src={`http://localhost:9000/system/image/${restaurant._id}`}
@@ -89,7 +75,6 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
       <div className="MyRestaurante-Products">
         <h3 style={{ marginTop: "10px" }}>Produtos</h3>
         <div className="grid-containerProduto">
-          {/* Mapear e exibir a lista de produtos */}
           {productsLista.map((produto) => (
             <div className="grid-itemProduto" key={produto._id}>
               <img
@@ -99,12 +84,12 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
               />
               <p>{produto.itemName}</p>
               <p>{produto.itemPrice + "€"}</p>
-              {/* Botão para adicionar o produto ao carrinho */}
               <button onClick={() => addToCart(produto)}>Adicionar</button>
             </div>
           ))}
         </div>
       </div>
+     
     </div>
   );
 };
