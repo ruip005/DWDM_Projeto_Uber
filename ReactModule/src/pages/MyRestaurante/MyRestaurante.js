@@ -2,6 +2,7 @@ import React, { useState, useEffect } from "react";
 import "./MyRestaurante.css";
 import { useNavigate, useParams } from "react-router-dom";
 import axios from "axios";
+import { Link } from "react-router-dom";
 
 const MyRestaurante = () => {
   const [productsLista, setProductsLista] = useState([]);
@@ -108,6 +109,7 @@ const MyRestaurante = () => {
         <h3 className="Produtos_h3">Produtos</h3>
         <div className="grid-containerProduto">
           {productsLista.map((produto) => (
+            <Link to={`/myrestaurant/edit/${produto._id}`}>
             <div className="grid-itemProduto" key={produto._id}>
               <img
                 className="imagemProduto"
@@ -117,6 +119,7 @@ const MyRestaurante = () => {
               <p>{produto.itemName}</p>
               <p>{produto.itemPrice + "€"}</p>
             </div>
+            </Link>
           ))}
         </div>
       </div>

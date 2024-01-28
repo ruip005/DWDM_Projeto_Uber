@@ -79,7 +79,7 @@ const RestaurantesId = ({ cartItems, setCartItems }) => {
             <div className="grid-itemProduto" key={produto._id}>
               <img
                 className="imagemProduto"
-                src={produto.image}
+                src={`http://localhost:9000/system/image/${produto._id}`}
                 alt={produto.itemName}
               />
               <p>{produto.itemName}</p>

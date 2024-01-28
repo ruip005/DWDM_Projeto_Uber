@@ -22,7 +22,7 @@ import RestaurantesId from "./pages/Restaurantes/RestaurantesId.js";
 import Cart from "./pages/Cart/Cart.js";
 import Pedidos from "./pages/Pedidos/Pedidos.js";
 import Pendente from "./pages/Pedidos/Pendente.js";
-import pedidos from "./pages/Cart/PedidosLista.js";
+import Remove from "./pages/MyRestaurante/AddNewProduct/Remove.js";
 import Confirmation from "./pages/Cart/Confirmation/Confirmation.js";
 
 // Components
@@ -227,11 +227,25 @@ const App = () => {
               </>
             }
           />
+          <Route
+            path="/myrestaurant/edit/:produtoId"
+            element={
+              <>
+                <Navbar cartItems={cartItems} />
+                <div className="container">
+                  <Remove />
+                </div>
+                <Footer />
+              </>
+            }
+          />
         </Routes>
       </BrowserRouter>
+      
     </div>
   );
 };
+
 
 // Export
 export default App;

@@ -174,47 +174,47 @@ function Admin() {
             </tr>
           </thead>
           <tbody>
-            {PedidosLista && PedidosLista.length > 0 ? (
-              PedidosLista.map((pedido) => {
-                const user = usersList.find(
-                  (user) => user._id === pedido.userId
-                );
-                const restaurant = restaurantes.find(
-                  (restaurant) => restaurant && restaurant.id === pedido._id
-                );
+      {PedidosLista && PedidosLista.length > 0 ? (
+        PedidosLista.map((pedido) => {
+          const user = usersList.find(
+            (user) => user._id === pedido.userId
+          );
+          const restaurant = restaurantes.find(
+            (restaurant) => restaurant && restaurant._id === pedido.campanyId
+          );
 
-                return (
-                  <tr key={pedido._id}>
-                    <td>
-                      {user
-                        ? `${user.firstName} ${user.lastName}`
-                        : "Unknown User"}
-                    </td>
-                    <td>
-                      {restaurant
-                        ? restaurant.campanyName
-                        : "Unknown Restaurant"}
-                    </td>
-                    <td>
-                      <ul>
-                        {pedido.orderItems.map((item) => (
-                          <li key={item.name}>
-                            {item.name} - Quantity: {item.quantity}
-                          </li>
-                        ))}
-                      </ul>
-                    </td>
-                    <td>{pedido.orderTotal}</td>
-                    <td>{pedido.orderStatus}</td>
-                  </tr>
-                );
-              })
-            ) : (
-              <tr>
-                <td colSpan="5">No orders available</td>
-              </tr>
-            )}
-          </tbody>
+          return (
+            <tr key={pedido._id}>
+              <td>
+                {user
+                  ? `${user.firstName} ${user.lastName}`
+                  : "Unknown User"}
+              </td>
+              <td>
+                {restaurant
+                  ? restaurant.campanyName
+                  : "Unknown Restaurant"}
+              </td>
+              <td>
+                <ul>
+                  {pedido.orderItems.map((item) => (
+                    <li key={item.name}>
+                      {item.name} - Quantity: {item.quantity}
+                    </li>
+                  ))}
+                </ul>
+              </td>
+              <td>{pedido.orderTotal}</td>
+              <td>{pedido.orderStatus}</td>
+            </tr>
+          );
+        })
+      ) : (
+        <tr>
+          <td colSpan="5">No orders available</td>
+        </tr>
+      )}
+    </tbody>
         </table>
       )}
 

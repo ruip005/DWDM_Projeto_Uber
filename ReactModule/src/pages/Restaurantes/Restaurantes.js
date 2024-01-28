@@ -6,7 +6,8 @@ import { useParams } from "react-router-dom";
 
 export const Restaurantes = () => {
   const { id } = useParams();
-  const [RestaurantesList, setRestaurantes] = useState([]);
+  const [restaurantesList, setRestaurantes] = useState([]);
+  const [filteredType, setFilteredType] = useState(null);
 
   useEffect(() => {
     const fetchRestaurants = async () => {
@@ -29,16 +30,77 @@ export const Restaurantes = () => {
     fetchRestaurants();
   }, []);
 
+  const handleTypeFilter = (type) => {
+    setFilteredType(type);
+  };
+
+  const resetTypeFilter = () => {
+    setFilteredType(null);
+  };
+
+  const filteredRestaurants = filteredType
+    ? restaurantesList.filter(
+        (restaurante) => restaurante.type === filteredType
+      )
+    : restaurantesList;
+
   return (
     <>
-      <img className="fastfood" src="./fast-food.png" alt="fastfood" />
-      <img className="pizza" src="./pizza.png" alt="pizza" />
-      <img className="sandwich" src="./sandwich.png" alt="sandwich" />
-      <img className="coffee" src="./coffee-cup.png" alt="coffecup" />
+      <div className="filter-images">
+        <img
+          className="fastfood"
+          src="./fast-food.png"
+          alt="fastfood"
+          onClick={() => handleTypeFilter("fastfood")}
+        />
+        <img
+          className="pizza"
+          src="./pizza.png"
+          alt="pizza"
+          onClick={() => handleTypeFilter("pizza")}
+        />
+        <img
+          className="sandwich"
+          src="./sandwich.png"
+          alt="sandwich"
+          onClick={() => handleTypeFilter("sandwich")}
+        />
+        <img
+          className="coffee"
+          src="./coffee-cup.png"
+          alt="coffecup"
+          onClick={() => handleTypeFilter("coffee")}
+        />
+        <img
+          className="asia"
+          src="./1.png"
+          alt="asia"
+          onClick={() => handleTypeFilter("asia")}
+        />
+        <img
+          className="ice"
+          src="./2.png"
+          alt="icecream"
+          onClick={() => handleTypeFilter("icecream")}
+        />
+        <img
+          className="pastelaria"
+          src="./3.png"
+          alt="crossaint"
+          onClick={() => handleTypeFilter("pastelaria")}
+        />
+        {/* Add click handlers for other types as needed */}
+<p/>
+        <button onClick={resetTypeFilter}>Resetar o Filtro</button>
+      </div>
 
       <div className="grid-container">
-        {RestaurantesList.map((restaurante) => (
-          <Link to={`/restaurantes/${restaurante._id}`} key={restaurante.id}>
+        {filteredRestaurants.map((restaurante) => (
+          <Link
+            to={`/restaurantes/${restaurante._id}`}
+            key={restaurante.id}
+            style={{ textDecoration: "none" }}
+          >
             <div
               className="grid-item"
               key={restaurante.id}
